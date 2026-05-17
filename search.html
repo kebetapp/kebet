@@ -152,19 +152,22 @@
   let allWorkers = [];
   let salaryFilter = 'any';
 
-  // Load workers from Firebase
   async function loadWorkers() {
     try {
+      console.log("Trying to connect to Firebase...");
       const snapshot = await getDocs(collection(db, 'workers'));
+      console.log("Total docs found:", snapshot.size);
       allWorkers = [];
       snapshot.forEach(doc => {
+        console.log("Doc:", doc.id, doc.data());
         allWorkers.push({ id: doc.id, ...doc.data() });
       });
       document.getElementById('loading').style.display = 'none';
       document.getElementById('workers-grid').style.display = 'grid';
       filterWorkers();
     } catch (error) {
-      document.getElementById('loading').textContent = '❌ Error loading workers. Please refresh.';
+      console.log("Firebase error:", error);
+      document.getElementById('loading').textContent = '❌ Error: ' + error.message;
     }
   }
 
