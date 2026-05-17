@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Find Workers</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
+
+    nav { background: #fff; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+    .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
+    .nav-logo-am { font-size: 13px; color: #f0a500; }
+    .nav-btns { display: flex; gap: 10px; }
+    .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+
+    .search-hero { background: #1a6b3c; padding: 50px 40px; text-align: center; }
+    .search-hero h1 { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .search-hero p { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 28px; }
+    .search-bar { display: flex; gap: 10px; max-width: 700px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 8px; }
+    .search-bar input, .search-bar select { border: none; outline: none; font-size: 14px; padding: 10px 14px; border-radius: 10px; background: #f5f5f0; color: #111; }
+    .search-bar input { flex: 1; }
+    .search-bar select { min-width: 160px; }
+    .search-bar button { background: #1a6b3c; color: #fff; border: none; padding: 10px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    .main { display: flex; gap: 24px; padding: 32px 40px; max-width: 1200px; margin: 0 auto; }
+    .filters { width: 240px; flex-shrink: 0; }
+    .filter-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; margin-bottom: 16px; }
+    .filter-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 14px; }
+    .filter-option { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; }
+    .filter-option input[type=checkbox] { accent-color: #1a6b3c; width: 15px; height: 15px; }
+    .filter-option label { font-size: 13px; color: #555; cursor: pointer; }
+    .filter-count { font-size: 11px; color: #aaa; margin-left: auto; }
+
+    /* Salary range buttons */
+    .salary-filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+    .sal-filter-btn { border: 1.5px solid #eee; border-radius: 8px; padding: 8px 4px; cursor: pointer; background: #fff; text-align: center; font-size: 11px; color: #555; font-weight: 500; transition: all 0.2s; }
+    .sal-filter-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; font-weight: 700; }
+    .sal-custom-row { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+    .sal-custom-row input { flex: 1; padding: 7px 8px; border: 1.5px solid #eee; border-radius: 8px; font-size: 12px; outline: none; }
+    .sal-custom-row input:focus { border-color: #1a6b3c; }
+    .sal-custom-row span { font-size: 11px; color: #aaa; white-space: nowrap; }
+
+    .results { flex: 1; }
+    .results-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .results-count { font-size: 14px; color: #555; }
+    .results-count span { font-weight: 700; color: #111; }
+    .sort-select { border: 1.5px solid #eee; border-radius: 10px; padding: 8px 12px; font-size: 13px; outline: none; color: #555; }
+
+    .workers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .worker-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; cursor: pointer; transition: box-shadow 0.2s; }
+    .worker-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .worker-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+    .worker-av { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+    .av-gold { background: #fde8c8; color: #c87800; }
+    .av-green { background: #e8f5ee; color: #1a6b3c; }
+    .av-blue { background: #e8f0ff; color: #2255cc; }
+    .av-pink { background: #ffe8f0; color: #cc2255; }
+    .worker-name { font-size: 15px; font-weight: 600; color: #111; }
+    .worker-role { font-size: 12px; color: #888; margin: 2px 0; }
+    .worker-loc { font-size: 11px; color: #1a6b3c; }
+    .verified { background: #e8f5ee; color: #1a6b3c; font-size: 10px; padding: 3px 8px; border-radius: 8px; margin-left: auto; white-space: nowrap; }
+    .live-in-tag { background: #fff5e0; color: #c87800; font-size: 10px; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 3px; }
+    .worker-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .skill { background: #f5f5f0; color: #555; font-size: 11px; padding: 4px 10px; border-radius: 8px; }
+    .worker-bottom { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 12px; }
+    .worker-salary { font-size: 15px; font-weight: 700; color: #1a6b3c; }
+    .worker-salary span { font-size: 11px; color: #888; font-weight: 400; }
+    .stars { color: #f0a500; font-size: 12px; }
+    .hire-btn { background: #1a6b3c; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .no-results { text-align: center; padding: 60px 20px; color: #aaa; }
+    .no-results div { font-size: 40px; margin-bottom: 12px; }
+
+    @media (max-width: 768px) {
+      .main { flex-direction: column; padding: 20px; }
+      .filters { width: 100%; }
+      .workers-grid { grid-template-columns: 1fr; }
+      nav { padding: 16px 20px; }
+      .search-hero { padding: 40px 20px; }
+      .search-bar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🏠</div>
+    <div>
+      <div class="nav-logo-text">KEBET</div>
+      <div class="nav-logo-am">ከቤት</div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
+    <button class="btn-green" onclick="window.location.href='signup.html'">Get Started</button>
+  </div>
+</nav>
+
+<div class="search-hero">
+  <h1>Find Live-in House Workers</h1>
+  <p>የቤት ሰራተኛ — Verified workers who live in your home · Addis Ababa</p>
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Search by name or skill..." oninput="filterWorkers()" />
+    <select id="location-filter" onchange="filterWorkers()">
+      <option value="">All locations</option>
+      <option>Bole</option><option>Kirkos</option><option>Yeka</option>
+      <option>Arada</option><option>Kazanchis</option><option>Piassa</option><option>Kolfe</option>
+    </select>
+    <button onclick="filterWorkers()">🔍 Search</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="filters">
+
+    <div class="filter-card">
+      <div class="filter-title">Category</div>
+      <div class="filter-option"><input type="checkbox" id="f-clean" onchange="filterWorkers()"><label for="f-clean">Cleaning</label><span class="filter-count">120</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-cook" onchange="filterWorkers()"><label for="f-cook">Cooking</label><span class="filter-count">80</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-nanny" onchange="filterWorkers()"><label for="f-nanny">Nanny</label><span class="filter-count">95</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-laundry" onchange="filterWorkers()"><label for="f-laundry">Laundry</label><span class="filter-count">60</span></div>
+      <div class="filter-option"><input type="checkbox" id="f-full" onchange="filterWorkers()"><label for="f-full">Full-time</label><span class="filter-count">45</span></div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">💰 Monthly Salary</div>
+      <div class="salary-filter-grid">
+        <div class="sal-filter-btn" id="sal-any" onclick="setSalFilter('any')" style="grid-column:1/-1;">Any salary</div>
+        <div class="sal-filter-btn active" id="sal-all" onclick="setSalFilter('all')" style="grid-column:1/-1; display:none;"></div>
+        <div class="sal-filter-btn" id="sal-1" onclick="setSalFilter('under2000')">Under 2,000</div>
+        <div class="sal-filter-btn" id="sal-2" onclick="setSalFilter('2000-3000')">2,000–3,000</div>
+        <div class="sal-filter-btn" id="sal-3" onclick="setSalFilter('3000-4500')">3,000–4,500</div>
+        <div class="sal-filter-btn" id="sal-4" onclick="setSalFilter('above4500')">4,500+</div>
+      </div>
+      <div class="sal-custom-row">
+        <input type="number" id="custom-max" placeholder="Max ETB" oninput="setCustomMax(this.value)" />
+        <span>ETB max</span>
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">Rating</div>
+      <div class="filter-option"><input type="checkbox" id="f-r5" onchange="filterWorkers()"><label for="f-r5">⭐⭐⭐⭐⭐ 5.0</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-r4" onchange="filterWorkers()"><label for="f-r4">⭐⭐⭐⭐ 4.0+</label></div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">Other</div>
+      <div class="filter-option"><input type="checkbox" id="f-verified" onchange="filterWorkers()"><label for="f-verified">Verified only</label></div>
+    </div>
+
+  </div>
+
+  <div class="results">
+    <div class="results-top">
+      <div class="results-count">Showing <span id="result-count">6</span> workers</div>
+      <select class="sort-select" id="sort-select" onchange="filterWorkers()">
+        <option value="rating">Sort: Top rated</option>
+        <option value="low">Sort: Salary low → high</option>
+        <option value="high">Sort: Salary high → low</option>
+      </select>
+    </div>
+    <div class="workers-grid" id="workers-grid"></div>
+    <div class="no-results" id="no-results" style="display:none;">
+      <div>😔</div>
+      <div>No workers found. Try changing your filters.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const workers = [
+    { name:"Sara Alemu", initials:"SA", color:"av-gold", role:"Cleaner · Nanny · Cook", location:"Bole", skills:["Cleaning","Child care","Cooking"], salary:3500, rating:4.9, stars:"★★★★★", verified:true },
+    { name:"Marta Tadesse", initials:"MT", color:"av-green", role:"Cook · Cleaner", location:"Kazanchis", skills:["Ethiopian food","Cleaning","Laundry"], salary:3000, rating:4.7, stars:"★★★★☆", verified:true },
+    { name:"Hiwot Girma", initials:"HG", color:"av-gold", role:"Full-time helper", location:"Piassa", skills:["All home tasks","Ironing","Shopping"], salary:4500, rating:5.0, stars:"★★★★★", verified:true },
+    { name:"Tigist Bekele", initials:"TB", color:"av-blue", role:"Nanny · Cleaner", location:"Yeka", skills:["Child care","Cleaning","Cooking"], salary:3500, rating:4.8, stars:"★★★★★", verified:true },
+    { name:"Selam Hailu", initials:"SH", color:"av-pink", role:"Cook · Laundry", location:"Kirkos", skills:["Cooking","Laundry","Ironing"], salary:2500, rating:4.6, stars:"★★★★☆", verified:false },
+    { name:"Azeb Wolde", initials:"AW", color:"av-green", role:"Cleaner · Laundry", location:"Bole", skills:["Cleaning","Laundry"], salary:2000, rating:4.5, stars:"★★★★☆", verified:true },
+  ];
+
+  let salaryFilter = 'any';
+  let customMax = null;
+
+  function setSalFilter(type) {
+    salaryFilter = type;
+    customMax = null;
+    document.getElementById('custom-max').value = '';
+    ['sal-any','sal-1','sal-2','sal-3','sal-4'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+    const map = { any:'sal-any', 'under2000':'sal-1', '2000-3000':'sal-2', '3000-4500':'sal-3', 'above4500':'sal-4' };
+    if (map[type]) document.getElementById(map[type]).classList.add('active');
+    filterWorkers();
+  }
+
+  function setCustomMax(val) {
+    customMax = val ? parseInt(val) : null;
+    salaryFilter = 'custom';
+    ['sal-any','sal-1','sal-2','sal-3','sal-4'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+    filterWorkers();
+  }
+
+  function filterWorkers() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const location = document.getElementById('location-filter').value;
+    const onlyVerified = document.getElementById('f-verified').checked;
+    const only5star = document.getElementById('f-r5').checked;
+    const only4star = document.getElementById('f-r4').checked;
+    const sortVal = document.getElementById('sort-select').value;
+
+    const categories = [];
+    if (document.getElementById('f-clean').checked) categories.push('Cleaning');
+    if (document.getElementById('f-cook').checked) categories.push('Cooking');
+    if (document.getElementById('f-nanny').checked) categories.push('Child care');
+    if (document.getElementById('f-laundry').checked) categories.push('Laundry');
+    if (document.getElementById('f-full').checked) categories.push('All home tasks');
+
+    let filtered = workers.filter(w => {
+      if (search && !w.name.toLowerCase().includes(search) && !w.skills.join(' ').toLowerCase().includes(search)) return false;
+      if (location && w.location !== location) return false;
+      if (onlyVerified && !w.verified) return false;
+      if (only5star && w.rating < 5.0) return false;
+      if (only4star && w.rating < 4.0) return false;
+      if (categories.length > 0 && !categories.some(c => w.skills.includes(c))) return false;
+
+      if (salaryFilter === 'under2000' && w.salary >= 2000) return false;
+      if (salaryFilter === '2000-3000' && (w.salary < 2000 || w.salary > 3000)) return false;
+      if (salaryFilter === '3000-4500' && (w.salary < 3000 || w.salary > 4500)) return false;
+      if (salaryFilter === 'above4500' && w.salary <= 4500) return false;
+      if (salaryFilter === 'custom' && customMax && w.salary > customMax) return false;
+
+      return true;
+    });
+
+    if (sortVal === 'low') filtered.sort((a,b) => a.salary - b.salary);
+    else if (sortVal === 'high') filtered.sort((a,b) => b.salary - a.salary);
+    else filtered.sort((a,b) => b.rating - a.rating);
+
+    const grid = document.getElementById('workers-grid');
+    const noResults = document.getElementById('no-results');
+    document.getElementById('result-count').textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      noResults.style.display = 'block';
+      return;
+    }
+
+    noResults.style.display = 'none';
+    grid.innerHTML = filtered.map(w => `
+      <div class="worker-card" onclick="window.location.href='profile.html'">
+        <div class="worker-top">
+          <div class="worker-av ${w.color}">${w.initials}</div>
+          <div>
+            <div class="worker-name">${w.name}</div>
+            <div class="worker-role">${w.role}</div>
+            <div class="worker-loc">📍 ${w.location}, Addis Ababa</div>
+            <span class="live-in-tag">🛏️ Live-in</span>
+          </div>
+          ${w.verified ? '<div class="verified">✓ Verified</div>' : ''}
+        </div>
+        <div class="worker-skills">${w.skills.map(s=>`<span class="skill">${s}</span>`).join('')}</div>
+        <div class="worker-bottom">
+          <div>
+            <div class="worker-salary">${w.salary.toLocaleString()} ETB <span>/month</span></div>
+            <div class="stars">${w.stars} ${w.rating}</div>
+          </div>
+          <button class="hire-btn" onclick="event.stopPropagation(); window.location.href='profile.html'">Hire now</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  filterWorkers();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Book Worker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
+
+    nav {
+      background: #fff; padding: 16px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+    .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
+    .nav-logo-am { font-size: 13px; color: #f0a500; }
+
+    .back-bar { padding: 16px 40px; }
+    .back-btn { background: none; border: none; color: #1a6b3c; font-size: 14px; cursor: pointer; font-weight: 600; }
+
+    .page-title { text-align: center; padding: 10px 40px 30px; }
+    .page-title h1 { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .page-title p { font-size: 14px; color: #888; }
+
+    .live-in-banner {
+      max-width: 1000px; margin: 0 auto 0; padding: 0 40px 20px;
+    }
+    .live-in-badge {
+      background: #1a6b3c; color: #fff; border-radius: 14px;
+      padding: 16px 24px; display: flex; align-items: center; gap: 14px;
+    }
+    .live-in-badge-icon { font-size: 32px; }
+    .live-in-badge-text { font-size: 14px; line-height: 1.6; }
+    .live-in-badge-text strong { font-size: 15px; }
+
+    .main { display: flex; gap: 24px; padding: 0 40px 60px; max-width: 1000px; margin: 0 auto; }
+    .left-col { flex: 1; }
+    .right-col { width: 300px; flex-shrink: 0; }
+
+    .card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #eee; margin-bottom: 16px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 18px; }
+
+    .worker-mini { display: flex; align-items: center; gap: 14px; }
+    .w-av { width: 56px; height: 56px; border-radius: 14px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+    .w-name { font-size: 16px; font-weight: 700; color: #111; }
+    .w-role { font-size: 13px; color: #888; margin: 2px 0; }
+    .w-badge { background: #e8f5ee; color: #1a6b3c; font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; }
+
+    /* Salary options */
+    .salary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .salary-btn {
+      border: 2px solid #eee; border-radius: 12px; padding: 14px 8px;
+      cursor: pointer; background: #fff; text-align: center; transition: all 0.2s;
+    }
+    .salary-btn.active { border-color: #1a6b3c; background: #e8f5ee; }
+    .salary-amount { font-size: 15px; font-weight: 700; color: #111; }
+    .salary-btn.active .salary-amount { color: #1a6b3c; }
+    .salary-label { font-size: 10px; color: #aaa; margin-top: 3px; }
+    .salary-custom { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .salary-custom input { flex: 1; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .salary-custom input:focus { border-color: #1a6b3c; }
+    .salary-custom span { font-size: 13px; color: #888; white-space: nowrap; }
+
+    /* Duration */
+    .duration-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .dur-btn {
+      border: 2px solid #eee; border-radius: 10px; padding: 12px 6px;
+      cursor: pointer; background: #fff; text-align: center;
+      font-size: 13px; font-weight: 600; color: #555; transition: all 0.2s;
+    }
+    .dur-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
+    .dur-btn small { display: block; font-size: 10px; color: #aaa; font-weight: 400; margin-top: 2px; }
+    .dur-btn.active small { color: #1a6b3c; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; color: #111; background: #fff; outline: none; transition: border 0.2s; }
+    .form-input:focus, .form-select:focus { border-color: #1a6b3c; }
+
+    /* Services */
+    .service-option { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
+    .service-option input { accent-color: #1a6b3c; width: 16px; height: 16px; }
+    .service-option label { font-size: 13px; color: #333; cursor: pointer; font-weight: 500; }
+    .service-icon { font-size: 18px; }
+
+    /* What owner provides */
+    .provides-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .provides-item { display: flex; align-items: center; gap: 8px; padding: 12px; background: #f5f5f0; border-radius: 10px; }
+    .provides-icon { font-size: 18px; }
+    .provides-text { font-size: 12px; color: #333; font-weight: 600; }
+    .provides-sub { font-size: 10px; color: #888; }
+
+    /* Worker rights */
+    .rights-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+    .rights-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .rights-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    /* Rules */
+    .rule-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; font-size: 13px; color: #555; line-height: 1.6; }
+    .rule-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* Address */
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Summary */
+    .summary-card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; position: sticky; top: 80px; }
+    .summary-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; }
+    .summary-worker { display: flex; align-items: center; gap: 10px; background: #f5f5f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
+    .sum-av { width: 40px; height: 40px; border-radius: 10px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+    .sum-name { font-size: 13px; font-weight: 600; color: #111; }
+    .sum-role { font-size: 11px; color: #888; }
+    .sum-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 10px; }
+    .sum-row span:last-child { font-weight: 600; color: #111; }
+    .sum-divider { height: 1px; background: #eee; margin: 12px 0; }
+    .sum-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .sum-total span:last-child { color: #1a6b3c; font-size: 20px; }
+    .sum-note { font-size: 11px; color: #aaa; margin-bottom: 16px; }
+
+    .confirm-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+    .confirm-btn:hover { background: #145530; }
+    .safe-note { text-align: center; font-size: 11px; color: #aaa; line-height: 1.6; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: #fff; border-radius: 24px; padding: 40px; max-width: 400px; width: 90%; text-align: center; }
+    .modal-icon { font-size: 56px; margin-bottom: 16px; }
+    .modal-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .modal-sub { font-size: 14px; color: #888; line-height: 1.7; margin-bottom: 24px; }
+    .modal-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+    @media (max-width: 768px) {
+      .main { flex-direction: column; padding: 0 20px 40px; }
+      .right-col { width: 100%; }
+      nav { padding: 16px 20px; }
+      .back-bar { padding: 12px 20px; }
+      .live-in-banner { padding: 0 20px 20px; }
+      .salary-grid { grid-template-columns: repeat(3, 1fr); }
+      .duration-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🏠</div>
+    <div>
+      <div class="nav-logo-text">KEBET</div>
+      <div class="nav-logo-am">ከቤት</div>
+    </div>
+  </div>
+</nav>
+
+<div class="back-bar">
+  <button class="back-btn" onclick="window.location.href='profile.html'">← Back to profile</button>
+</div>
+
+<div class="page-title">
+  <h1>Book Your Live-in House Worker</h1>
+  <p>የቤት ሰራተኛ — Monthly contract, lives in your home</p>
+</div>
+
+<div class="live-in-banner">
+  <div class="live-in-badge">
+    <div class="live-in-badge-icon">🛏️</div>
+    <div class="live-in-badge-text">
+      <strong>Live-in work — የቤት ሰራተኛ</strong><br/>
+      In Ethiopia, house workers live with the family. You provide a room, meals and monthly salary. This is the standard and most trusted arrangement.
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="left-col">
+
+    <div class="card">
+      <div class="card-title">👤 Worker</div>
+      <div class="worker-mini">
+        <div class="w-av">SA</div>
+        <div>
+          <div class="w-name">Sara Alemu</div>
+          <div class="w-role">Cleaner · Nanny · Cook</div>
+          <span class="w-badge">✓ Verified · ⭐ 4.9 · 3 yrs experience</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 Monthly Salary</div>
+      <div class="salary-grid">
+        <div class="salary-btn" onclick="setSalary(2500, this)"><div class="salary-amount">2,500</div><div class="salary-label">ETB/month</div></div>
+        <div class="salary-btn active" onclick="setSalary(3500, this)"><div class="salary-amount">3,500</div><div class="salary-label">ETB/month</div></div>
+        <div class="salary-btn" onclick="setSalary(4500, this)"><div class="salary-amount">4,500</div><div class="salary-label">ETB/month</div></div>
+      </div>
+      <div class="salary-custom">
+        <input type="number" id="custom-salary" placeholder="Custom amount" oninput="setCustomSalary(this.value)" />
+        <span>ETB / month</span>
+      </div>
+      <div style="margin-top:10px; font-size:12px; color:#888;">💡 Average salary in Addis Ababa is 2,500 – 4,500 ETB/month depending on experience and duties.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📅 Contract Duration</div>
+      <div class="duration-grid">
+        <div class="dur-btn active" onclick="setDuration(1, this)">1 Month<small>Trial</small></div>
+        <div class="dur-btn" onclick="setDuration(3, this)">3 Months<small>Popular</small></div>
+        <div class="dur-btn" onclick="setDuration(6, this)">6 Months<small>Save 5%</small></div>
+        <div class="dur-btn" onclick="setDuration(12, this)">1 Year<small>Save 10%</small></div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="form-label">Start date</div>
+        <input type="date" class="form-input" id="start-date" onchange="calcTotal()" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧹 Duties & Services</div>
+      <div class="service-option"><input type="checkbox" id="s1" checked><span class="service-icon">🧹</span><label for="s1">House Cleaning (daily)</label></div>
+      <div class="service-option"><input type="checkbox" id="s2" checked><span class="service-icon">🍳</span><label for="s2">Cooking (Ethiopian & other food)</label></div>
+      <div class="service-option"><input type="checkbox" id="s3"><span class="service-icon">👶</span><label for="s3">Child Care / Nanny</label></div>
+      <div class="service-option"><input type="checkbox" id="s4" checked><span class="service-icon">👕</span><label for="s4">Laundry & Ironing</label></div>
+      <div class="service-option"><input type="checkbox" id="s5"><span class="service-icon">🛒</span><label for="s5">Grocery Shopping</label></div>
+      <div class="service-option"><input type="checkbox" id="s6"><span class="service-icon">🍼</span><label for="s6">Baby / Infant care</label></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏠 What You (House Owner) Provide</div>
+      <div class="provides-grid">
+        <div class="provides-item"><span class="provides-icon">🛏️</span><div><div class="provides-text">Private room</div><div class="provides-sub">A room to sleep safely</div></div></div>
+        <div class="provides-item"><span class="provides-icon">🍽️</span><div><div class="provides-text">3 meals daily</div><div class="provides-sub">Breakfast, lunch, dinner</div></div></div>
+        <div class="provides-item"><span class="provides-icon">💧</span><div><div class="provides-text">Water & electricity</div><div class="provides-sub">Included in home</div></div></div>
+        <div class="provides-item"><span class="provides-icon">📅</span><div><div class="provides-text">1 day off/week</div><div class="provides-sub">Usually Sunday</div></div></div>
+        <div class="provides-item"><span class="provides-icon">🏥</span><div><div class="provides-text">Basic health care</div><div class="provides-sub">Clinic visits if sick</div></div></div>
+        <div class="provides-item"><span class="provides-icon">📞</span><div><div class="provides-text">Phone access</div><div class="provides-sub">Contact her family</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🙏 Worker Rights — Please Read</div>
+      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">The worker has the right to leave at any time if she feels unsafe or mistreated</div></div>
+      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Salary must be paid on time every month — no delays</div></div>
+      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">No physical punishment, shouting or humiliation — zero tolerance</div></div>
+      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">She keeps her ID and phone at all times — never take them</div></div>
+      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">She gets proper rest — not working 24 hours with no break</div></div>
+      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Kebet can be contacted by the worker anytime if there is a problem</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📍 Your Home Address</div>
+      <div class="form-group">
+        <div class="form-label">Sub-city</div>
+        <select class="form-select">
+          <option>Bole</option><option>Kirkos</option><option>Yeka</option>
+          <option>Arada</option><option>Lideta</option><option>Kazanchis</option>
+          <option>Piassa</option><option>Kolfe Keranio</option><option>Gulele</option>
+          <option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="form-group">
+          <div class="form-label">Woreda</div>
+          <input type="text" class="form-input" placeholder="e.g. Woreda 3" />
+        </div>
+        <div class="form-group">
+          <div class="form-label">House number</div>
+          <input type="text" class="form-input" placeholder="e.g. 045" />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Landmark / directions</div>
+        <input type="text" class="form-input" placeholder="e.g. Near Edna Mall, blue gate" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Agreement</div>
+      <div class="rule-item"><span class="rule-icon">📌</span>1 month notice required from both sides before ending contract</div>
+      <div class="rule-item"><span class="rule-icon">📌</span>Salary paid at end of each month in cash or via mobile money</div>
+      <div class="rule-item"><span class="rule-icon">📌</span>Kebet mediates any dispute between owner and worker</div>
+      <div class="rule-item"><span class="rule-icon">📌</span>Both parties can rate each other after each month</div>
+      <div style="margin-top:14px; display:flex; align-items:flex-start; gap:10px;">
+        <input type="checkbox" id="agree" style="accent-color:#1a6b3c; width:16px; height:16px; margin-top:2px; flex-shrink:0;">
+        <label for="agree" style="font-size:13px; color:#555; line-height:1.6; cursor:pointer;">I have read and agree to the worker rights, house rules and <a href="#" style="color:#1a6b3c; font-weight:600;">Kebet Terms of Service</a></label>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="right-col">
+    <div class="summary-card">
+      <div class="summary-title">📋 Booking Summary</div>
+      <div class="summary-worker">
+        <div class="sum-av">SA</div>
+        <div><div class="sum-name">Sara Alemu</div><div class="sum-role">Live-in · የቤት ሰራተኛ</div></div>
+      </div>
+      <div class="sum-row"><span>Work type</span><span>🛏️ Live-in</span></div>
+      <div class="sum-row"><span>Contract</span><span id="sum-duration">1 month</span></div>
+      <div class="sum-row"><span>Monthly salary</span><span id="sum-rate">3,500 ETB</span></div>
+      <div class="sum-row"><span>Kebet fee</span><span>Free 🎉</span></div>
+      <div class="sum-divider"></div>
+      <div class="sum-total"><span id="sum-label">Total</span><span id="sum-total">3,500 ETB</span></div>
+      <div class="sum-note" id="sum-discount"></div>
+      <button class="confirm-btn" onclick="confirmBooking()">✅ Confirm Booking</button>
+      <div class="safe-note">🔒 Protected by Kebet<br/>All workers are verified before entering your home.</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title">Booking Confirmed!</div>
+    <div class="modal-sub">Sara Alemu has been notified and will contact you within 24 hours to confirm her start date.<br/><br/>ወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹<br/><br/>Welcome to the Kebet family!</div>
+    <button class="modal-btn" onclick="window.location.href='index.html'">Back to Home</button>
+  </div>
+</div>
+
+<script>
+  let salary = 3500;
+  let months = 1;
+
+  function setSalary(amount, btn) {
+    salary = amount;
+    document.getElementById('custom-salary').value = '';
+    document.querySelectorAll('.salary-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calcTotal();
+  }
+
+  function setCustomSalary(val) {
+    if (val && parseInt(val) > 0) {
+      salary = parseInt(val);
+      document.querySelectorAll('.salary-btn').forEach(b => b.classList.remove('active'));
+      calcTotal();
+    }
+  }
+
+  function setDuration(m, btn) {
+    months = m;
+    document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calcTotal();
+  }
+
+  function calcTotal() {
+    let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
+    let total = Math.round(salary * months * discount);
+    let discountText = '';
+    if (months >= 12) discountText = '🎉 10% discount applied for 1 year contract!';
+    else if (months >= 6) discountText = '🎉 5% discount applied for 6 month contract!';
+
+    document.getElementById('sum-duration').textContent = months + (months === 1 ? ' month' : ' months');
+    document.getElementById('sum-rate').textContent = salary.toLocaleString() + ' ETB/month';
+    document.getElementById('sum-label').textContent = 'Total (' + months + (months === 1 ? ' mo)' : ' mos)');
+    document.getElementById('sum-total').textContent = total.toLocaleString() + ' ETB';
+    document.getElementById('sum-discount').textContent = discountText;
+  }
+
+  function confirmBooking() {
+    if (!document.getElementById('agree').checked) {
+      alert('Please read and agree to the worker rights and terms before confirming.');
+      return;
+    }
+    document.getElementById('modal').classList.add('show');
+  }
+
+  calcTotal();
+</script>
+
+</body>
+</html>

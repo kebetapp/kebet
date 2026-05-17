@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Owner Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-item.active { background: rgba(255,255,255,0.12); color: #fff; border-left-color: #f0a500; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
+    .main { margin-left: 240px; flex: 1; padding: 32px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .topbar-title h1 { font-size: 22px; font-weight: 700; color: #111; }
+    .topbar-title p { font-size: 14px; color: #888; margin-top: 2px; }
+    .topbar-right { display: flex; gap: 10px; align-items: center; }
+    .find-btn { background: #1a6b3c; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+    .icon-green { background: #e8f5ee; }
+    .icon-gold { background: #fff5e0; }
+    .icon-blue { background: #e8f0ff; }
+    .icon-pink { background: #ffe8f0; }
+    .stat-num { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .stat-label { font-size: 12px; color: #888; }
+    .stat-change { font-size: 11px; color: #1a6b3c; margin-top: 6px; font-weight: 600; }
+    .section-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 14px; }
+    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
+    .profile-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .profile-av { width: 64px; height: 64px; border-radius: 16px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; flex-shrink: 0; }
+    .profile-name { font-size: 20px; font-weight: 700; color: #111; }
+    .profile-sub { font-size: 13px; color: #888; margin-top: 3px; }
+    .profile-loc { font-size: 12px; color: #1a6b3c; margin-top: 3px; }
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .info-item { background: #f5f5f0; border-radius: 12px; padding: 14px; }
+    .info-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .info-val { font-size: 14px; font-weight: 700; color: #111; }
+    .info-val.green { color: #1a6b3c; }
+    .action-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-outline { background: #fff; color: #1a6b3c; border: 2px solid #1a6b3c; padding: 9px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .no-worker-card { background: #fff; border-radius: 16px; padding: 40px; border: 2px dashed #eee; text-align: center; margin-bottom: 20px; }
+    .no-worker-icon { font-size: 48px; margin-bottom: 12px; }
+    .no-worker-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .no-worker-sub { font-size: 14px; color: #888; margin-bottom: 20px; }
+    .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f5f5f0; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .activity-text { font-size: 13px; color: #333; line-height: 1.5; flex: 1; }
+    .activity-text span { font-weight: 600; color: #111; }
+    .activity-time { font-size: 11px; color: #aaa; white-space: nowrap; }
+    .tip-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f5f5f0; }
+    .tip-item:last-child { border-bottom: none; }
+    .tip-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .tip-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 2px; }
+    .tip-text { font-size: 12px; color: #888; line-height: 1.5; }
+    @media (max-width: 900px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } .stats-row { grid-template-columns: 1fr 1fr; } .two-col { grid-template-columns: 1fr; } .info-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role">House Owner</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading your dashboard...</div>
+  <div id="dashboard-content" style="display:none;">
+    <div class="topbar">
+      <div class="topbar-title">
+        <h1 id="greeting">Good morning! 👋</h1>
+        <p>Welcome to your Kebet dashboard</p>
+      </div>
+      <div class="topbar-right">
+        <button class="find-btn" onclick="window.location.href='search.html'">+ Find Worker</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label">Your name</div></div>
+      <div class="stat-card"><div class="stat-icon icon-gold">📍</div><div class="stat-num" id="stat-location">—</div><div class="stat-label">Your location</div></div>
+      <div class="stat-card"><div class="stat-icon icon-blue">📱</div><div class="stat-num" id="stat-phone">—</div><div class="stat-label">Phone</div></div>
+      <div class="stat-card"><div class="stat-icon icon-pink">📅</div><div class="stat-num" id="stat-joined">—</div><div class="stat-label">Joined</div></div>
+    </div>
+
+    <div class="section-title">🏠 Your Account</div>
+    <div class="card">
+      <div class="profile-row">
+        <div class="profile-av" id="profile-av">?</div>
+        <div>
+          <div class="profile-name" id="profile-name">Loading...</div>
+          <div class="profile-sub" id="profile-email">—</div>
+          <div class="profile-loc" id="profile-loc">📍 —</div>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-label">Account type</div><div class="info-val green">🏠 House Owner</div></div>
+        <div class="info-item"><div class="info-label">Phone</div><div class="info-val" id="info-phone">—</div></div>
+        <div class="info-item"><div class="info-label">Member since</div><div class="info-val" id="info-joined">—</div></div>
+      </div>
+      <div class="action-btns">
+        <button class="btn-green" onclick="window.location.href='search.html'">🔍 Find a Worker</button>
+        <button class="btn-outline">✏️ Edit Profile</button>
+      </div>
+    </div>
+
+    <div class="section-title">🛏️ Current Worker</div>
+    <div class="no-worker-card">
+      <div class="no-worker-icon">🔍</div>
+      <div class="no-worker-title">No worker hired yet</div>
+      <div class="no-worker-sub">Find a trusted live-in worker for your home today</div>
+      <button class="btn-green" onclick="window.location.href='search.html'">Browse Workers →</button>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-title">📋 Recent Activity</div>
+        <div class="activity-item"><div class="activity-icon icon-green">✅</div><div class="activity-text">Your account was <span>created successfully</span></div><div class="activity-time">Just now</div></div>
+        <div class="activity-item"><div class="activity-icon icon-blue">🔍</div><div class="activity-text">Start by <span>searching for workers</span> near you</div><div class="activity-time"></div></div>
+      </div>
+      <div class="card">
+        <div class="section-title">💡 Getting Started Tips</div>
+        <div class="tip-item"><div class="tip-icon icon-green">🔍</div><div><div class="tip-title">Search for workers</div><div class="tip-text">Browse verified workers in your area by skill and salary range.</div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-gold">💰</div><div><div class="tip-title">Agree on monthly salary</div><div class="tip-text">Average salary in Addis is 2,500 – 4,500 ETB per month.</div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-blue">⭐</div><div><div class="tip-title">Rate your worker monthly</div><div class="tip-text">Monthly ratings help build trust in the Kebet community.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = 'signin.html';
+      return;
+    }
+
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) {
+      window.location.href = 'signin.html';
+      return;
+    }
+
+    const data = userDoc.data();
+
+    if (data.userType !== 'owner') {
+      window.location.href = 'dashboard-worker.html';
+      return;
+    }
+
+    const firstName = data.firstName || '';
+    const lastName = data.lastName || '';
+    const fullName = firstName + ' ' + lastName;
+    const initials = (firstName[0] || '') + (lastName[0] || '');
+    const joined = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : '—';
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
+    document.getElementById('greeting').textContent = greeting + ', ' + firstName + '! 👋';
+    document.getElementById('sidebar-name').textContent = fullName;
+    document.getElementById('sidebar-av').textContent = initials;
+    document.getElementById('profile-av').textContent = initials;
+    document.getElementById('profile-name').textContent = fullName;
+    document.getElementById('profile-email').textContent = data.email || '—';
+    document.getElementById('profile-loc').textContent = '📍 ' + (data.location || '—') + ', Addis Ababa';
+    document.getElementById('stat-name').textContent = firstName;
+    document.getElementById('stat-location').textContent = data.location || '—';
+    document.getElementById('stat-phone').textContent = data.phone || '—';
+    document.getElementById('stat-joined').textContent = joined;
+    document.getElementById('info-phone').textContent = data.phone || '—';
+    document.getElementById('info-joined').textContent = joined;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+
+</body>
+</html>

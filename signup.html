@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Sign Up</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    .left { background: #1a6b3c; width: 45%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px; position: sticky; top: 0; height: 100vh; }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+    .logo-icon { width: 50px; height: 50px; background: #fff; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .logo-text { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 3px; }
+    .logo-am { font-size: 14px; color: #f0a500; }
+    .left-title { font-size: 28px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 10px; }
+    .left-sub { font-size: 14px; color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 40px; line-height: 1.7; }
+    .feature { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; width: 100%; max-width: 300px; }
+    .feature-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .feature-text { font-size: 13px; color: rgba(255,255,255,0.85); }
+    .right { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px; }
+    .form-box { width: 100%; max-width: 420px; }
+    .form-title { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .form-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
+    .type-toggle { display: flex; background: #f0f0f0; border-radius: 12px; padding: 4px; margin-bottom: 24px; }
+    .type-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-size: 13px; font-weight: 500; color: #888; cursor: pointer; }
+    .type-btn.active { background: #fff; color: #1a6b3c; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 16px; }
+    label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; color: #111; background: #fff; outline: none; transition: border 0.2s; }
+    input:focus, select:focus { border-color: #1a6b3c; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .submit-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+    .submit-btn:hover { background: #145530; }
+    .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+    .signin-link { text-align: center; font-size: 13px; color: #888; margin-top: 16px; }
+    .signin-link a { color: #1a6b3c; font-weight: 600; text-decoration: none; }
+    .error-msg { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
+    .success-msg { background: #e8f5ee; border: 1px solid #b2dfc6; color: #1a6b3c; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
+    @media (max-width: 768px) { body { flex-direction: column; } .left { width: 100%; height: auto; padding: 40px 20px; position: relative; } .right { padding: 40px 20px; } }
+  </style>
+</head>
+<body>
+
+<div class="left">
+  <div class="logo">
+    <div class="logo-icon">🏠</div>
+    <div><div class="logo-text">KEBET</div><div class="logo-am">ከቤት</div></div>
+  </div>
+  <div class="left-title">Join Kebet Today</div>
+  <div class="left-sub">Ethiopia's #1 platform connecting house owners with trusted workers</div>
+  <div class="feature"><div class="feature-icon">✅</div><div class="feature-text">All workers verified and background checked</div></div>
+  <div class="feature"><div class="feature-icon">⭐</div><div class="feature-text">Real ratings and reviews from real people</div></div>
+  <div class="feature"><div class="feature-icon">💬</div><div class="feature-text">Chat directly with workers before hiring</div></div>
+  <div class="feature"><div class="feature-icon">💰</div><div class="feature-text">Transparent monthly salary — no hidden fees</div></div>
+  <div class="feature"><div class="feature-icon">📍</div><div class="feature-text">Find workers near you in Addis Ababa</div></div>
+</div>
+
+<div class="right">
+  <div class="form-box">
+    <div class="form-title">Create your account</div>
+    <div class="form-sub">It's free and takes less than 2 minutes</div>
+
+    <div class="type-toggle">
+      <button class="type-btn active" onclick="setType('owner', this)">🏠 House Owner</button>
+      <button class="type-btn" onclick="setType('worker', this)">🧹 House Worker</button>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+    <div class="success-msg" id="success-msg"></div>
+
+    <div class="row2">
+      <div class="form-group"><label>First name</label><input type="text" id="fname" placeholder="Abebe" /></div>
+      <div class="form-group"><label>Last name</label><input type="text" id="lname" placeholder="Kebede" /></div>
+    </div>
+    <div class="form-group"><label>Phone number</label><input type="tel" id="phone" placeholder="09__ ___ ___" /></div>
+    <div class="form-group"><label>Email address</label><input type="email" id="email" placeholder="abebe@email.com" /></div>
+    <div class="form-group">
+      <label>Location (Sub-city)</label>
+      <select id="location">
+        <option value="">Select your sub-city</option>
+        <option>Bole</option><option>Kirkos</option><option>Yeka</option>
+        <option>Arada</option><option>Lideta</option><option>Kolfe Keranio</option>
+        <option>Gulele</option><option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
+        <option>Lemi Kura</option><option>Addis Ketema</option>
+      </select>
+    </div>
+    <div class="form-group" id="skill-group" style="display:none;">
+      <label>Your main skill</label>
+      <select id="skill">
+        <option value="">Select your skill</option>
+        <option>Cleaning</option><option>Cooking</option>
+        <option>Nanny / Child care</option><option>Laundry</option>
+        <option>Full-time helper</option><option>Gardening</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Create a strong password" /></div>
+
+    <button class="submit-btn" id="signup-btn" onclick="handleSignUp()">Create Account →</button>
+    <div class="signin-link">Already have an account? <a href="signin.html">Sign in here</a></div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let userType = 'owner';
+
+  window.setType = function(type, btn) {
+    userType = type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('skill-group').style.display = type === 'worker' ? 'block' : 'none';
+  }
+
+  window.handleSignUp = async function() {
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const location = document.getElementById('location').value;
+    const password = document.getElementById('password').value;
+    const skill = document.getElementById('skill').value;
+    const errorMsg = document.getElementById('error-msg');
+    const successMsg = document.getElementById('success-msg');
+    const btn = document.getElementById('signup-btn');
+
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+
+    if (!fname || !lname || !email || !password || !location || !phone) {
+      errorMsg.textContent = '⚠️ Please fill in all fields.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    if (password.length < 6) {
+      errorMsg.textContent = '⚠️ Password must be at least 6 characters.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, 'users', user.uid), {
+        firstName: fname,
+        lastName: lname,
+        phone: phone,
+        email: email,
+        location: location,
+        userType: userType,
+        skill: skill || null,
+        rating: 0,
+        createdAt: new Date().toISOString()
+      });
+
+      successMsg.textContent = '✅ Account created! Taking you to your dashboard...';
+      successMsg.style.display = 'block';
+
+      setTimeout(() => {
+        if (userType === 'owner') {
+          window.location.href = 'dashboard-owner.html';
+        } else {
+          window.location.href = 'dashboard-worker.html';
+        }
+      }, 1500);
+
+    } catch (error) {
+      btn.textContent = 'Create Account →';
+      btn.disabled = false;
+      if (error.code === 'auth/email-already-in-use') {
+        errorMsg.textContent = '❌ This email is already registered. Please sign in.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMsg.textContent = '❌ Password is too weak. Use at least 6 characters.';
+      } else {
+        errorMsg.textContent = '❌ Error: ' + error.message;
+      }
+      errorMsg.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — ከቤት</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
+
+    nav {
+      background: #fff; padding: 16px 40px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+    .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
+    .nav-logo-am { font-size: 13px; color: #f0a500; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { text-decoration: none; color: #555; font-size: 14px; }
+    .nav-links a:hover { color: #1a6b3c; }
+    .nav-btns { display: flex; gap: 10px; }
+    .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+
+    .hero { background: #1a6b3c; padding: 80px 40px; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+    .hero-left { max-width: 520px; }
+    .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); color: #f0a500; padding: 6px 16px; border-radius: 20px; font-size: 12px; margin-bottom: 20px; }
+    .hero-title { font-size: 48px; font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 8px; }
+    .hero-title span { color: #f0a500; }
+    .hero-amharic { font-size: 22px; color: rgba(255,255,255,0.7); margin-bottom: 16px; }
+    .hero-desc { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 32px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-white-hero { background: #fff; color: #1a6b3c; border: none; padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-gold-hero { background: #f0a500; color: #fff; border: none; padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .hero-stats { display: flex; gap: 28px; margin-top: 40px; }
+    .hero-stat-num { font-size: 24px; font-weight: 700; color: #fff; }
+    .hero-stat-lab { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+    .hero-right { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; min-width: 280px; }
+    .hero-card-title { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+    .mini-worker { background: #fff; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .mini-av { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+    .av-gold { background: #fde8c8; color: #c87800; }
+    .av-green { background: #e8f5ee; color: #1a6b3c; }
+    .mini-name { font-size: 13px; font-weight: 600; color: #111; }
+    .mini-role { font-size: 11px; color: #888; }
+    .mini-salary { font-size: 11px; font-weight: 700; color: #1a6b3c; margin-left: auto; text-align: right; white-space: nowrap; }
+    .mini-salary small { display: block; font-size: 9px; color: #aaa; font-weight: 400; }
+    .mini-stars { color: #f0a500; font-size: 10px; }
+
+    .section { padding: 70px 40px; }
+    .section-center { text-align: center; margin-bottom: 48px; }
+    .section-tag { display: inline-block; background: #e8f5ee; color: #1a6b3c; padding: 6px 16px; border-radius: 20px; font-size: 12px; margin-bottom: 12px; }
+    .section-title { font-size: 32px; font-weight: 700; color: #111; margin-bottom: 10px; }
+    .section-sub { font-size: 15px; color: #888; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .step-card { background: #fff; border-radius: 16px; padding: 24px; text-align: center; border: 1px solid #eee; }
+    .step-icon { width: 56px; height: 56px; background: #e8f5ee; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; }
+    .step-num { font-size: 11px; color: #f0a500; font-weight: 600; margin-bottom: 6px; }
+    .step-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 6px; }
+    .step-desc { font-size: 12px; color: #888; line-height: 1.6; }
+
+    .cats-section { background: #fff; padding: 70px 40px; }
+    .cats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .cat-card { background: #f5f5f0; border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; border: 2px solid transparent; }
+    .cat-card:hover { background: #e8f5ee; border-color: #1a6b3c; }
+    .cat-icon-big { width: 64px; height: 64px; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 28px; }
+    .cat-name { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 4px; }
+    .cat-count { font-size: 12px; color: #888; }
+    .cat-salary { font-size: 12px; color: #1a6b3c; font-weight: 600; margin-top: 6px; }
+
+    .workers-section { padding: 70px 40px; }
+    .workers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .worker-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; }
+    .worker-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+    .worker-av { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; flex-shrink: 0; }
+    .worker-name { font-size: 15px; font-weight: 600; color: #111; }
+    .worker-role { font-size: 12px; color: #888; margin: 2px 0; }
+    .worker-loc { font-size: 11px; color: #1a6b3c; }
+    .verified { background: #e8f5ee; color: #1a6b3c; font-size: 10px; padding: 3px 8px; border-radius: 8px; margin-left: auto; }
+    .worker-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .skill { background: #f5f5f0; color: #555; font-size: 11px; padding: 4px 10px; border-radius: 8px; }
+    .worker-bottom { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 12px; }
+    .worker-salary { font-size: 15px; font-weight: 700; color: #1a6b3c; }
+    .worker-salary span { font-size: 11px; color: #888; font-weight: 400; }
+    .stars { color: #f0a500; font-size: 12px; }
+    .hire-btn { background: #1a6b3c; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .live-in-tag { background: #fff5e0; color: #c87800; font-size: 10px; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 3px; }
+
+    .cta-section { background: #1a6b3c; padding: 70px 40px; text-align: center; }
+    .cta-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .cta-sub { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; }
+
+    footer { background: #111; padding: 40px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .footer-am { font-size: 13px; color: #f0a500; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { color: #888; font-size: 13px; text-decoration: none; }
+    .footer-copy { color: #555; font-size: 12px; }
+
+    @media (max-width: 768px) {
+      .hero { flex-direction: column; padding: 40px 20px; }
+      .hero-title { font-size: 32px; }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+      .cats-grid { grid-template-columns: 1fr 1fr; }
+      .workers-grid { grid-template-columns: 1fr; }
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .section { padding: 40px 20px; }
+      .cats-section { padding: 40px 20px; }
+      .workers-section { padding: 40px 20px; }
+      footer { flex-direction: column; gap: 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🏠</div>
+    <div>
+      <div class="nav-logo-text">KEBET</div>
+      <div class="nav-logo-am">ከቤት</div>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="search.html">Find Workers</a></li>
+    <li><a href="signup.html">For Workers</a></li>
+    <li><a href="#">How it works</a></li>
+  </ul>
+  <div class="nav-btns">
+    <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
+    <button class="btn-green" onclick="window.location.href='signup.html'">Get Started</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">🇪🇹 #1 House Worker Platform in Ethiopia</div>
+    <div class="hero-title">Find Trusted<br/><span>House Workers</span><br/>Near You</div>
+    <div class="hero-amharic">ቤትዎን እናስተዳድርልዎ</div>
+    <div class="hero-desc">Connect with verified live-in house workers in Addis Ababa. Pay monthly salary. Safe, reliable and trusted.</div>
+    <div class="hero-btns">
+      <button class="btn-white-hero" onclick="window.location.href='search.html'">Find a Worker</button>
+      <button class="btn-gold-hero" onclick="window.location.href='signup.html'">Join as Worker</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">500+</div><div class="hero-stat-lab">Workers</div></div>
+      <div><div class="hero-stat-num">1,200+</div><div class="hero-stat-lab">Happy homes</div></div>
+      <div><div class="hero-stat-num">4.9★</div><div class="hero-stat-lab">Average rating</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card-title">Available workers near you 📍</div>
+    <div class="mini-worker">
+      <div class="mini-av av-gold">SA</div>
+      <div>
+        <div class="mini-name">Sara Alemu</div>
+        <div class="mini-role">Cleaner · Nanny</div>
+        <div class="mini-stars">★★★★★</div>
+      </div>
+      <div class="mini-salary">3,500 ETB<small>/month</small></div>
+    </div>
+    <div class="mini-worker">
+      <div class="mini-av av-green">MT</div>
+      <div>
+        <div class="mini-name">Marta Tadesse</div>
+        <div class="mini-role">Cook · Cleaner</div>
+        <div class="mini-stars">★★★★☆</div>
+      </div>
+      <div class="mini-salary">3,000 ETB<small>/month</small></div>
+    </div>
+    <div class="mini-worker">
+      <div class="mini-av av-gold">HG</div>
+      <div>
+        <div class="mini-name">Hiwot Girma</div>
+        <div class="mini-role">Full-time help</div>
+        <div class="mini-stars">★★★★★</div>
+      </div>
+      <div class="mini-salary">4,500 ETB<small>/month</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-center">
+    <div class="section-tag">How it works</div>
+    <div class="section-title">Find help in 4 simple steps</div>
+    <div class="section-sub">Easy to use for everyone</div>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-icon">📍</div><div class="step-num">STEP 01</div><div class="step-title">Set your location</div><div class="step-desc">Tell us where you are and we show workers near you</div></div>
+    <div class="step-card"><div class="step-icon">🔍</div><div class="step-num">STEP 02</div><div class="step-title">Browse workers</div><div class="step-desc">See profiles, ratings, skills and monthly salary</div></div>
+    <div class="step-card"><div class="step-icon">📅</div><div class="step-num">STEP 03</div><div class="step-title">Book & agree salary</div><div class="step-desc">Choose your start date and agree on monthly salary</div></div>
+    <div class="step-card"><div class="step-icon">⭐</div><div class="step-num">STEP 04</div><div class="step-title">Rate & review</div><div class="step-desc">After each month rate the worker and help the community</div></div>
+  </div>
+</div>
+
+<div class="cats-section">
+  <div class="section-center">
+    <div class="section-tag">Categories</div>
+    <div class="section-title">What do you need help with?</div>
+    <div class="section-sub">All workers are live-in — they stay in your home</div>
+  </div>
+  <div class="cats-grid">
+    <div class="cat-card" onclick="window.location.href='search.html'">
+      <div class="cat-icon-big">🧹</div>
+      <div class="cat-name">Cleaning</div>
+      <div class="cat-count">120+ workers</div>
+      <div class="cat-salary">2,500 – 3,500 ETB/mo</div>
+    </div>
+    <div class="cat-card" onclick="window.location.href='search.html'">
+      <div class="cat-icon-big">🍳</div>
+      <div class="cat-name">Cooking</div>
+      <div class="cat-count">80+ workers</div>
+      <div class="cat-salary">3,000 – 4,000 ETB/mo</div>
+    </div>
+    <div class="cat-card" onclick="window.location.href='search.html'">
+      <div class="cat-icon-big">👶</div>
+      <div class="cat-name">Nanny</div>
+      <div class="cat-count">95+ workers</div>
+      <div class="cat-salary">3,500 – 4,500 ETB/mo</div>
+    </div>
+    <div class="cat-card" onclick="window.location.href='search.html'">
+      <div class="cat-icon-big">🏠</div>
+      <div class="cat-name">Full-time Help</div>
+      <div class="cat-count">60+ workers</div>
+      <div class="cat-salary">3,000 – 5,000 ETB/mo</div>
+    </div>
+  </div>
+</div>
+
+<div class="workers-section">
+  <div class="section-center">
+    <div class="section-tag">Top workers</div>
+    <div class="section-title">Trusted & verified workers</div>
+    <div class="section-sub">All workers are background checked, verified and ready to live in your home</div>
+  </div>
+  <div class="workers-grid">
+    <div class="worker-card">
+      <div class="worker-top">
+        <div class="worker-av av-gold">SA</div>
+        <div>
+          <div class="worker-name">Sara Alemu</div>
+          <div class="worker-role">Cleaner · Nanny · Cook</div>
+          <div class="worker-loc">📍 Bole, Addis Ababa</div>
+          <span class="live-in-tag">🛏️ Live-in</span>
+        </div>
+        <div class="verified">✓ Verified</div>
+      </div>
+      <div class="worker-skills"><span class="skill">Cleaning</span><span class="skill">Child care</span><span class="skill">Cooking</span></div>
+      <div class="worker-bottom">
+        <div>
+          <div class="worker-salary">3,500 ETB <span>/month</span></div>
+          <div class="stars">★★★★★ 4.9</div>
+        </div>
+        <button class="hire-btn" onclick="window.location.href='profile.html'">Hire now</button>
+      </div>
+    </div>
+    <div class="worker-card">
+      <div class="worker-top">
+        <div class="worker-av av-green">MT</div>
+        <div>
+          <div class="worker-name">Marta Tadesse</div>
+          <div class="worker-role">Cook · Cleaner</div>
+          <div class="worker-loc">📍 Kazanchis, Addis</div>
+          <span class="live-in-tag">🛏️ Live-in</span>
+        </div>
+        <div class="verified">✓ Verified</div>
+      </div>
+      <div class="worker-skills"><span class="skill">Ethiopian food</span><span class="skill">Cleaning</span><span class="skill">Laundry</span></div>
+      <div class="worker-bottom">
+        <div>
+          <div class="worker-salary">3,000 ETB <span>/month</span></div>
+          <div class="stars">★★★★☆ 4.7</div>
+        </div>
+        <button class="hire-btn" onclick="window.location.href='profile.html'">Hire now</button>
+      </div>
+    </div>
+    <div class="worker-card">
+      <div class="worker-top">
+        <div class="worker-av av-gold">HG</div>
+        <div>
+          <div class="worker-name">Hiwot Girma</div>
+          <div class="worker-role">Full-time helper</div>
+          <div class="worker-loc">📍 Piassa, Addis Ababa</div>
+          <span class="live-in-tag">🛏️ Live-in</span>
+        </div>
+        <div class="verified">✓ Verified</div>
+      </div>
+      <div class="worker-skills"><span class="skill">All home tasks</span><span class="skill">Ironing</span><span class="skill">Shopping</span></div>
+      <div class="worker-bottom">
+        <div>
+          <div class="worker-salary">4,500 ETB <span>/month</span></div>
+          <div class="stars">★★★★★ 5.0</div>
+        </div>
+        <button class="hire-btn" onclick="window.location.href='profile.html'">Hire now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="cta-title">Ready to find your perfect house worker?</div>
+  <div class="cta-sub">Join thousands of happy homes in Addis Ababa today</div>
+  <div class="cta-btns">
+    <button class="btn-white-hero" onclick="window.location.href='search.html'">Find a Worker Now</button>
+    <button class="btn-gold-hero" onclick="window.location.href='signup.html'">Register as Worker</button>
+  </div>
+</div>
+
+<footer>
+  <div><div class="footer-logo">KEBET</div><div class="footer-am">ከቤት · ቤትዎን እናስተዳድርልዎ</div></div>
+  <div class="footer-links"><a href="#">About</a><a href="#">How it works</a><a href="#">Contact</a><a href="#">Privacy</a></div>
+  <div class="footer-copy">© 2024 Kebet. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
