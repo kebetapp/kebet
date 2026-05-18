@@ -7,114 +7,88 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
-
     nav { background: #fff; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
     .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
     .nav-logo-am { font-size: 13px; color: #f0a500; }
     .nav-btns { display: flex; gap: 10px; }
     .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
-    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
-
-    .back-bar { padding: 16px 40px; }
-    .back-btn { background: none; border: none; color: #1a6b3c; font-size: 14px; cursor: pointer; font-weight: 600; }
-
-    .profile-hero { background: #fff; border-bottom: 1px solid #eee; padding: 32px 40px; display: flex; gap: 28px; align-items: flex-start; }
-    .profile-av { width: 100px; height: 100px; border-radius: 24px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; flex-shrink: 0; }
+    .btn-green-nav { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+    .back-bar { padding: 16px 40px; display: flex; align-items: center; gap: 10px; }
+    .back-btn { display: flex; align-items: center; gap: 6px; color: #1a6b3c; font-size: 13px; font-weight: 600; cursor: pointer; background: none; border: none; }
+    .page { max-width: 900px; margin: 0 auto; padding: 0 40px 60px; }
+    .profile-hero { background: #fff; border-radius: 20px; padding: 32px; border: 1px solid #eee; margin-bottom: 20px; display: flex; gap: 24px; align-items: flex-start; }
+    .profile-av-lg { width: 90px; height: 90px; border-radius: 20px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; flex-shrink: 0; }
     .profile-info { flex: 1; }
-    .profile-name { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 4px; }
-    .profile-role { font-size: 15px; color: #888; margin-bottom: 8px; }
-    .profile-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-    .badge { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
-    .badge-green { background: #e8f5ee; color: #1a6b3c; }
-    .badge-gold { background: #fff5e0; color: #c87800; }
-    .badge-blue { background: #e8f0ff; color: #2255cc; }
-    .profile-loc { font-size: 13px; color: #555; margin-bottom: 4px; }
-    .profile-stats { display: flex; gap: 24px; margin-top: 16px; }
-    .p-stat { text-align: center; }
-    .p-stat-num { font-size: 20px; font-weight: 700; color: #1a6b3c; }
-    .p-stat-lab { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .profile-name-lg { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .profile-skill-lg { font-size: 15px; color: #555; margin-bottom: 8px; }
+    .profile-loc-lg { font-size: 13px; color: #1a6b3c; margin-bottom: 12px; }
+    .profile-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tag { font-size: 12px; padding: 5px 12px; border-radius: 20px; font-weight: 600; }
+    .tag-green { background: #e8f5ee; color: #1a6b3c; }
+    .tag-gold { background: #fff5e0; color: #c87800; }
+    .tag-blue { background: #e8f0ff; color: #2255cc; }
+    .tag-gray { background: #f0f0f0; color: #555; }
+    .hire-big-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; }
+    .hire-big-btn:hover { background: #145530; }
+    .profile-right { min-width: 200px; display: flex; flex-direction: column; gap: 12px; }
+    .salary-box { background: #e8f5ee; border-radius: 14px; padding: 18px; text-align: center; }
+    .salary-box-label { font-size: 11px; color: #1a6b3c; font-weight: 600; margin-bottom: 4px; }
+    .salary-box-val { font-size: 22px; font-weight: 700; color: #1a6b3c; }
+    .salary-box-sub { font-size: 11px; color: #888; }
+    .rating-box { background: #fff5e0; border-radius: 14px; padding: 18px; text-align: center; }
+    .rating-box-val { font-size: 28px; font-weight: 700; color: #c87800; }
+    .rating-box-stars { color: #f0a500; font-size: 16px; margin: 2px 0; }
+    .rating-box-sub { font-size: 11px; color: #888; }
+    .section-card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 16px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 14px; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f0; font-size: 13px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #888; }
+    .info-val { font-weight: 600; color: #111; }
+    .skills-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .skill-pill { background: #e8f5ee; color: #1a6b3c; font-size: 12px; padding: 6px 14px; border-radius: 20px; font-weight: 600; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .loading { text-align: center; padding: 80px; color: #888; font-size: 16px; }
+    .not-found { text-align: center; padding: 80px 20px; }
+    .not-found-icon { font-size: 60px; margin-bottom: 16px; }
+    .not-found-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .not-found-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
 
-    .profile-actions { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
-    .hire-big-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 24px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; }
-    .msg-btn { background: #fff; color: #1a6b3c; border: 2px solid #1a6b3c; padding: 12px 24px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
-
-    /* Salary display on profile */
-    .salary-display { background: #e8f5ee; border-radius: 14px; padding: 14px 18px; text-align: center; }
-    .salary-label { font-size: 11px; color: #888; margin-bottom: 4px; }
-    .salary-range { font-size: 18px; font-weight: 700; color: #1a6b3c; }
-    .salary-note { font-size: 11px; color: #888; margin-top: 4px; }
-
-    .main { display: flex; gap: 24px; padding: 28px 40px; max-width: 1100px; margin: 0 auto; }
-    .left-col { flex: 1; }
-    .right-col { width: 280px; flex-shrink: 0; }
-
-    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 16px; }
-    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 14px; }
-    .about-text { font-size: 14px; color: #555; line-height: 1.8; }
-
-    .skills-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
-    .skill-tag { background: #f5f5f0; color: #333; font-size: 12px; padding: 6px 14px; border-radius: 10px; font-weight: 500; }
-
-    .avail-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-    .day-box { text-align: center; padding: 8px 4px; border-radius: 8px; font-size: 11px; }
-    .day-box .day-name { color: #aaa; margin-bottom: 4px; }
-    .day-box .day-dot { width: 8px; height: 8px; border-radius: 50%; margin: 0 auto; }
-    .dot-green { background: #1a6b3c; }
-    .dot-red { background: #ff4444; }
-
-    .review { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
-    .review:last-child { border-bottom: none; }
-    .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .review-av { width: 32px; height: 32px; border-radius: 8px; background: #e8f5ee; color: #1a6b3c; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-    .review-name { font-size: 13px; font-weight: 600; color: #111; }
-    .review-date { font-size: 11px; color: #aaa; margin-left: auto; }
-    .review-stars { color: #f0a500; font-size: 12px; }
-    .review-text { font-size: 13px; color: #555; line-height: 1.6; }
-
-    /* Booking card with salary picker */
-    .booking-card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; position: sticky; top: 80px; }
-    .booking-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; }
-
-    .salary-picker-title { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 8px; }
-    .salary-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
-    .sp-btn { border: 2px solid #eee; border-radius: 10px; padding: 8px 4px; cursor: pointer; background: #fff; text-align: center; transition: all 0.2s; }
-    .sp-btn.active { border-color: #1a6b3c; background: #e8f5ee; }
-    .sp-amount { font-size: 13px; font-weight: 700; color: #111; }
-    .sp-btn.active .sp-amount { color: #1a6b3c; }
-    .sp-label { font-size: 9px; color: #aaa; }
-    .sp-custom { display: flex; gap: 6px; align-items: center; margin-bottom: 14px; }
-    .sp-custom input { flex: 1; padding: 8px 10px; border: 1.5px solid #eee; border-radius: 8px; font-size: 13px; outline: none; }
-    .sp-custom input:focus { border-color: #1a6b3c; }
-    .sp-custom span { font-size: 11px; color: #aaa; white-space: nowrap; }
-
-    .booking-group { margin-bottom: 14px; }
-    .booking-label { font-size: 11px; font-weight: 600; color: #555; margin-bottom: 6px; display: block; }
-    .booking-input { width: 100%; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 10px; font-size: 13px; outline: none; color: #111; }
-    .booking-input:focus { border-color: #1a6b3c; }
-
-    .booking-summary { background: #f5f5f0; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
-    .booking-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 6px; }
-    .booking-row.total { font-weight: 700; color: #111; border-top: 1px solid #eee; padding-top: 8px; margin-top: 4px; }
-
-    .book-now-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; }
-    .book-now-btn:hover { background: #145530; }
+    /* Book Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: #fff; border-radius: 24px; padding: 32px; max-width: 420px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .form-input:focus { border-color: #1a6b3c; }
+    .svc-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .svc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
+    .total-box { background: #e8f5ee; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #1a6b3c; font-weight: 600; margin-bottom: 16px; display: none; }
+    .error-box { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: none; }
+    .modal-btns { display: flex; gap: 10px; }
+    .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
 
     @media (max-width: 768px) {
-      .profile-hero { flex-direction: column; padding: 20px; }
-      .profile-actions { flex-direction: row; flex-wrap: wrap; }
-      .main { flex-direction: column; padding: 20px; }
-      .right-col { width: 100%; }
       nav { padding: 16px 20px; }
       .back-bar { padding: 12px 20px; }
+      .page { padding: 0 20px 40px; }
+      .profile-hero { flex-direction: column; }
+      .profile-right { min-width: unset; flex-direction: row; }
+      .salary-box, .rating-box { flex: 1; }
+      .two-col { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">
+  <div class="nav-logo" onclick="window.location.href='search.html'">
     <div class="nav-logo-icon">🏠</div>
     <div>
       <div class="nav-logo-text">KEBET</div>
@@ -123,179 +97,341 @@
   </div>
   <div class="nav-btns">
     <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
-    <button class="btn-green" onclick="window.location.href='signup.html'">Get Started</button>
+    <button class="btn-green-nav" onclick="window.location.href='signup.html'">Get Started</button>
   </div>
 </nav>
 
 <div class="back-bar">
-  <button class="back-btn" onclick="window.location.href='search.html'">← Back to search</button>
+  <button class="back-btn" onclick="window.history.back()">← Back to search</button>
 </div>
 
-<div class="profile-hero">
-  <div class="profile-av">SA</div>
-  <div class="profile-info">
-    <div class="profile-name">Sara Alemu</div>
-    <div class="profile-role">Cleaner · Nanny · Cook · Live-in የቤት ሰራተኛ</div>
-    <div class="profile-badges">
-      <span class="badge badge-green">✓ Verified</span>
-      <span class="badge badge-gold">⭐ Top Worker</span>
-      <span class="badge badge-blue">3 years experience</span>
-      <span class="badge badge-gold">🛏️ Live-in</span>
-    </div>
-    <div class="profile-loc">📍 Bole, Addis Ababa</div>
-    <div class="profile-stats">
-      <div class="p-stat"><div class="p-stat-num">4.9</div><div class="p-stat-lab">Rating</div></div>
-      <div class="p-stat"><div class="p-stat-num">48</div><div class="p-stat-lab">Jobs done</div></div>
-      <div class="p-stat"><div class="p-stat-num">100%</div><div class="p-stat-lab">Response</div></div>
-      <div class="p-stat"><div class="p-stat-num">3 yrs</div><div class="p-stat-lab">Experience</div></div>
-    </div>
+<div class="page">
+  <div id="loading" class="loading">⏳ Loading worker profile...</div>
+  <div id="not-found" class="not-found" style="display:none;">
+    <div class="not-found-icon">😔</div>
+    <div class="not-found-title">Worker not found</div>
+    <div class="not-found-sub">This profile does not exist or was removed.</div>
+    <button onclick="window.location.href='search.html'" style="background:#1a6b3c; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;">← Back to Search</button>
   </div>
-  <div class="profile-actions">
-    <div class="salary-display">
-      <div class="salary-label">Expected monthly salary</div>
-      <div class="salary-range">3,000 – 4,000 ETB</div>
-      <div class="salary-note">Negotiable · paid monthly</div>
-    </div>
-    <button class="hire-big-btn" onclick="document.getElementById('booking-section').scrollIntoView({behavior:'smooth'})">📅 Book Now</button>
-    <button class="msg-btn">💬 Send Message</button>
-  </div>
-</div>
+  <div id="profile-content" style="display:none;">
 
-<div class="main">
-  <div class="left-col">
-
-    <div class="card">
-      <div class="card-title">About Sara</div>
-      <div class="about-text">Hi! My name is Sara Alemu and I have been working as a live-in house helper in Addis Ababa for over 3 years. I am experienced in deep cleaning, cooking Ethiopian and international food, and taking care of children of all ages. I am honest, hardworking and I treat every home I work in with care and respect. I am available 6 days a week and I can start immediately. References available on request.</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Skills & Services</div>
-      <div class="skills-wrap">
-        <span class="skill-tag">🧹 Deep Cleaning</span>
-        <span class="skill-tag">🍳 Ethiopian Cooking</span>
-        <span class="skill-tag">👶 Child Care</span>
-        <span class="skill-tag">👕 Laundry & Ironing</span>
-        <span class="skill-tag">🛒 Grocery Shopping</span>
-        <span class="skill-tag">🪴 Light Gardening</span>
-        <span class="skill-tag">🐾 Pet Care</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Weekly Availability</div>
-      <div class="avail-grid">
-        <div class="day-box"><div class="day-name">Mon</div><div class="day-dot dot-green"></div></div>
-        <div class="day-box"><div class="day-name">Tue</div><div class="day-dot dot-green"></div></div>
-        <div class="day-box"><div class="day-name">Wed</div><div class="day-dot dot-green"></div></div>
-        <div class="day-box"><div class="day-name">Thu</div><div class="day-dot dot-green"></div></div>
-        <div class="day-box"><div class="day-name">Fri</div><div class="day-dot dot-green"></div></div>
-        <div class="day-box"><div class="day-name">Sat</div><div class="day-dot dot-green"></div></div>
-        <div class="day-box"><div class="day-name">Sun</div><div class="day-dot dot-red"></div></div>
-      </div>
-      <div style="margin-top:12px; font-size:12px; color:#aaa;">🟢 Available &nbsp; 🔴 Day off</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Reviews (48)</div>
-      <div class="review">
-        <div class="review-top">
-          <div class="review-av">AB</div>
-          <div><div class="review-name">Abebe Bekele</div><div class="review-stars">★★★★★</div></div>
-          <div class="review-date">2 weeks ago</div>
+    <!-- Hero -->
+    <div class="profile-hero">
+      <div style="flex:1;">
+        <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
+          <div class="profile-av-lg" id="p-initials">??</div>
+          <div class="profile-info">
+            <div class="profile-name-lg" id="p-name">—</div>
+            <div class="profile-skill-lg" id="p-skill">—</div>
+            <div class="profile-loc-lg" id="p-loc">📍 —</div>
+            <div class="profile-tags" id="p-tags"></div>
+          </div>
         </div>
-        <div class="review-text">Sara is amazing! She cleaned our whole house perfectly and cooked delicious food. Very trustworthy and professional. We will hire her again for sure!</div>
+        <button class="hire-big-btn" onclick="openBookModal()">🏠 Hire Now — Book This Worker</button>
       </div>
-      <div class="review">
-        <div class="review-top">
-          <div class="review-av">TW</div>
-          <div><div class="review-name">Tigist Wolde</div><div class="review-stars">★★★★★</div></div>
-          <div class="review-date">1 month ago</div>
+      <div class="profile-right">
+        <div class="salary-box">
+          <div class="salary-box-label">SALARY</div>
+          <div class="salary-box-val" id="p-salary">Negotiable</div>
+          <div class="salary-box-sub">/month ETB</div>
         </div>
-        <div class="review-text">I hired Sara to take care of my 2 kids and clean our apartment. She was on time, very caring with the children and left the house spotless. Highly recommended!</div>
-      </div>
-      <div class="review">
-        <div class="review-top">
-          <div class="review-av">DM</div>
-          <div><div class="review-name">Daniel Mekonnen</div><div class="review-stars">★★★★☆</div></div>
-          <div class="review-date">2 months ago</div>
+        <div class="rating-box">
+          <div class="rating-box-val" id="p-rating-num">New</div>
+          <div class="rating-box-stars" id="p-stars">☆☆☆☆☆</div>
+          <div class="rating-box-sub">Rating</div>
         </div>
-        <div class="review-text">Very good worker. She is reliable and does her job well. Communication was easy through Kebet. Would hire again.</div>
       </div>
     </div>
 
-  </div>
+    <div class="two-col">
+      <!-- Left column -->
+      <div>
+        <div class="section-card">
+          <div class="section-title">👤 Personal Info</div>
+          <div class="info-row"><span class="info-label">Full name</span><span class="info-val" id="d-name">—</span></div>
+          <div class="info-row"><span class="info-label">Location</span><span class="info-val" id="d-loc">—</span></div>
+          <div class="info-row"><span class="info-label">Main skill</span><span class="info-val" id="d-skill">—</span></div>
+          <div class="info-row"><span class="info-label">Work type</span><span class="info-val">🛏️ Live-in</span></div>
+          <div class="info-row"><span class="info-label">Phone</span><span class="info-val" id="d-phone">—</span></div>
+          <div class="info-row"><span class="info-label">Member since</span><span class="info-val" id="d-joined">—</span></div>
+        </div>
 
-  <div class="right-col">
-    <div class="booking-card" id="booking-section">
-      <div class="booking-title">📅 Book Sara</div>
-
-      <div class="salary-picker-title">💰 Agree on monthly salary</div>
-      <div class="salary-picker-grid">
-        <div class="sp-btn" onclick="setSalary(2500, this)"><div class="sp-amount">2,500</div><div class="sp-label">ETB/mo</div></div>
-        <div class="sp-btn active" onclick="setSalary(3500, this)"><div class="sp-amount">3,500</div><div class="sp-label">ETB/mo</div></div>
-        <div class="sp-btn" onclick="setSalary(4500, this)"><div class="sp-amount">4,500</div><div class="sp-label">ETB/mo</div></div>
-      </div>
-      <div class="sp-custom">
-        <input type="number" id="custom-sal" placeholder="Custom amount" oninput="setCustomSal(this.value)" />
-        <span>ETB/month</span>
-      </div>
-
-      <div class="booking-group">
-        <span class="booking-label">Contract duration</span>
-        <select class="booking-input" id="months-select" onchange="calcTotal()">
-          <option value="1">1 month (trial)</option>
-          <option value="3">3 months</option>
-          <option value="6">6 months (save 5%)</option>
-          <option value="12">1 year (save 10%)</option>
-        </select>
+        <div class="section-card">
+          <div class="section-title">🧹 Skills & Services</div>
+          <div class="skills-grid" id="d-skills"></div>
+        </div>
       </div>
 
-      <div class="booking-group">
-        <span class="booking-label">Start date</span>
-        <input type="date" class="booking-input" id="start-date" />
-      </div>
+      <!-- Right column -->
+      <div>
+        <div class="section-card">
+          <div class="section-title">⭐ Reviews</div>
+          <div id="d-reviews">
+            <div style="text-align:center; padding:24px; color:#aaa;">
+              <div style="font-size:32px; margin-bottom:8px;">⭐</div>
+              <div style="font-size:13px;">No reviews yet — be the first to hire and rate!</div>
+            </div>
+          </div>
+        </div>
 
-      <div class="booking-summary">
-        <div class="booking-row"><span>Monthly salary</span><span id="sum-salary">3,500 ETB</span></div>
-        <div class="booking-row"><span>Duration</span><span id="sum-months">1 month</span></div>
-        <div class="booking-row total"><span>Total</span><span id="sum-total">3,500 ETB</span></div>
+        <div class="section-card" style="background:#1a6b3c;">
+          <div class="section-title" style="color:#fff;">🙏 Worker Rights</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); line-height:1.8;">
+            ✅ Right to 1 day off per week<br>
+            ✅ Salary paid on time monthly<br>
+            ✅ Keeps phone and ID at all times<br>
+            ✅ Zero tolerance for abuse<br>
+            ✅ Can contact Kebet anytime<br>
+            ✅ Can leave if unsafe
+          </div>
+        </div>
       </div>
-
-      <button class="book-now-btn" onclick="window.location.href='booking.html'">Confirm & Book →</button>
     </div>
+
+    <!-- Bottom hire bar -->
+    <div style="background:#fff; border-radius:16px; padding:20px 24px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>
+        <div style="font-size:16px; font-weight:700; color:#111;" id="bottom-name">Ready to hire?</div>
+        <div style="font-size:13px; color:#888; margin-top:2px;">Send a booking request — it only takes 1 minute</div>
+      </div>
+      <button onclick="openBookModal()" style="background:#1a6b3c; color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;">🏠 Hire Now</button>
+    </div>
+
   </div>
 </div>
 
-<script>
-  let salary = 3500;
+<!-- Book Modal -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal-box">
+    <div class="modal-title">📋 Book Worker</div>
+    <div class="modal-sub" id="modal-sub">—</div>
+    <div class="form-group">
+      <label class="form-label">Start Date</label>
+      <input type="date" id="book-start-date" class="form-input" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contract Length (months)</label>
+      <select id="book-months" class="form-input">
+        <option value="1">1 month</option>
+        <option value="3" selected>3 months</option>
+        <option value="6">6 months</option>
+        <option value="12">12 months</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Monthly Salary (ETB)</label>
+      <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Services needed</label>
+      <div class="svc-wrap">
+        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
+        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
+        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> Laundry</label>
+        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> Nanny</label>
+        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
+      </div>
+    </div>
+    <div class="total-box" id="total-box"></div>
+    <div class="error-box" id="error-box"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeBookModal()">Cancel</button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()">Confirm Booking ✓</button>
+    </div>
+  </div>
+</div>
 
-  function setSalary(amount, btn) {
-    salary = amount;
-    document.getElementById('custom-sal').value = '';
-    document.querySelectorAll('.sp-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    calcTotal();
-  }
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  function setCustomSal(val) {
-    if (val && parseInt(val) > 0) {
-      salary = parseInt(val);
-      document.querySelectorAll('.sp-btn').forEach(b => b.classList.remove('active'));
-      calcTotal();
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let workerData = null;
+  let workerId = null;
+  let currentUser = null;
+  let currentOwnerData = null;
+
+  // Get worker ID from URL: profile.html?id=WORKER_UID
+  const params = new URLSearchParams(window.location.search);
+  workerId = params.get('id');
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (snap.exists()) currentOwnerData = snap.data();
+    }
+  });
+
+  async function loadProfile() {
+    if (!workerId) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('not-found').style.display = 'block';
+      return;
+    }
+
+    try {
+      const snap = await getDoc(doc(db, 'users', workerId));
+      if (!snap.exists() || snap.data().userType !== 'worker') {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('not-found').style.display = 'block';
+        return;
+      }
+
+      workerData = snap.data();
+      const firstName = workerData.firstName || '';
+      const lastName = workerData.lastName || '';
+      const fullName = firstName + ' ' + lastName;
+      const initials = (firstName[0] || '') + (lastName[0] || '');
+      const skill = workerData.skill || '—';
+      const location = workerData.location || '—';
+      const rating = parseFloat(workerData.rating) || 0;
+      const stars = rating >= 5 ? '★★★★★' : rating >= 4 ? '★★★★☆' : rating >= 3 ? '★★★☆☆' : rating > 0 ? '★★☆☆☆' : '☆☆☆☆☆';
+      const joined = workerData.createdAt
+        ? new Date(workerData.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : '—';
+      const isVerified = workerData.verified === true || workerData.verified === 'true';
+
+      document.title = 'Kebet — ' + fullName;
+      document.getElementById('p-initials').textContent = initials || '?';
+      document.getElementById('p-name').textContent = fullName;
+      document.getElementById('p-skill').textContent = '🧹 ' + skill;
+      document.getElementById('p-loc').textContent = '📍 ' + location + ', Addis Ababa';
+      document.getElementById('p-rating-num').textContent = rating > 0 ? rating.toFixed(1) : 'New';
+      document.getElementById('p-stars').textContent = stars;
+      document.getElementById('d-name').textContent = fullName;
+      document.getElementById('d-loc').textContent = location + ', Addis Ababa';
+      document.getElementById('d-skill').textContent = skill;
+      document.getElementById('d-phone').textContent = workerData.phone ? '📞 Available after booking' : '—';
+      document.getElementById('d-joined').textContent = joined;
+      document.getElementById('bottom-name').textContent = 'Hire ' + firstName + ' today';
+
+      // Tags
+      const tagsEl = document.getElementById('p-tags');
+      let tagsHtml = '<span class="tag tag-gold">🛏️ Live-in</span>';
+      if (isVerified) tagsHtml += '<span class="tag tag-green">✓ Verified</span>';
+      tagsHtml += '<span class="tag tag-blue">📍 ' + location + '</span>';
+      if (workerData.phone) tagsHtml += '<span class="tag tag-gray">📞 Has phone</span>';
+      tagsEl.innerHTML = tagsHtml;
+
+      // Skills
+      const skillsEl = document.getElementById('d-skills');
+      const skillList = ['Cleaning', 'Cooking', 'Laundry', 'Nanny / Child care', 'Full-time helper', 'Gardening'];
+      const workerSkillLower = skill.toLowerCase();
+      skillsEl.innerHTML = skillList
+        .filter(s => workerSkillLower.includes(s.toLowerCase().split('/')[0].trim()) || s.toLowerCase().includes(workerSkillLower))
+        .map(s => `<span class="skill-pill">✓ ${s}</span>`)
+        .join('') || `<span class="skill-pill">✓ ${skill}</span>`;
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('profile-content').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('loading').textContent = '❌ Error loading profile: ' + err.message;
     }
   }
 
-  function calcTotal() {
-    const months = parseInt(document.getElementById('months-select').value);
-    let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    let total = Math.round(salary * months * discount);
-    document.getElementById('sum-salary').textContent = salary.toLocaleString() + ' ETB';
-    document.getElementById('sum-months').textContent = months + (months === 1 ? ' month' : ' months');
-    document.getElementById('sum-total').textContent = total.toLocaleString() + ' ETB';
+  window.openBookModal = function() {
+    if (!currentUser) {
+      alert('Please sign in first to book a worker.');
+      window.location.href = 'signin.html';
+      return;
+    }
+    if (currentOwnerData?.userType !== 'owner') {
+      alert('Only house owners can book workers. Please sign in as an owner.');
+      return;
+    }
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('book-start-date').min = today;
+    document.getElementById('book-start-date').value = today;
+    document.getElementById('book-months').value = '3';
+    document.getElementById('book-salary').value = '';
+    document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
+    document.getElementById('total-box').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+    document.getElementById('modal-sub').textContent = 'Booking: ' + (workerData?.firstName || '') + ' ' + (workerData?.lastName || '') + ' · ' + (workerData?.skill || '');
+    document.getElementById('book-modal').classList.add('show');
+    document.getElementById('book-salary').oninput = updateTotal;
+    document.getElementById('book-months').onchange = updateTotal;
   }
 
-  calcTotal();
+  window.closeBookModal = function() {
+    document.getElementById('book-modal').classList.remove('show');
+  }
+
+  function updateTotal() {
+    const sal = parseInt(document.getElementById('book-salary').value) || 0;
+    const months = parseInt(document.getElementById('book-months').value) || 1;
+    const el = document.getElementById('total-box');
+    if (sal > 0) {
+      el.style.display = 'block';
+      el.textContent = '💰 Total: ' + (sal * months).toLocaleString() + ' ETB (' + sal.toLocaleString() + ' × ' + months + ' months)';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  window.confirmBooking = async function() {
+    const startDate = document.getElementById('book-start-date').value;
+    const months = parseInt(document.getElementById('book-months').value);
+    const salary = parseInt(document.getElementById('book-salary').value);
+    const services = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
+    const errEl = document.getElementById('error-box');
+    const btn = document.getElementById('confirm-btn');
+
+    errEl.style.display = 'none';
+    if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
+    if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
+    if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Booking...';
+    btn.disabled = true;
+
+    try {
+      const ownerName = ((currentOwnerData?.firstName || '') + ' ' + (currentOwnerData?.lastName || '')).trim();
+      const workerFullName = ((workerData?.firstName || '') + ' ' + (workerData?.lastName || '')).trim();
+
+      await addDoc(collection(db, 'bookings'), {
+        workerId: workerId,
+        workerName: workerFullName,
+        workerRole: workerData?.skill || '',
+        ownerId: currentUser.uid,
+        ownerName: ownerName,
+        ownerLocation: currentOwnerData?.location || '',
+        startDate: startDate,
+        contractMonths: months,
+        monthlySalary: salary,
+        totalAmount: salary * months,
+        services: services,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+
+      closeBookModal();
+      alert('✅ Booking sent to ' + (workerData?.firstName || 'worker') + '! They will be notified.');
+      window.location.href = 'dashboard-owner.html';
+    } catch (err) {
+      errEl.textContent = '❌ Booking failed: ' + err.message;
+      errEl.style.display = 'block';
+      btn.textContent = 'Confirm Booking ✓';
+      btn.disabled = false;
+    }
+  }
+
+  loadProfile();
 </script>
 
 </body>

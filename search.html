@@ -7,71 +7,263 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
-    nav { background: #fff; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; }
+
+    nav {
+      background: #fff;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
     .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
     .nav-logo-am { font-size: 13px; color: #f0a500; }
     .nav-btns { display: flex; gap: 10px; }
     .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
-    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
-    .search-hero { background: #1a6b3c; padding: 50px 40px; text-align: center; }
-    .search-hero h1 { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-    .search-hero p { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 28px; }
-    .search-bar { display: flex; gap: 10px; max-width: 700px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 8px; }
-    .search-bar input, .search-bar select { border: none; outline: none; font-size: 14px; padding: 10px 14px; border-radius: 10px; background: #f5f5f0; color: #111; }
-    .search-bar input { flex: 1; }
-    .search-bar select { min-width: 160px; }
-    .search-bar button { background: #1a6b3c; color: #fff; border: none; padding: 10px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .main { display: flex; gap: 24px; padding: 32px 40px; max-width: 1200px; margin: 0 auto; }
-    .filters { width: 240px; flex-shrink: 0; }
-    .filter-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; margin-bottom: 16px; }
-    .filter-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 14px; }
-    .filter-option { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-    .filter-option input[type=checkbox] { accent-color: #1a6b3c; width: 15px; height: 15px; }
-    .filter-option label { font-size: 13px; color: #555; cursor: pointer; }
-    .sal-filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-    .sal-btn { border: 1.5px solid #eee; border-radius: 8px; padding: 8px 4px; cursor: pointer; background: #fff; text-align: center; font-size: 11px; color: #555; font-weight: 500; }
-    .sal-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; font-weight: 700; }
-    .results { flex: 1; }
-    .results-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .results-count { font-size: 14px; color: #555; }
-    .results-count span { font-weight: 700; color: #111; }
-    .sort-select { border: 1.5px solid #eee; border-radius: 10px; padding: 8px 12px; font-size: 13px; outline: none; color: #555; }
-    .workers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .worker-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; cursor: pointer; transition: box-shadow 0.2s; }
-    .worker-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    .worker-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
-    .worker-av { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; background: #fde8c8; color: #c87800; }
-    .worker-name { font-size: 15px; font-weight: 600; color: #111; }
-    .worker-role { font-size: 12px; color: #888; margin: 2px 0; }
-    .worker-loc { font-size: 11px; color: #1a6b3c; }
-    .verified { background: #e8f5ee; color: #1a6b3c; font-size: 10px; padding: 3px 8px; border-radius: 8px; margin-left: auto; white-space: nowrap; }
-    .live-in-tag { background: #fff5e0; color: #c87800; font-size: 10px; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 3px; }
-    .worker-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .skill-tag { background: #f5f5f0; color: #555; font-size: 11px; padding: 4px 10px; border-radius: 8px; }
-    .worker-bottom { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 12px; }
-    .worker-salary { font-size: 15px; font-weight: 700; color: #1a6b3c; }
-    .worker-salary span { font-size: 11px; color: #888; font-weight: 400; }
-    .stars { color: #f0a500; font-size: 12px; }
-    .hire-btn { background: #1a6b3c; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .no-results { text-align: center; padding: 60px 20px; color: #aaa; }
-    .loading { text-align: center; padding: 60px 20px; color: #888; font-size: 15px; }
-    .debug-info { background: #fff5e0; border: 1px solid #f0a500; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: #555; }
+    .btn-green-nav { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+
+    .hero {
+      background: linear-gradient(135deg, #1a6b3c 0%, #145530 100%);
+      padding: 48px 40px 56px;
+      text-align: center;
+      color: #fff;
+    }
+    .hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .hero p { font-size: 15px; color: rgba(255,255,255,0.8); margin-bottom: 28px; }
+    .search-bar {
+      background: #fff;
+      border-radius: 16px;
+      padding: 8px;
+      display: flex;
+      gap: 8px;
+      max-width: 640px;
+      margin: 0 auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: #111;
+    }
+    .search-bar select {
+      border: none;
+      outline: none;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: #555;
+      background: #f5f5f0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .search-bar button {
+      background: #1a6b3c;
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filters-bar {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 12px 40px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+    .filter-chip {
+      border: 1.5px solid #eee;
+      background: #fff;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      color: #555;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover, .filter-chip.active { background: #1a6b3c; color: #fff; border-color: #1a6b3c; }
+
+    .main { max-width: 1140px; margin: 0 auto; padding: 28px 40px 60px; }
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .results-count { font-size: 14px; color: #888; }
+    .sort-select { border: 1.5px solid #eee; border-radius: 10px; padding: 7px 14px; font-size: 13px; outline: none; cursor: pointer; background: #fff; color: #555; }
+
+    .worker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .worker-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      border: 1.5px solid #eee;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .worker-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(26,107,60,0.10);
+      border-color: #1a6b3c;
+    }
+
+    .worker-top { display: flex; gap: 14px; align-items: flex-start; }
+    .worker-av {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: #fde8c8;
+      color: #c87800;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .worker-name { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .worker-role { font-size: 13px; color: #555; margin-bottom: 2px; }
+    .worker-loc { font-size: 12px; color: #1a6b3c; margin-bottom: 6px; }
+    .live-in-tag {
+      display: inline-block;
+      background: #fff5e0;
+      color: #c87800;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .verified {
+      background: #e8f5ee;
+      color: #1a6b3c;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      align-self: flex-start;
+      white-space: nowrap;
+    }
+
+    .worker-skills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .skill-tag {
+      background: #f5f5f0;
+      color: #555;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .worker-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid #f5f5f0;
+    }
+    .stars { font-size: 13px; color: #f0a500; margin-top: 2px; }
+    .hire-btn {
+      background: #1a6b3c;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .hire-btn:hover { background: #145530; }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      grid-column: 1 / -1;
+    }
+    .empty-icon { font-size: 56px; margin-bottom: 16px; }
+    .empty-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .empty-sub { font-size: 14px; color: #888; }
+
+    .loading-state { text-align: center; padding: 80px 20px; grid-column: 1 / -1; color: #888; font-size: 16px; }
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 420px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .form-input:focus { border-color: #1a6b3c; }
+    .svc-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .svc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
+    .total-box {
+      background: #e8f5ee;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #1a6b3c;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-box {
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      color: #cc0000;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .modal-btns { display: flex; gap: 10px; }
+    .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
     @media (max-width: 768px) {
-      .main { flex-direction: column; padding: 20px; }
-      .filters { width: 100%; }
-      .workers-grid { grid-template-columns: 1fr; }
       nav { padding: 16px 20px; }
-      .search-hero { padding: 40px 20px; }
-      .search-bar { flex-direction: column; }
+      .hero { padding: 32px 20px 40px; }
+      .hero h1 { font-size: 24px; }
+      .filters-bar { padding: 12px 20px; }
+      .main { padding: 20px 20px 40px; }
+      .search-bar { flex-wrap: wrap; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">
+  <div class="nav-logo" onclick="window.location.href='index.html'">
     <div class="nav-logo-icon">🏠</div>
     <div>
       <div class="nav-logo-text">KEBET</div>
@@ -80,117 +272,92 @@
   </div>
   <div class="nav-btns">
     <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
-    <button class="btn-green" onclick="window.location.href='signup.html'">Get Started</button>
+    <button class="btn-green-nav" onclick="window.location.href='signup.html'">Get Started</button>
   </div>
 </nav>
 
-<div class="search-hero">
-  <h1>Find Live-in House Workers</h1>
-  <p>የቤት ሰራተኛ — Verified workers in Addis Ababa</p>
+<div class="hero">
+  <h1>Find Your Perfect Home Worker</h1>
+  <p>Trusted, verified domestic workers across Addis Ababa</p>
   <div class="search-bar">
-    <input type="text" id="search-input" placeholder="Search by name or skill..." oninput="filterWorkers()" />
+    <input type="text" id="search-input" placeholder="Search by name, skill..." oninput="filterWorkers()" />
     <select id="location-filter" onchange="filterWorkers()">
-      <option value="">All locations</option>
-      <option>Bole</option>
-      <option>Kirkos</option>
-      <option>Yeka</option>
-      <option>Arada</option>
-      <option>Lideta</option>
-      <option>Kolfe Keranio</option>
-      <option>Gulele</option>
-      <option>Akaky Kaliti</option>
-      <option>Nifas Silk-Lafto</option>
-      <option>Lemi Kura</option>
-      <option>Addis Ketema</option>
+      <option value="">All Locations</option>
+      <option value="Bole">Bole</option>
+      <option value="Kirkos">Kirkos</option>
+      <option value="Yeka">Yeka</option>
+      <option value="Arada">Arada</option>
+      <option value="Kolfe">Kolfe</option>
+      <option value="Akaki">Akaki</option>
+      <option value="Lideta">Lideta</option>
+      <option value="Gulele">Gulele</option>
+      <option value="Nifas Silk">Nifas Silk</option>
     </select>
     <button onclick="filterWorkers()">🔍 Search</button>
   </div>
 </div>
 
-<div class="main">
-  <div class="filters">
-    <div class="filter-card">
-      <div class="filter-title">Skill / Category</div>
-      <div class="filter-option"><input type="checkbox" id="f-clean" onchange="filterWorkers()"><label for="f-clean">Cleaning</label></div>
-      <div class="filter-option"><input type="checkbox" id="f-cook" onchange="filterWorkers()"><label for="f-cook">Cooking</label></div>
-      <div class="filter-option"><input type="checkbox" id="f-nanny" onchange="filterWorkers()"><label for="f-nanny">Nanny / Child care</label></div>
-      <div class="filter-option"><input type="checkbox" id="f-laundry" onchange="filterWorkers()"><label for="f-laundry">Laundry</label></div>
-      <div class="filter-option"><input type="checkbox" id="f-fulltime" onchange="filterWorkers()"><label for="f-fulltime">Full-time helper</label></div>
-      <div class="filter-option"><input type="checkbox" id="f-garden" onchange="filterWorkers()"><label for="f-garden">Gardening</label></div>
-    </div>
-    <div class="filter-card">
-      <div class="filter-title">💰 Monthly Salary</div>
-      <div class="sal-filter-grid">
-        <div class="sal-btn active" id="sal-any" onclick="setSal('any')">Any</div>
-        <div class="sal-btn" id="sal-1" onclick="setSal('under2000')">Under 2,000</div>
-        <div class="sal-btn" id="sal-2" onclick="setSal('2000-3000')">2,000–3,000</div>
-        <div class="sal-btn" id="sal-3" onclick="setSal('3000-4500')">3,000–4,500</div>
-        <div class="sal-btn" id="sal-4" onclick="setSal('above4500')">4,500+</div>
-      </div>
-    </div>
-    <div class="filter-card">
-      <div class="filter-title">Other</div>
-      <div class="filter-option"><input type="checkbox" id="f-verified" onchange="filterWorkers()"><label for="f-verified">Verified only</label></div>
-    </div>
-  </div>
+<div class="filters-bar">
+  <button class="filter-chip active" onclick="setSkillFilter('', this)">All Workers</button>
+  <button class="filter-chip" onclick="setSkillFilter('Cleaning', this)">🧹 Cleaning</button>
+  <button class="filter-chip" onclick="setSkillFilter('Cooking', this)">🍳 Cooking</button>
+  <button class="filter-chip" onclick="setSkillFilter('Nanny', this)">👶 Nanny</button>
+  <button class="filter-chip" onclick="setSkillFilter('Laundry', this)">👕 Laundry</button>
+  <button class="filter-chip" onclick="setSkillFilter('Gardening', this)">🌿 Gardening</button>
+  <button class="filter-chip" onclick="setSkillFilter('Full-time', this)">🏠 Full-time</button>
+</div>
 
-  <div class="results">
-    <div class="debug-info" id="debug-info">⏳ Connecting...</div>
-    <div class="results-top">
-      <div class="results-count">Showing <span id="result-count">0</span> workers</div>
-      <select class="sort-select" id="sort-select" onchange="filterWorkers()">
-        <option value="rating">Sort: Top rated</option>
-        <option value="newest">Sort: Newest first</option>
-        <option value="az">Sort: A → Z</option>
-      </select>
-    </div>
-    <div id="loading" class="loading">⏳ Loading workers...</div>
-    <div class="workers-grid" id="workers-grid" style="display:none;"></div>
-    <div class="no-results" id="no-results" style="display:none;">
-      <div style="font-size:40px; margin-bottom:12px;">😔</div>
-      <div style="font-size:15px; font-weight:600; color:#555; margin-bottom:6px;">No workers found</div>
-      <div style="font-size:13px;">Try changing your filters or search term.</div>
-    </div>
+<div class="main">
+  <div class="results-header">
+    <div class="results-count" id="results-count">Loading workers...</div>
+    <select class="sort-select" id="sort-select" onchange="filterWorkers()">
+      <option value="newest">Newest first</option>
+      <option value="rating">Highest rated</option>
+      <option value="name">Name A–Z</option>
+    </select>
+  </div>
+  <div class="worker-grid" id="worker-grid">
+    <div class="loading-state">⏳ Loading available workers...</div>
   </div>
 </div>
 
-<!-- Book Worker Modal -->
-<div id="book-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-  <div style="background:#fff; border-radius:24px; padding:32px; max-width:420px; width:90%; max-height:90vh; overflow-y:auto;">
-    <div style="font-size:20px; font-weight:700; color:#111; margin-bottom:4px;">📋 Book Worker</div>
-    <div style="font-size:13px; color:#888; margin-bottom:20px;" id="modal-worker-name">—</div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:6px;">Start Date</label>
-      <input type="date" id="book-start-date" style="width:100%; padding:11px 14px; border:1.5px solid #eee; border-radius:10px; font-size:14px; outline:none;" />
+<!-- Book Modal -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal-box">
+    <div class="modal-title">📋 Book Worker</div>
+    <div class="modal-sub" id="modal-sub">—</div>
+    <div class="form-group">
+      <label class="form-label">Start Date</label>
+      <input type="date" id="book-start-date" class="form-input" />
     </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:6px;">Contract Length (months)</label>
-      <select id="book-months" style="width:100%; padding:11px 14px; border:1.5px solid #eee; border-radius:10px; font-size:14px; outline:none;">
+    <div class="form-group">
+      <label class="form-label">Contract Length (months)</label>
+      <select id="book-months" class="form-input">
         <option value="1">1 month</option>
         <option value="3" selected>3 months</option>
         <option value="6">6 months</option>
         <option value="12">12 months</option>
       </select>
     </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:6px;">Monthly Salary (ETB)</label>
-      <input type="number" id="book-salary" placeholder="e.g. 3000" style="width:100%; padding:11px 14px; border:1.5px solid #eee; border-radius:10px; font-size:14px; outline:none;" />
+    <div class="form-group">
+      <label class="form-label">Monthly Salary (ETB)</label>
+      <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" />
     </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:12px; font-weight:600; color:#555; display:block; margin-bottom:6px;">Services needed</label>
-      <div style="display:flex; flex-wrap:wrap; gap:8px;">
-        <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#555;"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
-        <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#555;"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
-        <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#555;"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> Laundry</label>
-        <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#555;"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> Nanny</label>
-        <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#555;"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
+    <div class="form-group">
+      <label class="form-label">Services needed</label>
+      <div class="svc-wrap">
+        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
+        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
+        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> Laundry</label>
+        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> Nanny</label>
+        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
       </div>
     </div>
-    <div id="book-total" style="background:#e8f5ee; border-radius:10px; padding:12px 16px; font-size:13px; color:#1a6b3c; font-weight:600; margin-bottom:16px; display:none;"></div>
-    <div id="book-error" style="background:#fff0f0; border:1px solid #ffcccc; color:#cc0000; font-size:12px; padding:10px 14px; border-radius:8px; margin-bottom:12px; display:none;"></div>
-    <div style="display:flex; gap:10px;">
-      <button onclick="closeBookModal()" style="flex:1; background:#f5f5f0; color:#555; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">Cancel</button>
-      <button onclick="confirmBooking()" id="confirm-book-btn" style="flex:1; background:#1a6b3c; color:#fff; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">Confirm Booking ✓</button>
+    <div class="total-box" id="total-box"></div>
+    <div class="error-box" id="error-box"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeBookModal()">Cancel</button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()">Confirm Booking ✓</button>
     </div>
   </div>
 </div>
@@ -198,7 +365,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, where, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -214,10 +381,11 @@
   const db = getFirestore(app);
 
   let allWorkers = [];
-  let salaryFilter = 'any';
+  let currentSkillFilter = '';
   let currentUser = null;
   let currentOwnerData = null;
-  let selectedWorker = null;
+  let selectedWorkerId = null;
+  let selectedWorkerData = null;
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -229,96 +397,81 @@
 
   async function loadWorkers() {
     try {
-      const snapshot = await getDocs(collection(db, 'users'));
-      allWorkers = [];
-      snapshot.forEach(d => {
-        const data = d.data();
-        if (data.userType === 'worker') {
-          allWorkers.push({ id: d.id, ...data });
-        }
-      });
-      document.getElementById('debug-info').textContent =
-        '✅ Connected! Found ' + allWorkers.length + ' worker(s). If you see 0, make sure you signed up as a House Worker.';
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('workers-grid').style.display = 'grid';
+      const q = query(collection(db, 'users'), where('userType', '==', 'worker'));
+      const snap = await getDocs(q);
+      allWorkers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       filterWorkers();
-    } catch (error) {
-      document.getElementById('loading').textContent = '❌ Error: ' + error.message;
-      document.getElementById('debug-info').textContent = '❌ Firebase error: ' + error.message;
+    } catch (err) {
+      document.getElementById('worker-grid').innerHTML =
+        `<div class="loading-state">❌ Error loading workers: ${err.message}</div>`;
     }
   }
 
-  window.setSal = function(type) {
-    salaryFilter = type;
-    ['sal-any','sal-1','sal-2','sal-3','sal-4'].forEach(id =>
-      document.getElementById(id).classList.remove('active'));
-    const map = { any:'sal-any', 'under2000':'sal-1', '2000-3000':'sal-2', '3000-4500':'sal-3', 'above4500':'sal-4' };
-    if (map[type]) document.getElementById(map[type]).classList.add('active');
+  window.setSkillFilter = function(skill, btn) {
+    currentSkillFilter = skill;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
     filterWorkers();
-  }
+  };
 
   window.filterWorkers = function() {
-    const search = document.getElementById('search-input').value.toLowerCase().trim();
-    const location = document.getElementById('location-filter').value;
-    const onlyVerified = document.getElementById('f-verified').checked;
-    const sortVal = document.getElementById('sort-select').value;
-
-    const skillFilters = [];
-    if (document.getElementById('f-clean').checked) skillFilters.push('cleaning');
-    if (document.getElementById('f-cook').checked) skillFilters.push('cooking');
-    if (document.getElementById('f-nanny').checked) skillFilters.push('nanny');
-    if (document.getElementById('f-laundry').checked) skillFilters.push('laundry');
-    if (document.getElementById('f-fulltime').checked) skillFilters.push('full-time');
-    if (document.getElementById('f-garden').checked) skillFilters.push('garden');
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const location = document.getElementById('location-filter').value.toLowerCase();
+    const sort = document.getElementById('sort-select').value;
+    const grid = document.getElementById('worker-grid');
+    const countEl = document.getElementById('results-count');
 
     let filtered = allWorkers.filter(w => {
       const fullName = ((w.firstName || '') + ' ' + (w.lastName || '')).toLowerCase();
       const skill = (w.skill || '').toLowerCase();
-
-      if (search && !fullName.includes(search) && !skill.includes(search)) return false;
-      if (location && (w.location || '') !== location) return false;
-      if (onlyVerified && w.verified !== true && w.verified !== 'true') return false;
-      if (skillFilters.length > 0 && !skillFilters.some(f => skill.includes(f))) return false;
-
-      return true;
+      const loc = (w.location || '').toLowerCase();
+      const matchSearch = !search || fullName.includes(search) || skill.includes(search);
+      const matchLocation = !location || loc.includes(location);
+      const matchSkill = !currentSkillFilter || skill.toLowerCase().includes(currentSkillFilter.toLowerCase());
+      return matchSearch && matchLocation && matchSkill;
     });
 
-    if (sortVal === 'newest') {
-      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    } else if (sortVal === 'az') {
+    if (sort === 'rating') {
+      filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+    } else if (sort === 'name') {
       filtered.sort((a, b) => (a.firstName || '').localeCompare(b.firstName || ''));
     } else {
-      filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     }
 
-    document.getElementById('result-count').textContent = filtered.length;
-    const grid = document.getElementById('workers-grid');
-    const noResults = document.getElementById('no-results');
+    countEl.textContent = filtered.length === 0
+      ? 'No workers found'
+      : `${filtered.length} worker${filtered.length !== 1 ? 's' : ''} available`;
 
     if (filtered.length === 0) {
-      grid.innerHTML = '';
-      grid.style.display = 'none';
-      noResults.style.display = 'block';
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No workers found</div>
+          <div class="empty-sub">Try adjusting your filters or search terms.</div>
+        </div>`;
       return;
     }
 
-    noResults.style.display = 'none';
-    grid.style.display = 'grid';
-
     grid.innerHTML = filtered.map(w => {
-      const fullName = (w.firstName || '') + ' ' + (w.lastName || '');
+      const fullName = ((w.firstName || '') + ' ' + (w.lastName || '')).trim();
       const initials = (w.firstName?.[0] || '') + (w.lastName?.[0] || '');
       const skill = w.skill || '—';
       const location = w.location || '—';
       const rating = parseFloat(w.rating) || 0;
-      const stars = rating >= 5 ? '★★★★★' : rating >= 4 ? '★★★★☆' : rating >= 3 ? '★★★☆☆' : '☆☆☆☆☆';
+      const stars = rating >= 5 ? '★★★★★'
+                  : rating >= 4 ? '★★★★☆'
+                  : rating >= 3 ? '★★★☆☆'
+                  : rating > 0  ? '★★☆☆☆'
+                  : '☆☆☆☆☆';
       const isVerified = w.verified === true || w.verified === 'true';
       const joined = w.createdAt
         ? new Date(w.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
         : '';
+      const safeFullName = fullName.replace(/'/g, "\\'");
 
       return `
-        <div class="worker-card">
+        <div class="worker-card" onclick="window.location.href='profile.html?id=${w.id}'">
           <div class="worker-top">
             <div class="worker-av">${initials || '?'}</div>
             <div style="flex:1;">
@@ -337,57 +490,60 @@
           <div class="worker-bottom">
             <div>
               <div style="font-size:13px; color:#555;">Salary: negotiable</div>
-              <div class="stars">${rating > 0 ? stars + ' ' + rating : '☆ New worker'}</div>
+              <div class="stars">${rating > 0 ? stars + ' ' + rating.toFixed(1) : '☆ New worker'}</div>
             </div>
-            <button class="hire-btn" onclick="openBookModal('${w.id}', '${fullName.replace(/'/g,"\\'")}', '${skill}', '${location}')">
-              Hire now
+            <button class="hire-btn" onclick="event.stopPropagation(); openBookModal('${w.id}', '${safeFullName}', '${skill}', '${location}')">
+              Hire Now
             </button>
           </div>
         </div>
       `;
     }).join('');
-  }
+  };
 
-  window.openBookModal = function(workerId, workerName, workerSkill, workerLocation) {
+  window.openBookModal = function(id, name, skill, location) {
     if (!currentUser) {
       alert('Please sign in first to book a worker.');
       window.location.href = 'signin.html';
       return;
     }
     if (currentOwnerData?.userType !== 'owner') {
-      alert('Only house owners can book workers.');
+      alert('Only house owners can book workers. Please sign in as an owner.');
       return;
     }
-    selectedWorker = { id: workerId, name: workerName, skill: workerSkill, location: workerLocation };
-    document.getElementById('modal-worker-name').textContent = 'Booking: ' + workerName + ' · ' + workerSkill;
-    document.getElementById('book-error').style.display = 'none';
-    document.getElementById('book-total').style.display = 'none';
-    document.getElementById('book-salary').value = '';
-    document.getElementById('book-months').value = '3';
-    document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
+    selectedWorkerId = id;
+    selectedWorkerData = allWorkers.find(w => w.id === id) || null;
+
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('book-start-date').min = today;
     document.getElementById('book-start-date').value = today;
-    document.getElementById('book-modal').style.display = 'flex';
+    document.getElementById('book-months').value = '3';
+    document.getElementById('book-salary').value = '';
+    document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
+    document.getElementById('total-box').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+    document.getElementById('modal-sub').textContent = `Booking: ${name} · ${skill} · ${location}`;
+    document.getElementById('book-modal').classList.add('show');
     document.getElementById('book-salary').oninput = updateTotal;
     document.getElementById('book-months').onchange = updateTotal;
-  }
+  };
+
+  window.closeBookModal = function() {
+    document.getElementById('book-modal').classList.remove('show');
+    selectedWorkerId = null;
+    selectedWorkerData = null;
+  };
 
   function updateTotal() {
     const sal = parseInt(document.getElementById('book-salary').value) || 0;
     const months = parseInt(document.getElementById('book-months').value) || 1;
-    const el = document.getElementById('book-total');
+    const el = document.getElementById('total-box');
     if (sal > 0) {
       el.style.display = 'block';
-      el.textContent = '💰 Total: ' + (sal * months).toLocaleString() + ' ETB (' + sal.toLocaleString() + ' × ' + months + ' months)';
+      el.textContent = `💰 Total: ${(sal * months).toLocaleString()} ETB (${sal.toLocaleString()} × ${months} months)`;
     } else {
       el.style.display = 'none';
     }
-  }
-
-  window.closeBookModal = function() {
-    document.getElementById('book-modal').style.display = 'none';
-    selectedWorker = null;
   }
 
   window.confirmBooking = async function() {
@@ -395,8 +551,8 @@
     const months = parseInt(document.getElementById('book-months').value);
     const salary = parseInt(document.getElementById('book-salary').value);
     const services = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
-    const errEl = document.getElementById('book-error');
-    const btn = document.getElementById('confirm-book-btn');
+    const errEl = document.getElementById('error-box');
+    const btn = document.getElementById('confirm-btn');
 
     errEl.style.display = 'none';
     if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
@@ -408,10 +564,14 @@
 
     try {
       const ownerName = ((currentOwnerData?.firstName || '') + ' ' + (currentOwnerData?.lastName || '')).trim();
+      const workerFullName = selectedWorkerData
+        ? ((selectedWorkerData.firstName || '') + ' ' + (selectedWorkerData.lastName || '')).trim()
+        : document.getElementById('modal-sub').textContent.split('·')[0].replace('Booking:', '').trim();
+
       await addDoc(collection(db, 'bookings'), {
-        workerId: selectedWorker.id,
-        workerName: selectedWorker.name,
-        workerRole: selectedWorker.skill,
+        workerId: selectedWorkerId,
+        workerName: workerFullName,
+        workerRole: selectedWorkerData?.skill || '',
         ownerId: currentUser.uid,
         ownerName: ownerName,
         ownerLocation: currentOwnerData?.location || '',
@@ -423,8 +583,9 @@
         status: 'pending',
         createdAt: new Date().toISOString()
       });
+
       closeBookModal();
-      alert('✅ Booking sent successfully!');
+      alert(`✅ Booking sent to ${workerFullName}! They will be notified.`);
       window.location.href = 'dashboard-owner.html';
     } catch (err) {
       errEl.textContent = '❌ Booking failed: ' + err.message;
@@ -432,7 +593,7 @@
       btn.textContent = 'Confirm Booking ✓';
       btn.disabled = false;
     }
-  }
+  };
 
   loadWorkers();
 </script>
