@@ -41,8 +41,6 @@
     .stat-change { font-size: 11px; color: #1a6b3c; margin-top: 6px; font-weight: 600; }
     .section-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 14px; }
     .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
-
-    /* Booking cards */
     .booking-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; margin-bottom: 14px; display: flex; gap: 16px; align-items: flex-start; }
     .booking-av { width: 52px; height: 52px; border-radius: 14px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
     .booking-info { flex: 1; }
@@ -67,8 +65,6 @@
     .no-bookings-icon { font-size: 48px; margin-bottom: 12px; }
     .no-bookings-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 8px; }
     .no-bookings-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
-
-    /* Profile section */
     .profile-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
     .profile-av { width: 56px; height: 56px; border-radius: 14px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
     .profile-name { font-size: 18px; font-weight: 700; color: #111; }
@@ -81,8 +77,6 @@
     .tip-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 2px; }
     .tip-text { font-size: 12px; color: #888; line-height: 1.5; }
     .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
-
-    /* Confirm modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
     .modal-overlay.show { display: flex; }
     .modal { background: #fff; border-radius: 24px; padding: 32px; max-width: 380px; width: 90%; text-align: center; }
@@ -93,7 +87,6 @@
     .modal-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .modal-confirm-red { flex: 1; background: #cc2222; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .modal-confirm-green { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-
     @media (max-width: 900px) {
       .sidebar { display: none; }
       .main { margin-left: 0; padding: 20px; }
@@ -115,7 +108,7 @@
   <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
   <div class="sidebar-item" onclick="scrollToBookings()"><span class="sidebar-item-icon">📋</span> My Bookings <span class="sidebar-badge" id="bookings-badge" style="display:none;">0</span></div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+  <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
   <div class="sidebar-section">ACCOUNT</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
@@ -150,7 +143,6 @@
       <div class="stat-card"><div class="stat-icon icon-pink">📍</div><div class="stat-num" id="stat-location">—</div><div class="stat-label">Your location</div></div>
     </div>
 
-    <!-- My Bookings -->
     <div id="bookings-section">
       <div class="section-title">📋 My Bookings</div>
       <div id="bookings-list">
@@ -165,7 +157,6 @@
       </div>
     </div>
 
-    <!-- Profile info -->
     <div class="section-title" style="margin-top:8px;">👤 My Account</div>
     <div class="card">
       <div class="profile-row">
@@ -192,18 +183,10 @@
       <div class="card">
         <div class="section-title">📊 Booking Summary</div>
         <div style="display:flex; flex-direction:column; gap:12px;">
-          <div style="display:flex; justify-content:space-between; font-size:14px;">
-            <span style="color:#888;">Total bookings</span><span id="sum-total" style="font-weight:700;">0</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:14px;">
-            <span style="color:#888;">Active now</span><span id="sum-active" style="font-weight:700; color:#1a6b3c;">0</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:14px;">
-            <span style="color:#888;">Pending</span><span id="sum-pending" style="font-weight:700; color:#c87800;">0</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:14px;">
-            <span style="color:#888;">Ended</span><span id="sum-ended" style="font-weight:700; color:#888;">0</span>
-          </div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Total bookings</span><span id="sum-total" style="font-weight:700;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Active now</span><span id="sum-active" style="font-weight:700; color:#1a6b3c;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Pending</span><span id="sum-pending" style="font-weight:700; color:#c87800;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Ended</span><span id="sum-ended" style="font-weight:700; color:#888;">0</span></div>
         </div>
       </div>
     </div>
@@ -211,7 +194,6 @@
   </div>
 </div>
 
-<!-- Cancel confirm modal -->
 <div class="modal-overlay" id="cancel-modal">
   <div class="modal">
     <div class="modal-icon">⚠️</div>
@@ -224,7 +206,6 @@
   </div>
 </div>
 
-<!-- Activate confirm modal -->
 <div class="modal-overlay" id="activate-modal">
   <div class="modal">
     <div class="modal-icon">✅</div>
@@ -261,7 +242,6 @@
   window.scrollToBookings = function() {
     document.getElementById('bookings-section').scrollIntoView({ behavior: 'smooth' });
   }
-
   window.closeCancelModal = function() {
     document.getElementById('cancel-modal').classList.remove('show');
   }
@@ -327,7 +307,8 @@
         ? `<button class="btn-sm-green" onclick="activateBooking('${b.id}')">✓ Mark Active</button>
            <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">Cancel</button>`
         : status === 'active'
-        ? `<button class="btn-sm-outline">💬 Message</button>
+        ? `<button class="btn-sm-green" onclick="window.location.href='payments.html'">💰 Salary Payments</button>
+           <button class="btn-sm-outline">💬 Message</button>
            <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">End Contract</button>`
         : '';
 
@@ -400,7 +381,6 @@
     document.getElementById('stat-name').textContent = firstName;
     document.getElementById('stat-location').textContent = data.location || '—';
 
-    // Load bookings
     const q = query(collection(db, 'bookings'), where('ownerId', '==', user.uid));
     const snap = await getDocs(q);
     const bookings = [];

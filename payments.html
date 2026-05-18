@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Salary Payments</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+
+    /* ── Sidebar (owner = green, worker = dark) ── */
+    .sidebar { width: 240px; background: var(--sb-bg, #1a6b3c); display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-item.active { background: rgba(255,255,255,0.12); color: #fff; border-left-color: #f0a500; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
+
+    /* ── Main ── */
+    .main { margin-left: 240px; flex: 1; padding: 32px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .topbar-title h1 { font-size: 22px; font-weight: 700; color: #111; }
+    .topbar-title p { font-size: 14px; color: #888; margin-top: 2px; }
+
+    /* ── Stats row ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+    .icon-green { background: #e8f5ee; }
+    .icon-gold { background: #fff5e0; }
+    .icon-blue { background: #e8f0ff; }
+    .icon-pink { background: #ffe8f0; }
+    .stat-num { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .stat-label { font-size: 12px; color: #888; }
+
+    /* ── Contract picker ── */
+    .contract-picker { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; margin-bottom: 24px; }
+    .picker-label { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 10px; }
+    .contract-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .contract-tab {
+      padding: 10px 18px; border-radius: 12px; border: 1.5px solid #eee;
+      font-size: 13px; font-weight: 600; cursor: pointer; color: #555;
+      transition: all 0.15s; background: #fff;
+    }
+    .contract-tab:hover { border-color: #1a6b3c; color: #1a6b3c; }
+    .contract-tab.active { background: #1a6b3c; color: #fff; border-color: #1a6b3c; }
+    .contract-tab-name { font-size: 14px; font-weight: 700; }
+    .contract-tab-sub { font-size: 11px; opacity: 0.75; margin-top: 1px; }
+
+    /* ── Payment table ── */
+    .section-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 14px; }
+    .payments-card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #eee; margin-bottom: 20px; }
+    .payment-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid #f5f5f0;
+    }
+    .payment-row:last-child { border-bottom: none; }
+    .month-badge {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .month-badge.paid { background: #e8f5ee; color: #1a6b3c; }
+    .month-badge.unpaid { background: #fff5e0; color: #c87800; }
+    .month-badge.future { background: #f5f5f0; color: #aaa; }
+    .month-badge-num { font-size: 18px; font-weight: 700; line-height: 1; }
+    .payment-info { flex: 1; }
+    .payment-month { font-size: 14px; font-weight: 700; color: #111; }
+    .payment-date { font-size: 12px; color: #888; margin-top: 2px; }
+    .payment-amount { font-size: 16px; font-weight: 700; color: #1a6b3c; min-width: 110px; text-align: right; }
+    .payment-amount.unpaid { color: #c87800; }
+    .payment-amount.future { color: #aaa; }
+    .payment-status { min-width: 90px; text-align: right; }
+    .status-pill { font-size: 11px; padding: 5px 12px; border-radius: 20px; font-weight: 700; display: inline-block; }
+    .pill-paid { background: #e8f5ee; color: #1a6b3c; }
+    .pill-unpaid { background: #fff5e0; color: #c87800; }
+    .pill-future { background: #f5f5f0; color: #aaa; }
+    .mark-btn {
+      background: #1a6b3c; color: #fff; border: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: background 0.15s;
+    }
+    .mark-btn:hover { background: #145530; }
+    .unmark-btn {
+      background: #f5f5f0; color: #888; border: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+    }
+
+    /* ── Summary card ── */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .summary-box { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; }
+    .summary-box.green { background: #1a6b3c; }
+    .summary-box-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .summary-box.green .summary-box-label { color: rgba(255,255,255,0.7); }
+    .summary-box-val { font-size: 24px; font-weight: 700; color: #111; }
+    .summary-box.green .summary-box-val { color: #fff; }
+    .summary-box-sub { font-size: 12px; color: #888; margin-top: 4px; }
+    .summary-box.green .summary-box-sub { color: rgba(255,255,255,0.6); }
+
+    /* ── Progress bar ── */
+    .progress-wrap { background: #eee; border-radius: 10px; height: 10px; margin: 12px 0 6px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #1a6b3c; border-radius: 10px; transition: width 0.5s; }
+
+    /* ── Empty / loading ── */
+    .empty { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 52px; margin-bottom: 14px; }
+    .empty-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .empty-sub { font-size: 13px; color: #888; }
+    .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
+
+    /* ── Mark modal ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: #fff; border-radius: 24px; padding: 32px; max-width: 380px; width: 90%; }
+    .modal-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .form-input:focus { border-color: #1a6b3c; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 4px; }
+    .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .error-box { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: none; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .payment-row { flex-wrap: wrap; gap: 8px; }
+      .payment-amount, .payment-status { text-align: left; min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar injected by JS based on userType -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div id="sidebar-menu"></div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role" id="sidebar-role">—</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading payment tracker...</div>
+  <div id="page-content" style="display:none;">
+
+    <div class="topbar">
+      <div class="topbar-title">
+        <h1>💰 Salary Payment Tracker</h1>
+        <p id="topbar-sub">Track monthly salary payments</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon icon-green">✅</div><div class="stat-num" id="stat-paid">0</div><div class="stat-label">Months paid</div></div>
+      <div class="stat-card"><div class="stat-icon icon-gold">⏳</div><div class="stat-num" id="stat-unpaid">0</div><div class="stat-label">Months unpaid</div></div>
+      <div class="stat-card"><div class="stat-icon icon-blue">💵</div><div class="stat-num" id="stat-total-paid">0</div><div class="stat-label">Total paid (ETB)</div></div>
+      <div class="stat-card"><div class="stat-icon icon-pink">📋</div><div class="stat-num" id="stat-remaining">0</div><div class="stat-label">Remaining (ETB)</div></div>
+    </div>
+
+    <!-- No active bookings state -->
+    <div id="no-contracts" style="display:none;">
+      <div class="payments-card">
+        <div class="empty">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">No active contracts</div>
+          <div class="empty-sub" id="no-contracts-sub">You need an active booking to track salary payments.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contract picker (shown if multiple active) -->
+    <div id="contract-picker-wrap" style="display:none;">
+      <div class="contract-picker">
+        <div class="picker-label">Select a contract to view payments:</div>
+        <div class="contract-tabs" id="contract-tabs"></div>
+      </div>
+    </div>
+
+    <!-- Payment content -->
+    <div id="payment-content" style="display:none;">
+
+      <!-- Summary -->
+      <div class="summary-grid">
+        <div class="summary-box green">
+          <div class="summary-box-label">TOTAL PAID SO FAR</div>
+          <div class="summary-box-val" id="sum-paid-etb">0 ETB</div>
+          <div class="summary-box-sub" id="sum-paid-months">0 of 0 months</div>
+          <div class="progress-wrap"><div class="progress-fill" id="sum-progress" style="width:0%"></div></div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-box-label">CONTRACT</div>
+          <div class="summary-box-val" id="sum-worker-name">—</div>
+          <div class="summary-box-sub" id="sum-contract-detail">—</div>
+          <div style="margin-top:10px; font-size:12px; color:#888;" id="sum-start">—</div>
+        </div>
+      </div>
+
+      <!-- Payment list -->
+      <div class="section-title" id="payment-list-title">📅 Monthly Payments</div>
+      <div class="payments-card" id="payment-list"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Mark paid modal -->
+<div class="modal-overlay" id="mark-modal">
+  <div class="modal">
+    <div class="modal-title">✅ Mark Month as Paid</div>
+    <div class="modal-sub" id="mark-modal-sub">—</div>
+    <div class="form-group">
+      <label class="form-label">Date paid</label>
+      <input type="date" id="mark-date" class="form-input" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Note (optional)</label>
+      <input type="text" id="mark-note" class="form-input" placeholder="e.g. Paid via CBE, cash in hand..." />
+    </div>
+    <div class="error-box" id="mark-error"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeMarkModal()">Cancel</button>
+      <button class="btn-confirm" id="mark-confirm-btn" onclick="confirmMarkPaid()">Mark as Paid ✓</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, collection, query, where,
+    getDocs, updateDoc, arrayUnion, arrayRemove
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let userType = '';
+  let currentUser = null;
+  let activeContracts = [];
+  let selectedContract = null;
+  let markingMonthIndex = null;
+
+  // ── Sidebar menus ──
+  function buildSidebar(type, firstName) {
+    const menu = document.getElementById('sidebar-menu');
+    document.getElementById('sidebar-role').textContent = type === 'owner' ? 'House Owner' : 'House Worker';
+    if (type === 'owner') {
+      document.getElementById('sidebar').style.background = '#1a6b3c';
+      menu.innerHTML = `
+        <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+        <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
+        <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
+        <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+        <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+        <div class="sidebar-section">ACCOUNT</div>
+        <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>`;
+    } else {
+      document.getElementById('sidebar').style.background = '#111';
+      document.getElementById('sidebar-user-av').style.background = '#fde8c8';
+      document.getElementById('sidebar-user-av').style.color = '#c87800';
+      menu.innerHTML = `
+        <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+        <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
+        <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> My Salary</div>
+        <div class="sidebar-item"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+        <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+        <div class="sidebar-section">ACCOUNT</div>
+        <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>`;
+    }
+  }
+
+  // ── Generate month list from start date and contract length ──
+  function generateMonths(startDate, contractMonths) {
+    const months = [];
+    const start = new Date(startDate);
+    for (let i = 0; i < contractMonths; i++) {
+      const d = new Date(start.getFullYear(), start.getMonth() + i, 1);
+      months.push({
+        index: i,
+        year: d.getFullYear(),
+        month: d.getMonth(),
+        label: d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
+        short: d.toLocaleDateString('en-GB', { month: 'short' }),
+        num: d.getDate(),
+        isPast: d <= new Date(),
+        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      });
+    }
+    return months;
+  }
+
+  function renderPaymentList(contract) {
+    selectedContract = contract;
+    const data = contract.data;
+    const months = generateMonths(data.startDate, data.contractMonths);
+    const paidMap = {}; // key -> {date, note}
+    (data.payments || []).forEach(p => { paidMap[p.monthKey] = p; });
+
+    const isOwner = userType === 'owner';
+    let paidCount = 0, unpaidCount = 0;
+
+    const today = new Date();
+
+    let html = '';
+    months.forEach((m) => {
+      const isPaid = !!paidMap[m.key];
+      const isFuture = new Date(m.year, m.month, 1) > today;
+
+      if (isPaid) paidCount++;
+      else if (!isFuture) unpaidCount++;
+
+      const badgeClass = isPaid ? 'paid' : isFuture ? 'future' : 'unpaid';
+      const pillClass = isPaid ? 'pill-paid' : isFuture ? 'pill-future' : 'pill-unpaid';
+      const pillText = isPaid ? '✓ Paid' : isFuture ? 'Upcoming' : '⚠ Unpaid';
+      const amountClass = isPaid ? '' : isFuture ? 'future' : 'unpaid';
+
+      const paidDate = isPaid && paidMap[m.key].date
+        ? new Date(paidMap[m.key].date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : null;
+      const note = isPaid && paidMap[m.key].note ? paidMap[m.key].note : null;
+
+      let actionBtn = '';
+      if (isOwner) {
+        if (isPaid) {
+          actionBtn = `<button class="unmark-btn" onclick="unmarkPaid('${contract.id}', '${m.key}')">↩ Unmark</button>`;
+        } else if (!isFuture) {
+          actionBtn = `<button class="mark-btn" onclick="openMarkModal('${contract.id}', ${m.index}, '${m.label}', '${m.key}')">Mark Paid ✓</button>`;
+        }
+      }
+
+      html += `
+        <div class="payment-row">
+          <div class="month-badge ${badgeClass}">
+            <div class="month-badge-num">${m.short}</div>
+            <div style="font-size:10px;">${m.year}</div>
+          </div>
+          <div class="payment-info">
+            <div class="payment-month">${m.label}</div>
+            <div class="payment-date">
+              ${isPaid ? `Paid on ${paidDate}${note ? ' · ' + note : ''}` : isFuture ? 'Not due yet' : 'Payment due'}
+            </div>
+          </div>
+          <div class="payment-amount ${amountClass}">${(data.monthlySalary || 0).toLocaleString()} ETB</div>
+          <div class="payment-status"><span class="status-pill ${pillClass}">${pillText}</span></div>
+          ${actionBtn ? `<div>${actionBtn}</div>` : ''}
+        </div>`;
+    });
+
+    document.getElementById('payment-list').innerHTML = html;
+
+    // Stats
+    const totalPaid = paidCount * (data.monthlySalary || 0);
+    const totalRemaining = unpaidCount * (data.monthlySalary || 0);
+    const pct = months.length > 0 ? Math.round((paidCount / months.length) * 100) : 0;
+
+    document.getElementById('stat-paid').textContent = paidCount;
+    document.getElementById('stat-unpaid').textContent = unpaidCount;
+    document.getElementById('stat-total-paid').textContent = totalPaid.toLocaleString();
+    document.getElementById('stat-remaining').textContent = totalRemaining.toLocaleString();
+
+    document.getElementById('sum-paid-etb').textContent = totalPaid.toLocaleString() + ' ETB';
+    document.getElementById('sum-paid-months').textContent = `${paidCount} of ${months.length} months paid`;
+    document.getElementById('sum-progress').style.width = pct + '%';
+    document.getElementById('sum-worker-name').textContent = isOwner ? (data.workerName || '—') : (data.ownerName || '—');
+    document.getElementById('sum-contract-detail').textContent = `${(data.monthlySalary || 0).toLocaleString()} ETB/month · ${data.contractMonths} months`;
+    document.getElementById('sum-start').textContent = `Started: ${new Date(data.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+    document.getElementById('payment-list-title').textContent = `📅 Monthly Payments — ${data.workerName || data.ownerName || ''}`;
+    document.getElementById('topbar-sub').textContent = isOwner
+      ? `Tracking salary for ${data.workerName || 'worker'}`
+      : `Your salary from ${data.ownerName || 'owner'}`;
+
+    document.getElementById('payment-content').style.display = 'block';
+  }
+
+  function renderContractTabs(contracts) {
+    if (contracts.length === 0) {
+      document.getElementById('no-contracts').style.display = 'block';
+      document.getElementById('no-contracts-sub').textContent =
+        userType === 'owner'
+          ? 'Book a worker and mark them as active to start tracking payments.'
+          : 'Accept a job offer to start tracking your salary payments.';
+      return;
+    }
+
+    if (contracts.length > 1) {
+      document.getElementById('contract-picker-wrap').style.display = 'block';
+      const tabs = document.getElementById('contract-tabs');
+      tabs.innerHTML = contracts.map((c, i) => {
+        const d = c.data;
+        const name = userType === 'owner' ? d.workerName : d.ownerName;
+        return `
+          <button class="contract-tab ${i === 0 ? 'active' : ''}" onclick="selectContract(${i}, this)">
+            <div class="contract-tab-name">${name || '—'}</div>
+            <div class="contract-tab-sub">${(d.monthlySalary || 0).toLocaleString()} ETB · ${d.contractMonths}mo</div>
+          </button>`;
+      }).join('');
+    }
+
+    renderPaymentList(contracts[0]);
+  }
+
+  window.selectContract = function(index, btn) {
+    document.querySelectorAll('.contract-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderPaymentList(activeContracts[index]);
+  };
+
+  // ── Mark modal ──
+  window.openMarkModal = function(contractId, monthIndex, monthLabel, monthKey) {
+    markingMonthIndex = { contractId, monthIndex, monthLabel, monthKey };
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('mark-date').value = today;
+    document.getElementById('mark-note').value = '';
+    document.getElementById('mark-modal-sub').textContent = `Mark ${monthLabel} salary as paid`;
+    document.getElementById('mark-error').style.display = 'none';
+    document.getElementById('mark-modal').classList.add('show');
+  };
+
+  window.closeMarkModal = function() {
+    document.getElementById('mark-modal').classList.remove('show');
+    markingMonthIndex = null;
+  };
+
+  window.confirmMarkPaid = async function() {
+    if (!markingMonthIndex) return;
+    const date = document.getElementById('mark-date').value;
+    const note = document.getElementById('mark-note').value.trim();
+    const errEl = document.getElementById('mark-error');
+    const btn = document.getElementById('mark-confirm-btn');
+
+    errEl.style.display = 'none';
+    if (!date) { errEl.textContent = '⚠️ Please pick the date payment was made.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
+    try {
+      const paymentEntry = {
+        monthKey: markingMonthIndex.monthKey,
+        monthLabel: markingMonthIndex.monthLabel,
+        date: date,
+        note: note,
+        markedAt: new Date().toISOString()
+      };
+      await updateDoc(doc(db, 'bookings', markingMonthIndex.contractId), {
+        payments: arrayUnion(paymentEntry)
+      });
+      closeMarkModal();
+      // Refresh
+      const snap = await getDoc(doc(db, 'bookings', markingMonthIndex.contractId));
+      const idx = activeContracts.findIndex(c => c.id === markingMonthIndex.contractId);
+      if (idx !== -1) {
+        activeContracts[idx].data = snap.data();
+        renderPaymentList(activeContracts[idx]);
+      }
+    } catch (err) {
+      errEl.textContent = '❌ Error: ' + err.message;
+      errEl.style.display = 'block';
+    } finally {
+      btn.textContent = 'Mark as Paid ✓';
+      btn.disabled = false;
+    }
+  };
+
+  window.unmarkPaid = async function(contractId, monthKey) {
+    if (!confirm('Remove this payment record?')) return;
+    try {
+      const snap = await getDoc(doc(db, 'bookings', contractId));
+      const payments = (snap.data().payments || []).filter(p => p.monthKey !== monthKey);
+      await updateDoc(doc(db, 'bookings', contractId), { payments });
+      const idx = activeContracts.findIndex(c => c.id === contractId);
+      if (idx !== -1) {
+        activeContracts[idx].data = { ...snap.data(), payments };
+        renderPaymentList(activeContracts[idx]);
+      }
+    } catch (err) {
+      alert('Error: ' + err.message);
+    }
+  };
+
+  // ── Auth ──
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+    currentUser = user;
+
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userSnap.exists()) { window.location.href = 'signin.html'; return; }
+    const userData = userSnap.data();
+    userType = userData.userType;
+
+    const firstName = userData.firstName || '';
+    const lastName = userData.lastName || '';
+    const fullName = firstName + ' ' + lastName;
+    const initials = (firstName[0] || '') + (lastName[0] || '');
+
+    document.getElementById('sidebar-av').textContent = initials;
+    document.getElementById('sidebar-name').textContent = fullName;
+    buildSidebar(userType, firstName);
+
+    // Load active bookings
+    const field = userType === 'owner' ? 'ownerId' : 'workerId';
+    const q = query(
+      collection(db, 'bookings'),
+      where(field, '==', user.uid),
+      where('status', '==', 'active')
+    );
+    const snap = await getDocs(q);
+    activeContracts = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+    activeContracts.sort((a, b) => new Date(b.data.createdAt) - new Date(a.data.createdAt));
+
+    renderContractTabs(activeContracts);
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+
+</body>
+</html>
