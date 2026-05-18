@@ -37,7 +37,6 @@
     .icon-pink { background: #ffe8f0; }
     .stat-num { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 2px; }
     .stat-label { font-size: 12px; color: #888; }
-    .stat-change { font-size: 11px; color: #1a6b3c; margin-top: 6px; font-weight: 600; }
     .section-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 14px; }
     .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
     .rights-card { background: #1a6b3c; border-radius: 16px; padding: 22px; margin-bottom: 20px; }
@@ -46,8 +45,6 @@
     .right-item { display: flex; gap: 8px; align-items: flex-start; }
     .right-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
     .right-text { font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.5; }
-
-    /* Job offer cards */
     .job-offer-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; margin-bottom: 14px; }
     .job-offer-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
     .job-house-av { width: 52px; height: 52px; border-radius: 14px; background: #e8f5ee; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
@@ -63,7 +60,7 @@
     .btn-sm-green { background: #1a6b3c; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
     .btn-sm-outline { background: #fff; color: #1a6b3c; border: 1.5px solid #1a6b3c; padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
     .btn-sm-red { background: #fff0f0; color: #cc2222; border: 1.5px solid #ffcccc; padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .status-badge { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
+    .status-badge { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 700; display:inline-block; margin-top:4px; }
     .status-pending { background: #fff5e0; color: #c87800; }
     .status-active { background: #e8f5ee; color: #1a6b3c; }
     .status-ended { background: #f0f0f0; color: #888; }
@@ -73,7 +70,6 @@
     .no-jobs-icon { font-size: 48px; margin-bottom: 12px; }
     .no-jobs-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 8px; }
     .no-jobs-sub { font-size: 13px; color: #888; }
-
     .profile-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
     .profile-av { width: 56px; height: 56px; border-radius: 14px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
     .skill-tag { display: inline-block; background: #e8f5ee; color: #1a6b3c; font-size: 12px; padding: 6px 14px; border-radius: 10px; font-weight: 600; margin-top: 8px; }
@@ -87,7 +83,15 @@
     .tip-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 2px; }
     .tip-text { font-size: 12px; color: #888; line-height: 1.5; }
     .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
-
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: #fff; border-radius: 24px; padding: 32px; max-width: 380px; width: 90%; text-align: center; }
+    .modal-icon { font-size: 48px; margin-bottom: 12px; }
+    .modal-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.6; }
+    .modal-btns { display: flex; gap: 10px; }
+    .modal-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .modal-confirm-red { flex: 1; background: #cc2222; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     @media (max-width: 900px) {
       .sidebar { display: none; }
       .main { margin-left: 0; padding: 20px; }
@@ -107,7 +111,7 @@
   </div>
   <div class="sidebar-section">MENU</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">🏠</span> My Jobs <span class="sidebar-badge" id="jobs-badge" style="display:none;">0</span></div>
+  <div class="sidebar-item" onclick="scrollToJobs()"><span class="sidebar-item-icon">🏠</span> My Jobs <span class="sidebar-badge" id="jobs-badge" style="display:none;">0</span></div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💰</span> My Salary</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
@@ -143,7 +147,6 @@
       <div class="stat-card"><div class="stat-icon icon-pink">🧹</div><div class="stat-num" id="stat-skill">—</div><div class="stat-label">Your skill</div></div>
     </div>
 
-    <!-- Rights reminder -->
     <div class="rights-card">
       <div class="rights-title">🙏 Your Rights — መብቶችዎ</div>
       <div class="rights-grid">
@@ -156,11 +159,9 @@
       </div>
     </div>
 
-    <!-- Job offers / bookings -->
-    <div class="section-title">🏠 My Job Offers & Bookings</div>
+    <div class="section-title" id="jobs-section">🏠 My Job Offers & Bookings</div>
     <div id="jobs-list"></div>
 
-    <!-- Profile -->
     <div class="section-title">👤 My Profile</div>
     <div class="card">
       <div class="profile-row">
@@ -199,10 +200,23 @@
   </div>
 </div>
 
+<!-- Decline confirm modal -->
+<div class="modal-overlay" id="decline-modal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Decline this offer?</div>
+    <div class="modal-sub">Are you sure you want to decline this job offer? The owner will be notified.</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeDeclineModal()">Keep it</button>
+      <button class="modal-confirm-red" id="confirm-decline-btn">Yes, decline</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -217,7 +231,27 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  function renderJobs(bookings, workerName) {
+  let declineBookingId = null;
+
+  window.scrollToJobs = function() {
+    document.getElementById('jobs-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  window.closeDeclineModal = function() {
+    document.getElementById('decline-modal').classList.remove('show');
+  }
+
+  function openDeclineModal(bookingId) {
+    declineBookingId = bookingId;
+    document.getElementById('decline-modal').classList.add('show');
+    document.getElementById('confirm-decline-btn').onclick = async () => {
+      await updateDoc(doc(db, 'bookings', declineBookingId), { status: 'cancelled' });
+      closeDeclineModal();
+      location.reload();
+    };
+  }
+
+  function renderJobs(bookings) {
     const list = document.getElementById('jobs-list');
     if (bookings.length === 0) {
       list.innerHTML = `
@@ -249,12 +283,12 @@
       const statusBadge = status === 'active'
         ? '<span class="status-badge status-active">✓ Active — You are working here</span>'
         : status === 'pending'
-        ? '<span class="status-badge status-pending">⏳ Offer pending — Owner will contact you</span>'
-        : '<span class="status-badge status-ended">Ended</span>';
+        ? '<span class="status-badge status-pending">⏳ Pending — Owner will contact you</span>'
+        : '<span class="status-badge status-ended">Ended / Declined</span>';
 
       const services = (data.services || []).map(s => `<span class="s-tag">${s}</span>`).join('');
 
-      const salaryHistory = status === 'active' ? `
+      const salaryTracker = status === 'active' ? `
         <div style="margin-top:12px; padding:12px; background:#f5f5f0; border-radius:10px;">
           <div style="font-size:12px; font-weight:700; color:#111; margin-bottom:8px;">💰 Salary tracker</div>
           <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:4px;">
@@ -268,13 +302,24 @@
           </div>
         </div>` : '';
 
+      const actionBtns = status === 'pending' ? `
+        <div class="job-actions" style="margin-top:10px;">
+          <button class="btn-sm-green" onclick="acceptJob('${b.id}')">✅ Accept</button>
+          <button class="btn-sm-outline">💬 Contact Owner</button>
+          <button class="btn-sm-red" onclick="declineJob('${b.id}')">❌ Decline</button>
+        </div>` : status === 'active' ? `
+        <div class="job-actions" style="margin-top:10px;">
+          <button class="btn-sm-outline">💬 Message Owner</button>
+          <button class="btn-sm-outline">📞 Call Kebet Help</button>
+        </div>` : '';
+
       html += `
         <div class="job-offer-card">
           <div class="job-offer-top">
             <div class="job-house-av">🏡</div>
             <div style="flex:1;">
               <div class="job-owner-name">${data.ownerName || 'House Owner'}'s Home</div>
-              <div class="job-owner-sub">📍 ${data.ownerLocation || '—'}, Addis Ababa${data.ownerWoreda ? ' · ' + data.ownerWoreda : ''}</div>
+              <div class="job-owner-sub">📍 ${data.ownerLocation || '—'}, Addis Ababa</div>
               <div class="job-owner-loc">Offer received: ${bookedDate}</div>
             </div>
             <div style="text-align:right;">
@@ -286,19 +331,11 @@
             <span class="job-meta-item">📅 Start: ${startDate}</span>
             <span class="job-meta-item">⏱ ${data.contractMonths} month${data.contractMonths > 1 ? 's' : ''}</span>
             <span class="job-meta-item green">🛏️ Live-in</span>
+            <span class="job-meta-item">💰 Total: ${(data.totalAmount || 0).toLocaleString()} ETB</span>
           </div>
           <div class="services-tags">${services}</div>
-          ${salaryHistory}
-          ${status === 'pending' ? `
-          <div class="job-actions" style="margin-top:10px;">
-            <button class="btn-sm-green">✅ Accept</button>
-            <button class="btn-sm-outline">💬 Contact Owner</button>
-            <button class="btn-sm-red">❌ Decline</button>
-          </div>` : status === 'active' ? `
-          <div class="job-actions" style="margin-top:10px;">
-            <button class="btn-sm-outline">💬 Message Owner</button>
-            <button class="btn-sm-outline">📞 Call Kebet Help</button>
-          </div>` : ''}
+          ${salaryTracker}
+          ${actionBtns}
         </div>`;
     });
 
@@ -310,6 +347,21 @@
       document.getElementById('jobs-badge').textContent = bookings.length;
       document.getElementById('jobs-badge').style.display = 'inline';
     }
+  }
+
+  // ✅ FIXED: Accept job sets status to 'active'
+  window.acceptJob = async function(bookingId) {
+    try {
+      await updateDoc(doc(db, 'bookings', bookingId), { status: 'active' });
+      alert('✅ You accepted the job! The owner will be notified.');
+      location.reload();
+    } catch (err) {
+      alert('Error: ' + err.message);
+    }
+  }
+
+  window.declineJob = function(bookingId) {
+    openDeclineModal(bookingId);
   }
 
   onAuthStateChanged(auth, async (user) => {
@@ -324,7 +376,6 @@
     const lastName = data.lastName || '';
     const fullName = firstName + ' ' + lastName;
     const initials = (firstName[0] || '') + (lastName[0] || '');
-    const joined = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : '—';
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
@@ -350,14 +401,13 @@
       document.getElementById('profile-skill').innerHTML = `<span class="skill-tag">🧹 ${data.skill}</span>`;
     }
 
-    // Load bookings where this worker is named
-    // Match by worker name since workers don't have accounts yet in bookings
-    const q = query(collection(db, 'bookings'), where('workerName', '==', fullName));
+    // ✅ FIXED: query by workerId (UID) instead of workerName
+    const q = query(collection(db, 'bookings'), where('workerId', '==', user.uid));
     const snap = await getDocs(q);
     const bookings = [];
     snap.forEach(d => bookings.push(d));
     bookings.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt));
-    renderJobs(bookings, fullName);
+    renderJobs(bookings);
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
