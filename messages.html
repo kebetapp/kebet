@@ -198,6 +198,7 @@
   let currentUser = null;
   let currentUserData = null;
   let activeConvoId = null;
+  let activeOtherId = null;       // ← track recipient for notifications
   let messagesUnsubscribe = null;
   let allConvos = [];
 
@@ -235,7 +236,6 @@
 
   // ── Get or create a conversation between two users ──
   async function getOrCreateConvo(otherUserId, otherUserName, otherUserType) {
-    // Conversation ID is always sorted so it's the same regardless of who opens it
     const ids = [currentUser.uid, otherUserId].sort();
     const convoId = ids[0] + '_' + ids[1];
 
@@ -245,7 +245,6 @@
     if (!convoSnap.exists()) {
       const myName = (currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '');
       await updateDoc(convoRef, {}).catch(async () => {
-        // Create it
         const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
         await setDoc(convoRef, {
           participants: [currentUser.uid, otherUserId],
@@ -311,11 +310,10 @@
   // ── Open a conversation ──
   window.openConvo = async function(convoId, otherId, otherName, otherType) {
     activeConvoId = convoId;
+    activeOtherId = otherId;   // ← store recipient ID
 
-    // Update convo list highlight
     renderConvoList();
 
-    // Set chat header
     const initials = otherName.split(' ').map(n => n[0] || '').join('').toUpperCase().slice(0, 2);
     const headerAv = document.getElementById('chat-header-av');
     headerAv.textContent = initials;
@@ -326,10 +324,8 @@
     document.getElementById('chat-empty').style.display = 'none';
     document.getElementById('chat-window').style.display = 'flex';
 
-    // Unsubscribe from previous listener
     if (messagesUnsubscribe) messagesUnsubscribe();
 
-    // Real-time messages listener
     const msgsRef = collection(db, 'conversations', convoId, 'messages');
     const msgsQuery = query(msgsRef, orderBy('createdAt', 'asc'));
 
@@ -356,14 +352,14 @@
           </div>`;
       }).join('');
 
-      // Scroll to bottom
       container.scrollTop = container.scrollHeight;
     });
   }
 
   // ── Send a message ──
+  // ✅ FIX: now also writes a notification for the recipient
   window.sendMessage = async function() {
-    if (!activeConvoId) return;
+    if (!activeConvoId || !activeOtherId) return;
     const input = document.getElementById('chat-input');
     const text = input.value.trim();
     if (!text) return;
@@ -372,23 +368,39 @@
     btn.disabled = true;
     input.value = '';
 
+    const senderName = ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim();
+    const preview = text.length > 60 ? text.slice(0, 60) + '...' : text;
+
     try {
+      // 1️⃣ Save the message itself
       const msgsRef = collection(db, 'conversations', activeConvoId, 'messages');
       await addDoc(msgsRef, {
         text: text,
         senderId: currentUser.uid,
-        senderName: ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim(),
+        senderName: senderName,
         createdAt: serverTimestamp()
       });
 
-      // Update conversation last message
+      // 2️⃣ Update conversation preview
       const convoRef = doc(db, 'conversations', activeConvoId);
       await updateDoc(convoRef, {
-        lastMessage: text.length > 40 ? text.slice(0, 40) + '...' : text,
+        lastMessage: preview,
         lastMessageAt: new Date().toISOString()
       });
 
-      // Reload convo list to show updated preview
+      // 3️⃣ Write a notification for the recipient ← NEW
+      await addDoc(collection(db, 'notifications'), {
+        userId: activeOtherId,                        // who receives the alert
+        type: 'message',
+        title: '💬 New message from ' + senderName,
+        body: preview,
+        senderId: currentUser.uid,
+        senderName: senderName,
+        convoId: activeConvoId,
+        read: false,
+        createdAt: serverTimestamp()
+      });
+
       await loadConversations();
 
     } catch (err) {
@@ -430,7 +442,6 @@
 
       const convoId = await getOrCreateConvo(withId, otherName, otherType);
 
-      // Add to convos list if not already there
       if (!allConvos.find(c => c.id === convoId)) {
         allConvos.unshift({
           id: convoId,
