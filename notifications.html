@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Notifications</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+
+    /* SIDEBAR — green for owner, dark for worker, JS switches it */
+    .sidebar { width: 240px; background: var(--sb-bg, #1a6b3c); display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-item.active { background: rgba(255,255,255,0.12); color: #fff; border-left-color: #f0a500; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-badge { background: #f0a500; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
+
+    .main { margin-left: 240px; flex: 1; padding: 32px; max-width: 720px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
+    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .mark-all-btn { font-size: 12px; color: #1a6b3c; background: none; border: none; cursor: pointer; font-weight: 600; }
+
+    /* Notification items */
+    .notif-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f5f5f0; cursor: pointer; transition: background 0.15s; border-radius: 8px; padding-left: 8px; padding-right: 8px; }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: #f9f9f6; }
+    .notif-item.unread { background: #f0fff6; }
+    .notif-item.unread:hover { background: #e4fced; }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #1a6b3c; flex-shrink: 0; margin-top: 6px; }
+    .notif-dot.read { background: transparent; }
+    .notif-icon-wrap { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .notif-icon-booking { background: #e8f5ee; }
+    .notif-icon-accept  { background: #fff5e0; }
+    .notif-icon-payment { background: #e8f0ff; }
+    .notif-icon-review  { background: #fff0f8; }
+    .notif-body { flex: 1; }
+    .notif-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .notif-title.read { font-weight: 500; color: #555; }
+    .notif-msg { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 4px; }
+    .notif-time { font-size: 11px; color: #bbb; }
+    .notif-action { font-size: 12px; color: #1a6b3c; font-weight: 600; margin-top: 6px; display: inline-block; }
+
+    .empty-state { text-align: center; padding: 48px 20px; }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: #888; }
+
+    .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div id="sidebar-links"></div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> <span id="settings-label">Settings</span></div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role" id="sidebar-role">—</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading notifications...</div>
+  <div id="page-content" style="display:none;">
+    <div class="page-title">🔔 Notifications</div>
+    <div class="page-sub" id="page-sub">Your latest alerts</div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>All Notifications <span id="unread-count" style="font-size:13px; color:#888; font-weight:400;"></span></span>
+        <button class="mark-all-btn" onclick="markAllRead()">✓ Mark all as read</button>
+      </div>
+      <div id="notif-list">
+        <div class="empty-state">
+          <div class="empty-icon">🔔</div>
+          <div class="empty-title">No notifications yet</div>
+          <div class="empty-sub">We'll alert you when something happens.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let allNotifDocs = [];
+
+  function timeAgo(iso) {
+    if (!iso) return '—';
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    if (days < 7) return days + 'd ago';
+    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  function iconFor(type) {
+    if (type === 'booking') return { wrap: 'notif-icon-booking', emoji: '📋' };
+    if (type === 'accepted') return { wrap: 'notif-icon-accept', emoji: '✅' };
+    if (type === 'payment') return { wrap: 'notif-icon-payment', emoji: '💰' };
+    if (type === 'review') return { wrap: 'notif-icon-review', emoji: '⭐' };
+    return { wrap: 'notif-icon-booking', emoji: '🔔' };
+  }
+
+  function actionFor(type, userType) {
+    if (type === 'booking') return '→ Go to My Jobs';
+    if (type === 'accepted') return '→ Go to My Bookings';
+    if (type === 'payment') return '→ View Payments';
+    if (type === 'review') return '→ View Reviews';
+    return '';
+  }
+
+  function linkFor(type, userType) {
+    if (type === 'booking') return 'dashboard-worker.html';
+    if (type === 'accepted') return 'dashboard-owner.html';
+    if (type === 'payment') return 'payments.html';
+    if (type === 'review') return userType === 'worker' ? 'my-reviews.html' : 'reviews.html';
+    return '#';
+  }
+
+  function renderNotifs(notifs, userType) {
+    const list = document.getElementById('notif-list');
+    const unread = notifs.filter(n => !n.read).length;
+    document.getElementById('unread-count').textContent = unread > 0 ? '· ' + unread + ' unread' : '· all read';
+
+    if (notifs.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🔔</div>
+          <div class="empty-title">No notifications yet</div>
+          <div class="empty-sub">We'll alert you here when something happens.</div>
+        </div>`;
+      return;
+    }
+
+    let html = '';
+    notifs.forEach(n => {
+      const ic = iconFor(n.type);
+      const action = actionFor(n.type, userType);
+      const link = linkFor(n.type, userType);
+      html += `
+        <div class="notif-item ${n.read ? '' : 'unread'}" onclick="openNotif('${n.id}', '${link}')">
+          <div class="notif-dot ${n.read ? 'read' : ''}"></div>
+          <div class="notif-icon-wrap ${ic.wrap}">${ic.emoji}</div>
+          <div class="notif-body">
+            <div class="notif-title ${n.read ? 'read' : ''}">${n.title || 'Notification'}</div>
+            <div class="notif-msg">${n.message || ''}</div>
+            <div class="notif-time">${timeAgo(n.createdAt)}</div>
+            ${action ? `<span class="notif-action">${action}</span>` : ''}
+          </div>
+        </div>`;
+    });
+    list.innerHTML = html;
+  }
+
+  window.openNotif = async function(notifId, link) {
+    // Mark as read then navigate
+    try {
+      const ref = allNotifDocs.find(d => d.id === notifId);
+      if (ref && !ref.data().read) {
+        await updateDoc(doc(db, 'notifications', notifId), { read: true });
+      }
+    } catch(e) {}
+    window.location.href = link;
+  }
+
+  window.markAllRead = async function() {
+    try {
+      const batch = writeBatch(db);
+      allNotifDocs.forEach(d => {
+        if (!d.data().read) batch.update(doc(db, 'notifications', d.id), { read: true });
+      });
+      await batch.commit();
+      location.reload();
+    } catch(e) { alert('Error: ' + e.message); }
+  }
+
+  function buildOwnerSidebar() {
+    document.getElementById('sidebar').style.background = '#1a6b3c';
+    document.getElementById('settings-label').textContent = 'Settings';
+    document.getElementById('sidebar-role').textContent = 'House Owner';
+    document.getElementById('sidebar-links').innerHTML = `
+      <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+      <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
+      <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
+      <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+      <div class="sidebar-item" onclick="window.location.href='reviews.html'"><span class="sidebar-item-icon">⭐</span> Reviews</div>
+      <div class="sidebar-item active"><span class="sidebar-item-icon">🔔</span> Notifications</div>`;
+  }
+
+  function buildWorkerSidebar() {
+    document.getElementById('sidebar').style.background = '#111';
+    document.getElementById('settings-label').textContent = 'My Profile';
+    document.getElementById('sidebar-role').textContent = 'House Worker';
+    document.getElementById('sidebar-user-av') && (document.getElementById('sidebar-user-av').style.background = '#fde8c8');
+    document.getElementById('sidebar-links').innerHTML = `
+      <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+      <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
+      <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
+      <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+      <div class="sidebar-item active"><span class="sidebar-item-icon">🔔</span> Notifications</div>`;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
+    const userData = userDoc.data();
+    const userType = userData.userType;
+
+    const firstName = userData.firstName || '';
+    const lastName = userData.lastName || '';
+    document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
+    document.getElementById('sidebar-av').textContent = (firstName[0] || '') + (lastName[0] || '');
+
+    if (userType === 'owner') buildOwnerSidebar();
+    else buildWorkerSidebar();
+
+    document.getElementById('page-sub').textContent = userType === 'owner'
+      ? 'Alerts when workers accept your bookings'
+      : 'Alerts when owners book you or leave a review';
+
+    // Load notifications
+    const snap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid)));
+    allNotifDocs = [];
+    const notifs = [];
+    snap.forEach(d => {
+      allNotifDocs.push(d);
+      notifs.push({ id: d.id, ...d.data() });
+    });
+    notifs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    renderNotifs(notifs, userType);
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+
+</body>
+</html>

@@ -113,7 +113,8 @@
   <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="scrollToJobs()"><span class="sidebar-item-icon">🏠</span> My Jobs <span class="sidebar-badge" id="jobs-badge" style="display:none;">0</span></div>
   <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+  <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+  <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
   <div class="sidebar-section">ACCOUNT</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>
@@ -215,7 +216,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -232,11 +233,15 @@
 
   let declineBookingId = null;
 
-  window.scrollToJobs = function() {
-    document.getElementById('jobs-section').scrollIntoView({ behavior: 'smooth' });
-  }
-  window.closeDeclineModal = function() {
-    document.getElementById('decline-modal').classList.remove('show');
+  window.scrollToJobs = function() { document.getElementById('jobs-section').scrollIntoView({ behavior: 'smooth' }); }
+  window.closeDeclineModal = function() { document.getElementById('decline-modal').classList.remove('show'); }
+
+  async function sendNotification(userId, type, title, message) {
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        userId, type, title, message, read: false, createdAt: new Date().toISOString()
+      });
+    } catch(e) {}
   }
 
   function openDeclineModal(bookingId) {
@@ -252,14 +257,7 @@
   function renderJobs(bookings) {
     const list = document.getElementById('jobs-list');
     if (bookings.length === 0) {
-      list.innerHTML = `
-        <div class="card">
-          <div class="no-jobs">
-            <div class="no-jobs-icon">🔍</div>
-            <div class="no-jobs-title">No job offers yet</div>
-            <div class="no-jobs-sub">Your profile is live! House owners can find and book you on Kebet.</div>
-          </div>
-        </div>`;
+      list.innerHTML = `<div class="card"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title">No job offers yet</div><div class="no-jobs-sub">Your profile is live! House owners can find and book you on Kebet.</div></div></div>`;
       return;
     }
 
@@ -271,12 +269,8 @@
       const status = data.status || 'pending';
       if (status === 'active') active++;
 
-      const startDate = data.startDate
-        ? new Date(data.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-        : '—';
-      const bookedDate = data.createdAt
-        ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-        : '—';
+      const startDate = data.startDate ? new Date(data.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+      const bookedDate = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
 
       const statusBadge = status === 'active'
         ? '<span class="status-badge status-active">✓ Active — You are working here</span>'
@@ -289,21 +283,15 @@
       const salaryTracker = status === 'active' ? `
         <div style="margin-top:12px; padding:12px; background:#f5f5f0; border-radius:10px;">
           <div style="font-size:12px; font-weight:700; color:#111; margin-bottom:8px;">💰 Salary tracker</div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:4px;">
-            <span>Monthly salary</span><span style="font-weight:700; color:#1a6b3c;">${(data.monthlySalary || 0).toLocaleString()} ETB</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:4px;">
-            <span>Contract length</span><span style="font-weight:700;">${data.contractMonths} month${data.contractMonths > 1 ? 's' : ''}</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:8px;">
-            <span>Total agreed</span><span style="font-weight:700;">${(data.totalAmount || 0).toLocaleString()} ETB</span>
-          </div>
-          <button class="btn-sm-green" onclick="window.location.href='payments.html'" style="width:100%; justify-content:center;">💰 View Full Payment History</button>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:4px;"><span>Monthly salary</span><span style="font-weight:700; color:#1a6b3c;">${(data.monthlySalary || 0).toLocaleString()} ETB</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:4px;"><span>Contract length</span><span style="font-weight:700;">${data.contractMonths} month${data.contractMonths > 1 ? 's' : ''}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:8px;"><span>Total agreed</span><span style="font-weight:700;">${(data.totalAmount || 0).toLocaleString()} ETB</span></div>
+          <button class="btn-sm-green" onclick="window.location.href='payments.html'" style="width:100%;">💰 View Full Payment History</button>
         </div>` : '';
 
       const actionBtns = status === 'pending' ? `
         <div class="job-actions" style="margin-top:10px;">
-          <button class="btn-sm-green" onclick="acceptJob('${b.id}')">✅ Accept</button>
+          <button class="btn-sm-green" onclick="acceptJob('${b.id}','${data.ownerId}','${data.ownerName || ''}','${data.workerName || ''}')">✅ Accept</button>
           <button class="btn-sm-outline">💬 Contact Owner</button>
           <button class="btn-sm-red" onclick="declineJob('${b.id}')">❌ Decline</button>
         </div>` : status === 'active' ? `
@@ -341,16 +329,17 @@
     list.innerHTML = html;
     document.getElementById('stat-jobs').textContent = bookings.length;
     document.getElementById('stat-active').textContent = active;
-
     if (bookings.length > 0) {
       document.getElementById('jobs-badge').textContent = bookings.length;
       document.getElementById('jobs-badge').style.display = 'inline';
     }
   }
 
-  window.acceptJob = async function(bookingId) {
+  window.acceptJob = async function(bookingId, ownerId, ownerName, workerName) {
     try {
       await updateDoc(doc(db, 'bookings', bookingId), { status: 'active' });
+      // Notify the owner
+      await sendNotification(ownerId, 'accepted', '✅ ' + workerName + ' accepted your booking!', workerName + ' has accepted your job offer and is ready to start. Go to My Bookings to confirm.');
       alert('✅ You accepted the job! The owner will be notified.');
       location.reload();
     } catch (err) {
@@ -358,13 +347,10 @@
     }
   }
 
-  window.declineJob = function(bookingId) {
-    openDeclineModal(bookingId);
-  }
+  window.declineJob = function(bookingId) { openDeclineModal(bookingId); }
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'signin.html'; return; }
-
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
     const data = userDoc.data();
@@ -399,6 +385,13 @@
       document.getElementById('profile-skill').innerHTML = `<span class="skill-tag">🧹 ${data.skill}</span>`;
     }
 
+    // Unread notification badge
+    const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false)));
+    if (notifSnap.size > 0) {
+      document.getElementById('notif-badge').textContent = notifSnap.size;
+      document.getElementById('notif-badge').style.display = 'inline';
+    }
+
     const q = query(collection(db, 'bookings'), where('workerId', '==', user.uid));
     const snap = await getDocs(q);
     const bookings = [];
@@ -415,6 +408,5 @@
     window.location.href = 'signin.html';
   });
 </script>
-
 </body>
 </html>
