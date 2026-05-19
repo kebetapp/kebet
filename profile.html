@@ -56,6 +56,16 @@
     .not-found-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
     .not-found-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
 
+    /* Reviews */
+    .review-item { padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
+    .review-item:last-child { border-bottom: none; }
+    .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .review-av { width: 32px; height: 32px; border-radius: 8px; background: #e8f0ff; color: #2255cc; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .review-owner { font-size: 13px; font-weight: 700; color: #111; }
+    .review-date { font-size: 11px; color: #aaa; margin-left: auto; }
+    .review-stars { color: #f0a500; font-size: 13px; margin-bottom: 3px; }
+    .review-comment { font-size: 12px; color: #555; line-height: 1.6; font-style: italic; }
+
     /* Book Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
     .modal-overlay.show { display: flex; }
@@ -115,7 +125,6 @@
   </div>
   <div id="profile-content" style="display:none;">
 
-    <!-- Hero -->
     <div class="profile-hero">
       <div style="flex:1;">
         <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
@@ -138,13 +147,12 @@
         <div class="rating-box">
           <div class="rating-box-val" id="p-rating-num">New</div>
           <div class="rating-box-stars" id="p-stars">☆☆☆☆☆</div>
-          <div class="rating-box-sub">Rating</div>
+          <div class="rating-box-sub" id="p-review-count">No reviews yet</div>
         </div>
       </div>
     </div>
 
     <div class="two-col">
-      <!-- Left column -->
       <div>
         <div class="section-card">
           <div class="section-title">👤 Personal Info</div>
@@ -155,17 +163,15 @@
           <div class="info-row"><span class="info-label">Phone</span><span class="info-val" id="d-phone">—</span></div>
           <div class="info-row"><span class="info-label">Member since</span><span class="info-val" id="d-joined">—</span></div>
         </div>
-
         <div class="section-card">
           <div class="section-title">🧹 Skills & Services</div>
           <div class="skills-grid" id="d-skills"></div>
         </div>
       </div>
 
-      <!-- Right column -->
       <div>
         <div class="section-card">
-          <div class="section-title">⭐ Reviews</div>
+          <div class="section-title">⭐ Reviews <span id="review-count-badge" style="font-size:12px; color:#888; font-weight:400;"></span></div>
           <div id="d-reviews">
             <div style="text-align:center; padding:24px; color:#aaa;">
               <div style="font-size:32px; margin-bottom:8px;">⭐</div>
@@ -173,7 +179,6 @@
             </div>
           </div>
         </div>
-
         <div class="section-card" style="background:#1a6b3c;">
           <div class="section-title" style="color:#fff;">🙏 Worker Rights</div>
           <div style="font-size:12px; color:rgba(255,255,255,0.85); line-height:1.8;">
@@ -188,7 +193,6 @@
       </div>
     </div>
 
-    <!-- Bottom hire bar -->
     <div style="background:#fff; border-radius:16px; padding:20px 24px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
       <div>
         <div style="font-size:16px; font-weight:700; color:#111;" id="bottom-name">Ready to hire?</div>
@@ -244,7 +248,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, addDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -264,7 +268,6 @@
   let currentUser = null;
   let currentOwnerData = null;
 
-  // Get worker ID from URL: profile.html?id=WORKER_UID
   const params = new URLSearchParams(window.location.search);
   workerId = params.get('id');
 
@@ -275,6 +278,12 @@
       if (snap.exists()) currentOwnerData = snap.data();
     }
   });
+
+  function starsHtml(rating) {
+    let s = '';
+    for (let i = 1; i <= 5; i++) s += i <= Math.round(rating) ? '★' : '☆';
+    return s;
+  }
 
   async function loadProfile() {
     if (!workerId) {
@@ -299,7 +308,7 @@
       const skill = workerData.skill || '—';
       const location = workerData.location || '—';
       const rating = parseFloat(workerData.rating) || 0;
-      const stars = rating >= 5 ? '★★★★★' : rating >= 4 ? '★★★★☆' : rating >= 3 ? '★★★☆☆' : rating > 0 ? '★★☆☆☆' : '☆☆☆☆☆';
+      const reviewCount = parseInt(workerData.reviewCount) || 0;
       const joined = workerData.createdAt
         ? new Date(workerData.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
         : '—';
@@ -311,7 +320,9 @@
       document.getElementById('p-skill').textContent = '🧹 ' + skill;
       document.getElementById('p-loc').textContent = '📍 ' + location + ', Addis Ababa';
       document.getElementById('p-rating-num').textContent = rating > 0 ? rating.toFixed(1) : 'New';
-      document.getElementById('p-stars').textContent = stars;
+      document.getElementById('p-stars').textContent = starsHtml(rating);
+      document.getElementById('p-review-count').textContent = reviewCount > 0 ? reviewCount + ' review' + (reviewCount > 1 ? 's' : '') : 'No reviews yet';
+      document.getElementById('review-count-badge').textContent = reviewCount > 0 ? '(' + reviewCount + ')' : '';
       document.getElementById('d-name').textContent = fullName;
       document.getElementById('d-loc').textContent = location + ', Addis Ababa';
       document.getElementById('d-skill').textContent = skill;
@@ -323,6 +334,7 @@
       const tagsEl = document.getElementById('p-tags');
       let tagsHtml = '<span class="tag tag-gold">🛏️ Live-in</span>';
       if (isVerified) tagsHtml += '<span class="tag tag-green">✓ Verified</span>';
+      if (rating > 0) tagsHtml += '<span class="tag tag-gold">★ ' + rating.toFixed(1) + ' rating</span>';
       tagsHtml += '<span class="tag tag-blue">📍 ' + location + '</span>';
       if (workerData.phone) tagsHtml += '<span class="tag tag-gray">📞 Has phone</span>';
       tagsEl.innerHTML = tagsHtml;
@@ -335,6 +347,39 @@
         .filter(s => workerSkillLower.includes(s.toLowerCase().split('/')[0].trim()) || s.toLowerCase().includes(workerSkillLower))
         .map(s => `<span class="skill-pill">✓ ${s}</span>`)
         .join('') || `<span class="skill-pill">✓ ${skill}</span>`;
+
+      // Load reviews from Firestore
+      const reviewsSnap = await getDocs(query(collection(db, 'reviews'), where('workerId', '==', workerId)));
+      const reviews = [];
+      reviewsSnap.forEach(r => reviews.push(r.data()));
+      reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      const reviewsEl = document.getElementById('d-reviews');
+      if (reviews.length === 0) {
+        reviewsEl.innerHTML = `
+          <div style="text-align:center; padding:24px; color:#aaa;">
+            <div style="font-size:32px; margin-bottom:8px;">⭐</div>
+            <div style="font-size:13px;">No reviews yet — be the first to hire and rate!</div>
+          </div>`;
+      } else {
+        let html = '';
+        reviews.forEach(r => {
+          const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+          html += `
+            <div class="review-item">
+              <div class="review-top">
+                <div class="review-av">${r.ownerInitials || '??'}</div>
+                <div>
+                  <div class="review-owner">${r.ownerName || 'House Owner'}</div>
+                  <div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px; color:#888;">${r.rating}/5</span></div>
+                </div>
+                <div class="review-date">${date}</div>
+              </div>
+              ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ''}
+            </div>`;
+        });
+        reviewsEl.innerHTML = html;
+      }
 
       document.getElementById('loading').style.display = 'none';
       document.getElementById('profile-content').style.display = 'block';

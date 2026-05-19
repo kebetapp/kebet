@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Reviews</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-item.active { background: rgba(255,255,255,0.12); color: #fff; border-left-color: #f0a500; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
+    .main { margin-left: 240px; flex: 1; padding: 32px; max-width: 800px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
+    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; }
+    .worker-tab { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; cursor: pointer; border: 2px solid #eee; margin-bottom: 10px; transition: all 0.2s; }
+    .worker-tab:hover { border-color: #1a6b3c; background: #f5fff8; }
+    .worker-tab.selected { border-color: #1a6b3c; background: #e8f5ee; }
+    .worker-av { width: 44px; height: 44px; border-radius: 12px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .worker-name { font-size: 14px; font-weight: 700; color: #111; }
+    .worker-sub { font-size: 12px; color: #888; margin-top: 2px; }
+    .worker-status { margin-left: auto; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; }
+    .status-active { background: #e8f5ee; color: #1a6b3c; }
+    .status-reviewed { background: #fff5e0; color: #c87800; }
+    .no-workers { text-align: center; padding: 40px 20px; color: #aaa; }
+    .no-workers-icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* Star rating */
+    .star-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .star-btn { font-size: 36px; cursor: pointer; color: #ddd; transition: color 0.15s; background: none; border: none; padding: 0; line-height: 1; }
+    .star-btn.lit { color: #f0a500; }
+    .star-label { font-size: 13px; color: #888; margin-bottom: 6px; font-weight: 600; }
+    .review-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; resize: vertical; min-height: 90px; font-family: inherit; }
+    .review-textarea:focus { border-color: #1a6b3c; }
+    .submit-btn { background: #1a6b3c; color: #fff; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 14px; }
+    .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+    .error-box { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-top: 10px; display: none; }
+    .success-box { background: #e8f5ee; border: 1px solid #b2dfc4; color: #1a6b3c; font-size: 13px; padding: 14px; border-radius: 10px; margin-top: 10px; display: none; font-weight: 600; text-align: center; }
+
+    /* Past reviews list */
+    .review-item { padding: 16px 0; border-bottom: 1px solid #f5f5f0; }
+    .review-item:last-child { border-bottom: none; }
+    .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .review-av { width: 36px; height: 36px; border-radius: 10px; background: #e8f0ff; color: #2255cc; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .review-owner { font-size: 13px; font-weight: 700; color: #111; }
+    .review-date { font-size: 11px; color: #aaa; margin-left: auto; }
+    .review-stars { color: #f0a500; font-size: 14px; margin-bottom: 4px; }
+    .review-comment { font-size: 13px; color: #555; line-height: 1.6; }
+    .no-reviews { text-align: center; padding: 24px; color: #aaa; font-size: 13px; }
+
+    .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
+  <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
+  <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">⭐</span> Reviews</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role">House Owner</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading...</div>
+  <div id="page-content" style="display:none;">
+
+    <div class="page-title">⭐ Reviews</div>
+    <div class="page-sub">Rate your workers — your reviews help build trust on Kebet</div>
+
+    <!-- Active workers to review -->
+    <div class="card">
+      <div class="section-title">📋 Your Active Workers</div>
+      <div id="workers-list">
+        <div class="no-workers">
+          <div class="no-workers-icon">👤</div>
+          <div>No active workers to review yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Write review form (hidden until worker selected) -->
+    <div class="card" id="review-form-card" style="display:none;">
+      <div class="section-title" id="review-form-title">⭐ Leave a Review</div>
+      <div class="star-label">Your rating</div>
+      <div class="star-row" id="star-row">
+        <button class="star-btn" data-val="1">★</button>
+        <button class="star-btn" data-val="2">★</button>
+        <button class="star-btn" data-val="3">★</button>
+        <button class="star-btn" data-val="4">★</button>
+        <button class="star-btn" data-val="5">★</button>
+      </div>
+      <div class="star-label" style="margin-top:4px;">Your comment (optional)</div>
+      <textarea class="review-textarea" id="review-comment" placeholder="How was your experience? e.g. Very hardworking, always on time, great with kids..."></textarea>
+      <div class="error-box" id="error-box"></div>
+      <div class="success-box" id="success-box">✅ Review submitted! Thank you.</div>
+      <button class="submit-btn" id="submit-btn" onclick="submitReview()">Submit Review ⭐</button>
+    </div>
+
+    <!-- Past reviews given by this owner -->
+    <div class="card">
+      <div class="section-title">📝 Reviews You've Given</div>
+      <div id="past-reviews">
+        <div class="no-reviews">No reviews given yet.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let selectedBookingId = null;
+  let selectedWorkerId = null;
+  let selectedWorkerName = null;
+  let selectedRating = 0;
+
+  // Star rating logic
+  const stars = document.querySelectorAll('.star-btn');
+  stars.forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedRating = parseInt(btn.dataset.val);
+      stars.forEach(s => {
+        s.classList.toggle('lit', parseInt(s.dataset.val) <= selectedRating);
+      });
+    });
+    btn.addEventListener('mouseover', () => {
+      const val = parseInt(btn.dataset.val);
+      stars.forEach(s => s.classList.toggle('lit', parseInt(s.dataset.val) <= val));
+    });
+    btn.addEventListener('mouseout', () => {
+      stars.forEach(s => s.classList.toggle('lit', parseInt(s.dataset.val) <= selectedRating));
+    });
+  });
+
+  window.selectWorker = function(bookingId, workerId, workerName) {
+    selectedBookingId = bookingId;
+    selectedWorkerId = workerId;
+    selectedWorkerName = workerName;
+    selectedRating = 0;
+    stars.forEach(s => s.classList.remove('lit'));
+    document.getElementById('review-comment').value = '';
+    document.getElementById('error-box').style.display = 'none';
+    document.getElementById('success-box').style.display = 'none';
+    document.getElementById('review-form-title').textContent = '⭐ Review for ' + workerName;
+    document.getElementById('review-form-card').style.display = 'block';
+    document.getElementById('review-form-card').scrollIntoView({ behavior: 'smooth' });
+
+    // Highlight selected
+    document.querySelectorAll('.worker-tab').forEach(t => t.classList.remove('selected'));
+    document.querySelector('[data-booking="' + bookingId + '"]').classList.add('selected');
+  }
+
+  window.submitReview = async function() {
+    const comment = document.getElementById('review-comment').value.trim();
+    const errEl = document.getElementById('error-box');
+    const successEl = document.getElementById('success-box');
+    const btn = document.getElementById('submit-btn');
+
+    errEl.style.display = 'none';
+    successEl.style.display = 'none';
+
+    if (selectedRating === 0) {
+      errEl.textContent = '⚠️ Please select a star rating.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    try {
+      const ownerSnap = await getDoc(doc(db, 'users', currentUser.uid));
+      const ownerData = ownerSnap.data();
+      const ownerName = ((ownerData?.firstName || '') + ' ' + (ownerData?.lastName || '')).trim();
+      const ownerInitials = (ownerData?.firstName?.[0] || '') + (ownerData?.lastName?.[0] || '');
+
+      // Save review to Firestore
+      await addDoc(collection(db, 'reviews'), {
+        workerId: selectedWorkerId,
+        workerName: selectedWorkerName,
+        ownerId: currentUser.uid,
+        ownerName: ownerName,
+        ownerInitials: ownerInitials,
+        bookingId: selectedBookingId,
+        rating: selectedRating,
+        comment: comment,
+        createdAt: new Date().toISOString()
+      });
+
+      // Update worker's average rating in users collection
+      const reviewsSnap = await getDocs(query(collection(db, 'reviews'), where('workerId', '==', selectedWorkerId)));
+      let total = 0, count = 0;
+      reviewsSnap.forEach(r => { total += r.data().rating; count++; });
+      const avg = count > 0 ? Math.round((total / count) * 10) / 10 : 0;
+      await updateDoc(doc(db, 'users', selectedWorkerId), { rating: avg, reviewCount: count });
+
+      successEl.style.display = 'block';
+      btn.textContent = '✅ Submitted!';
+      setTimeout(() => location.reload(), 1500);
+    } catch (err) {
+      errEl.textContent = '❌ Error: ' + err.message;
+      errEl.style.display = 'block';
+      btn.textContent = 'Submit Review ⭐';
+      btn.disabled = false;
+    }
+  }
+
+  function starsHtml(rating) {
+    let s = '';
+    for (let i = 1; i <= 5; i++) s += i <= rating ? '★' : '☆';
+    return s;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+    currentUser = user;
+
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
+    const userData = userDoc.data();
+    if (userData.userType !== 'owner') { window.location.href = 'dashboard-worker.html'; return; }
+
+    const firstName = userData.firstName || '';
+    const lastName = userData.lastName || '';
+    document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
+    document.getElementById('sidebar-av').textContent = (firstName[0] || '') + (lastName[0] || '');
+
+    // Load active bookings
+    const bookingsSnap = await getDocs(query(collection(db, 'bookings'), where('ownerId', '==', user.uid), where('status', '==', 'active')));
+    const bookings = [];
+    bookingsSnap.forEach(d => bookings.push({ id: d.id, ...d.data() }));
+
+    // Load reviews already given by this owner
+    const reviewsGivenSnap = await getDocs(query(collection(db, 'reviews'), where('ownerId', '==', user.uid)));
+    const reviewedBookingIds = new Set();
+    const reviewsGiven = [];
+    reviewsGivenSnap.forEach(r => {
+      reviewedBookingIds.add(r.data().bookingId);
+      reviewsGiven.push(r.data());
+    });
+    reviewsGiven.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // Render worker tabs
+    const workersList = document.getElementById('workers-list');
+    if (bookings.length === 0) {
+      workersList.innerHTML = `<div class="no-workers"><div class="no-workers-icon">👤</div><div>No active workers yet. <a href="search.html" style="color:#1a6b3c; font-weight:600;">Find a worker →</a></div></div>`;
+    } else {
+      let html = '';
+      bookings.forEach(b => {
+        const initials = b.workerName ? b.workerName.split(' ').map(n => n[0]).join('').toUpperCase() : '??';
+        const alreadyReviewed = reviewedBookingIds.has(b.id);
+        const statusBadge = alreadyReviewed
+          ? '<span class="worker-status status-reviewed">✓ Reviewed</span>'
+          : '<span class="worker-status status-active">Review now</span>';
+        const clickAttr = alreadyReviewed ? '' : `onclick="selectWorker('${b.id}', '${b.workerId}', '${b.workerName}')"`;
+        html += `
+          <div class="worker-tab" data-booking="${b.id}" ${clickAttr} style="${alreadyReviewed ? 'opacity:0.6; cursor:default;' : ''}">
+            <div class="worker-av">${initials}</div>
+            <div>
+              <div class="worker-name">${b.workerName || '—'}</div>
+              <div class="worker-sub">${b.workerRole || '—'} · ${b.monthlySalary?.toLocaleString()} ETB/month</div>
+            </div>
+            ${statusBadge}
+          </div>`;
+      });
+      workersList.innerHTML = html;
+    }
+
+    // Render past reviews
+    const pastEl = document.getElementById('past-reviews');
+    if (reviewsGiven.length === 0) {
+      pastEl.innerHTML = '<div class="no-reviews">No reviews given yet.</div>';
+    } else {
+      let html = '';
+      reviewsGiven.forEach(r => {
+        const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+        html += `
+          <div class="review-item">
+            <div class="review-top">
+              <div class="review-av">${r.ownerInitials || '??'}</div>
+              <div>
+                <div class="review-owner">Review for ${r.workerName || '—'}</div>
+                <div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px; color:#888;">${r.rating}/5</span></div>
+              </div>
+              <div class="review-date">${date}</div>
+            </div>
+            ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : '<div class="review-comment" style="color:#aaa; font-style:italic;">No comment left</div>'}
+          </div>`;
+      });
+      pastEl.innerHTML = html;
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+
+</body>
+</html>

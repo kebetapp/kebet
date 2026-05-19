@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — My Reviews</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #111; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .sidebar-item.active { background: rgba(26,107,60,0.3); color: #fff; border-left-color: #1a6b3c; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-badge { background: #f0a500; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.3); font-size: 18px; cursor: pointer; }
+    .main { margin-left: 240px; flex: 1; padding: 32px; max-width: 700px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
+    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; }
+
+    /* Rating summary */
+    .rating-summary { display: flex; align-items: center; gap: 24px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #f5f5f0; }
+    .rating-big { font-size: 56px; font-weight: 700; color: #c87800; line-height: 1; }
+    .rating-stars-big { color: #f0a500; font-size: 22px; margin-bottom: 4px; }
+    .rating-count { font-size: 13px; color: #888; }
+    .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .bar-label { font-size: 12px; color: #888; width: 30px; text-align: right; }
+    .bar-wrap { flex: 1; background: #eee; border-radius: 10px; height: 8px; overflow: hidden; }
+    .bar-fill { height: 100%; background: #f0a500; border-radius: 10px; }
+    .bar-count { font-size: 12px; color: #888; width: 20px; }
+
+    /* Review cards */
+    .review-item { padding: 16px 0; border-bottom: 1px solid #f5f5f0; }
+    .review-item:last-child { border-bottom: none; }
+    .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .review-av { width: 38px; height: 38px; border-radius: 10px; background: #e8f0ff; color: #2255cc; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .review-owner { font-size: 14px; font-weight: 700; color: #111; }
+    .review-date { font-size: 11px; color: #aaa; margin-left: auto; }
+    .review-stars { color: #f0a500; font-size: 15px; margin-bottom: 4px; }
+    .review-comment { font-size: 13px; color: #555; line-height: 1.6; font-style: italic; }
+    .no-reviews { text-align: center; padding: 48px 20px; }
+    .no-reviews-icon { font-size: 48px; margin-bottom: 12px; }
+    .no-reviews-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .no-reviews-sub { font-size: 13px; color: #888; }
+    .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
+  <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role">House Worker</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading your reviews...</div>
+  <div id="page-content" style="display:none;">
+    <div class="page-title">⭐ My Reviews</div>
+    <div class="page-sub">See what house owners say about you</div>
+
+    <div class="card">
+      <div class="section-title">📊 Your Rating</div>
+      <div class="rating-summary">
+        <div>
+          <div class="rating-big" id="avg-rating">—</div>
+          <div class="rating-stars-big" id="avg-stars">☆☆☆☆☆</div>
+          <div class="rating-count" id="review-count">0 reviews</div>
+        </div>
+        <div style="flex:1;" id="bar-chart"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">💬 All Reviews</div>
+      <div id="reviews-list">
+        <div class="no-reviews">
+          <div class="no-reviews-icon">⭐</div>
+          <div class="no-reviews-title">No reviews yet</div>
+          <div class="no-reviews-sub">Once an owner rates you, it will appear here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  function starsHtml(rating) {
+    let s = '';
+    for (let i = 1; i <= 5; i++) s += i <= Math.round(rating) ? '★' : '☆';
+    return s;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
+    const userData = userDoc.data();
+    if (userData.userType !== 'worker') { window.location.href = 'dashboard-owner.html'; return; }
+
+    const firstName = userData.firstName || '';
+    const lastName = userData.lastName || '';
+    document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
+    document.getElementById('sidebar-av').textContent = (firstName[0] || '') + (lastName[0] || '');
+
+    // Load reviews
+    const snap = await getDocs(query(collection(db, 'reviews'), where('workerId', '==', user.uid)));
+    const reviews = [];
+    snap.forEach(r => reviews.push(r.data()));
+    reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // Compute stats
+    const count = reviews.length;
+    const avg = count > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / count : 0;
+    const dist = [0, 0, 0, 0, 0]; // index 0=1star ... 4=5star
+    reviews.forEach(r => { if (r.rating >= 1 && r.rating <= 5) dist[r.rating - 1]++; });
+
+    document.getElementById('avg-rating').textContent = count > 0 ? avg.toFixed(1) : '—';
+    document.getElementById('avg-stars').textContent = starsHtml(avg);
+    document.getElementById('review-count').textContent = count + ' review' + (count !== 1 ? 's' : '');
+
+    // Bar chart (5 down to 1)
+    let barHtml = '';
+    for (let i = 5; i >= 1; i--) {
+      const val = dist[i - 1];
+      const pct = count > 0 ? Math.round((val / count) * 100) : 0;
+      barHtml += `
+        <div class="bar-row">
+          <div class="bar-label">${i}★</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <div class="bar-count">${val}</div>
+        </div>`;
+    }
+    document.getElementById('bar-chart').innerHTML = barHtml;
+
+    // Reviews list
+    const listEl = document.getElementById('reviews-list');
+    if (reviews.length === 0) {
+      listEl.innerHTML = `
+        <div class="no-reviews">
+          <div class="no-reviews-icon">⭐</div>
+          <div class="no-reviews-title">No reviews yet</div>
+          <div class="no-reviews-sub">Once an owner rates you, it will appear here.</div>
+        </div>`;
+    } else {
+      let html = '';
+      reviews.forEach(r => {
+        const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+        html += `
+          <div class="review-item">
+            <div class="review-top">
+              <div class="review-av">${r.ownerInitials || '??'}</div>
+              <div>
+                <div class="review-owner">${r.ownerName || 'House Owner'}</div>
+                <div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px; color:#888;">${r.rating}/5</span></div>
+              </div>
+              <div class="review-date">${date}</div>
+            </div>
+            ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : '<div class="review-comment" style="color:#ccc; font-style:italic;">No comment left</div>'}
+          </div>`;
+      });
+      listEl.innerHTML = html;
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+
+</body>
+</html>
