@@ -3,59 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kebet — Salary Tracker</title>
+  <title>Kebet — My Salary</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
-    .sidebar { width: 240px; background: #111; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
-    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    body { font-family: 'Segoe UI', sans-serif; background: #111; color: #111; display: flex; min-height: 100vh; }
+
+    /* Dark sidebar for worker */
+    .sidebar { width: 240px; background: #1a1a1a; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 16px; }
     .sidebar-logo-icon { width: 36px; height: 36px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
     .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
     .sidebar-logo-am { font-size: 11px; color: #f0a500; }
-    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
-    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500; border-left: 3px solid transparent; }
-    .sidebar-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
-    .sidebar-item.active { background: rgba(26,107,60,0.3); color: #fff; border-left-color: #1a6b3c; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.25); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 500; border-left: 3px solid transparent; transition: all 0.2s; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar-item.active { background: rgba(26,107,60,0.25); color: #fff; border-left-color: #1a6b3c; }
     .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
-    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; }
     .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
     .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
-    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.35); }
     .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.3); font-size: 18px; cursor: pointer; }
-    .main { margin-left: 240px; flex: 1; padding: 32px; }
-    .page-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 6px; }
-    .page-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; }
-    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 12px; }
+
+    /* Main content — white background */
+    .main { margin-left: 240px; flex: 1; padding: 32px; background: #f5f5f0; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-title { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #888; }
+
+    /* Worker rights banner — green */
+    .rights-banner { background: #1a6b3c; border-radius: 16px; padding: 20px 24px; margin-bottom: 24px; display: flex; gap: 16px; align-items: flex-start; }
+    .rights-banner-icon { font-size: 36px; flex-shrink: 0; }
+    .rights-banner-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .rights-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .rights-list-item { font-size: 12px; color: rgba(255,255,255,0.85); display: flex; gap: 6px; align-items: flex-start; line-height: 1.5; }
+    .contact-kebet-btn { background: #f0a500; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 14px; display: inline-block; }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: 14px; padding: 18px; border: 1px solid #eee; }
+    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
     .icon-green { background: #e8f5ee; }
     .icon-gold { background: #fff5e0; }
     .icon-blue { background: #e8f0ff; }
-    .stat-num { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 2px; }
-    .stat-label { font-size: 12px; color: #888; }
-    .stat-change { font-size: 11px; color: #1a6b3c; margin-top: 6px; font-weight: 600; }
+    .icon-pink { background: #ffe8f0; }
+    .stat-num { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .stat-label { font-size: 11px; color: #888; }
+    .stat-sub { font-size: 11px; color: #1a6b3c; margin-top: 4px; font-weight: 600; }
+
+    /* Salary card */
     .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
-    .card-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 16px; }
-    .salary-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
+    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .card-badge { font-size: 11px; background: #e8f5ee; color: #1a6b3c; padding: 4px 10px; border-radius: 8px; font-weight: 600; }
+
+    /* Current salary display */
+    .current-salary-box { background: linear-gradient(135deg, #1a6b3c, #145530); border-radius: 14px; padding: 24px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .csal-left { }
+    .csal-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+    .csal-amount { font-size: 36px; font-weight: 700; color: #fff; }
+    .csal-period { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+    .csal-right { text-align: right; }
+    .csal-next-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+    .csal-next-date { font-size: 16px; font-weight: 700; color: #f0a500; }
+    .csal-status { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+    /* Salary history rows */
+    .salary-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
     .salary-row:last-child { border-bottom: none; }
+    .sal-month-icon { width: 40px; height: 40px; border-radius: 10px; background: #e8f5ee; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .sal-month-icon.pending { background: #fff5e0; }
+    .sal-month-icon.upcoming { background: #f0f0f0; }
+    .sal-info { flex: 1; }
     .sal-month { font-size: 14px; font-weight: 600; color: #111; }
     .sal-date { font-size: 11px; color: #aaa; margin-top: 2px; }
-    .sal-amount { font-size: 15px; font-weight: 700; color: #1a6b3c; }
-    .sal-status { font-size: 11px; padding: 4px 12px; border-radius: 8px; font-weight: 600; }
-    .s-paid { background: #e8f5ee; color: #1a6b3c; }
+    .sal-amount { font-size: 15px; font-weight: 700; color: #1a6b3c; margin-right: 10px; }
+    .sal-status { font-size: 11px; padding: 4px 12px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
+    .s-received { background: #e8f5ee; color: #1a6b3c; }
     .s-pending { background: #fff5e0; color: #c87800; }
     .s-upcoming { background: #f0f0f0; color: #888; }
-    .info-banner { background: #1a6b3c; border-radius: 16px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
-    .info-banner-icon { font-size: 32px; }
-    .info-banner-text { color: #fff; font-size: 14px; line-height: 1.7; }
-    .info-banner-text strong { font-size: 16px; display: block; margin-bottom: 4px; }
-    .contact-btn { background: #fff; color: #1a6b3c; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-    .empty-state { text-align: center; padding: 40px; color: #aaa; }
+
+    /* Not paid alert */
+    .not-paid-alert { background: #fff0f0; border: 1px solid #ffcccc; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .alert-icon { font-size: 24px; flex-shrink: 0; }
+    .alert-title { font-size: 14px; font-weight: 700; color: #cc0000; margin-bottom: 4px; }
+    .alert-text { font-size: 13px; color: #555; line-height: 1.6; }
+    .alert-btn { background: #cc0000; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 40px 20px; }
     .empty-icon { font-size: 48px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 600; color: #555; margin-bottom: 8px; }
-    .empty-sub { font-size: 13px; color: #aaa; }
-    .loading { text-align: center; padding: 60px; color: #888; }
-    @media (max-width: 900px) { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } .stats-row { grid-template-columns: 1fr 1fr; } }
+    .empty-sub { font-size: 13px; color: #aaa; line-height: 1.6; }
+
+    /* How it works */
+    .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .how-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px; background: #f5f5f0; border-radius: 12px; }
+    .how-num { width: 28px; height: 28px; background: #1a6b3c; color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .how-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+    .loading { text-align: center; padding: 60px; color: #888; background: #f5f5f0; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .rights-list { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -69,34 +124,42 @@
   <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Jobs</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> My Salary</div>
-  <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
-  <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
   <div class="sidebar-section">ACCOUNT</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
       <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
-      <div class="sidebar-user-role">House Worker</div>
+      <div class="sidebar-user-role">House Worker · የቤት ሰራተኛ</div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
 </div>
 
 <div class="main">
-  <div id="loading" class="loading">⏳ Loading salary tracker...</div>
+  <div id="loading" class="loading">⏳ Loading your salary tracker...</div>
   <div id="main-content" style="display:none;">
 
-    <div class="page-title">💰 My Salary Tracker</div>
-    <div class="page-sub" id="page-sub">Track your monthly salary payments</div>
+    <div class="page-header">
+      <div class="page-title">💰 My Salary Tracker</div>
+      <div class="page-sub" id="page-sub">Welcome! Here is your salary information</div>
+    </div>
 
-    <!-- Rights banner -->
-    <div class="info-banner">
-      <div class="info-banner-icon">🙏</div>
-      <div class="info-banner-text">
-        <strong>Your salary rights — መብቶችዎ</strong>
-        Your salary must be paid on time every month. If your employer is late or refuses to pay, contact Kebet immediately. We protect you.
-        <br/><button class="contact-btn">📞 Contact Kebet Support</button>
+    <!-- Worker rights banner -->
+    <div class="rights-banner">
+      <div class="rights-banner-icon">🙏</div>
+      <div>
+        <div class="rights-banner-title">Your Salary Rights — የደሞዝ መብቶችዎ</div>
+        <div class="rights-list">
+          <div class="rights-list-item"><span>✅</span> Salary must be paid every month on time</div>
+          <div class="rights-list-item"><span>✅</span> You have the right to know your salary amount</div>
+          <div class="rights-list-item"><span>✅</span> No one can reduce your salary without agreement</div>
+          <div class="rights-list-item"><span>✅</span> Contact Kebet if salary is late or unpaid</div>
+        </div>
+        <button class="contact-kebet-btn">📞 Contact Kebet if salary is late</button>
       </div>
     </div>
 
@@ -105,31 +168,60 @@
       <div class="stat-card">
         <div class="stat-icon icon-green">💰</div>
         <div class="stat-num" id="stat-salary">—</div>
-        <div class="stat-label">Monthly salary (ETB)</div>
-        <div class="stat-change">Agreed with employer</div>
+        <div class="stat-label">My monthly salary (ETB)</div>
+        <div class="stat-sub">Agreed amount</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon icon-gold">📅</div>
+        <div class="stat-icon icon-gold">✅</div>
+        <div class="stat-num" id="stat-received">0</div>
+        <div class="stat-label">Payments received</div>
+        <div class="stat-sub" id="stat-total-received">Total: 0 ETB</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-blue">📅</div>
         <div class="stat-num" id="stat-months">0</div>
         <div class="stat-label">Months worked</div>
-        <div class="stat-change" id="stat-total">Total: 0 ETB</div>
+        <div class="stat-sub">Since you started</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon icon-blue">⏳</div>
-        <div class="stat-num" id="stat-next">—</div>
+        <div class="stat-icon icon-pink">⏳</div>
+        <div class="stat-num" id="stat-next">Soon</div>
         <div class="stat-label">Next payment</div>
-        <div class="stat-change">End of this month</div>
+        <div class="stat-sub">End of month</div>
+      </div>
+    </div>
+
+    <!-- Current salary box -->
+    <div class="card">
+      <div class="card-title">
+        My Current Salary
+        <span class="card-badge">🛏️ Live-in Worker</span>
+      </div>
+      <div class="current-salary-box">
+        <div class="csal-left">
+          <div class="csal-label">Monthly salary agreed</div>
+          <div class="csal-amount" id="csal-amount">— ETB</div>
+          <div class="csal-period">Paid every month · የወር ደሞዝ</div>
+        </div>
+        <div class="csal-right">
+          <div class="csal-next-label">Next payment</div>
+          <div class="csal-next-date" id="csal-next-date">End of month</div>
+          <div class="csal-status">Cash or mobile money</div>
+        </div>
       </div>
     </div>
 
     <!-- Salary history -->
     <div class="card">
-      <div class="card-title">📋 Salary History</div>
+      <div class="card-title">
+        📋 Salary History
+        <span class="card-badge" id="history-badge">0 payments</span>
+      </div>
       <div id="salary-list">
         <div class="empty-state">
           <div class="empty-icon">💰</div>
           <div class="empty-title">No salary records yet</div>
-          <div class="empty-sub">Your salary history will appear here once you start working</div>
+          <div class="empty-sub">Your salary history will appear here once your employer starts marking payments.<br/><br/>If you have been working and not received payment — contact Kebet immediately!</div>
         </div>
       </div>
     </div>
@@ -137,23 +229,11 @@
     <!-- How salary works -->
     <div class="card">
       <div class="card-title">ℹ️ How salary works on Kebet</div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <div style="display:flex; gap:12px; align-items:flex-start;">
-          <div style="width:32px; height:32px; background:#e8f5ee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">1️⃣</div>
-          <div style="font-size:13px; color:#555; line-height:1.6;">You and your employer agree on a monthly salary before work starts</div>
-        </div>
-        <div style="display:flex; gap:12px; align-items:flex-start;">
-          <div style="width:32px; height:32px; background:#e8f5ee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">2️⃣</div>
-          <div style="font-size:13px; color:#555; line-height:1.6;">Salary is paid at the end of every month in cash or mobile money</div>
-        </div>
-        <div style="display:flex; gap:12px; align-items:flex-start;">
-          <div style="width:32px; height:32px; background:#e8f5ee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">3️⃣</div>
-          <div style="font-size:13px; color:#555; line-height:1.6;">Your employer marks your salary as paid on Kebet so both sides have a record</div>
-        </div>
-        <div style="display:flex; gap:12px; align-items:flex-start;">
-          <div style="width:32px; height:32px; background:#e8f5ee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">4️⃣</div>
-          <div style="font-size:13px; color:#555; line-height:1.6;">If salary is late or unpaid contact Kebet — we will help you get your money</div>
-        </div>
+      <div class="how-grid">
+        <div class="how-item"><div class="how-num">1</div><div class="how-text">You and your employer agree on a monthly salary before work starts</div></div>
+        <div class="how-item"><div class="how-num">2</div><div class="how-text">Salary is paid at the end of every month in cash or mobile money (CBE Birr, Telebirr)</div></div>
+        <div class="how-item"><div class="how-num">3</div><div class="how-text">Your employer marks your salary as paid on Kebet — both sides have a record</div></div>
+        <div class="how-item"><div class="how-num">4</div><div class="how-text">If salary is late or not paid — contact Kebet immediately and we will help you!</div></div>
       </div>
     </div>
 
@@ -163,7 +243,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -179,18 +259,19 @@
   const db = getFirestore(app);
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = 'signin.html';
-      return;
-    }
+    if (!user) { window.location.href = 'signin.html'; return; }
 
     const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists()) {
-      window.location.href = 'signin.html';
+    if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
+
+    const data = userDoc.data();
+
+    // Make sure this is a worker
+    if (data.userType === 'owner') {
+      window.location.href = 'dashboard-owner.html';
       return;
     }
 
-    const data = userDoc.data();
     const firstName = data.firstName || '';
     const lastName = data.lastName || '';
     const fullName = firstName + ' ' + lastName;
@@ -198,8 +279,24 @@
 
     document.getElementById('sidebar-name').textContent = fullName;
     document.getElementById('sidebar-av').textContent = initials;
+    document.getElementById('page-sub').textContent = 'Hello ' + firstName + '! Here is your salary information';
 
-    // Try to load payments from Firebase
+    // Get agreed salary from booking or user profile
+    const agreedSalary = data.agreedSalary || data.salary || null;
+    if (agreedSalary) {
+      const salFormatted = parseInt(agreedSalary).toLocaleString() + ' ETB';
+      document.getElementById('stat-salary').textContent = parseInt(agreedSalary).toLocaleString();
+      document.getElementById('csal-amount').textContent = salFormatted;
+    }
+
+    // Get next payment date — end of current month
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const nextPayment = endOfMonth.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    document.getElementById('stat-next').textContent = nextPayment;
+    document.getElementById('csal-next-date').textContent = nextPayment;
+
+    // Load payments from Firebase
     try {
       const paymentsQuery = query(
         collection(db, 'payments'),
@@ -208,46 +305,54 @@
       const paymentsSnap = await getDocs(paymentsQuery);
 
       if (!paymentsSnap.empty) {
-        let totalPaid = 0;
+        let totalReceived = 0;
+        let receivedCount = 0;
         let monthsWorked = 0;
-        let lastSalary = 0;
         let rows = '';
 
         const payments = [];
-        paymentsSnap.forEach(doc => payments.push({ id: doc.id, ...doc.data() }));
-        payments.sort((a, b) => new Date(b.date) - new Date(a.date));
+        paymentsSnap.forEach(d => payments.push({ id: d.id, ...d.data() }));
+        payments.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+        monthsWorked = payments.length;
 
         payments.forEach(p => {
           const amount = parseInt(p.amount) || 0;
-          lastSalary = amount;
-          if (p.status === 'paid') { totalPaid += amount; monthsWorked++; }
-          const statusClass = p.status === 'paid' ? 's-paid' : p.status === 'pending' ? 's-pending' : 's-upcoming';
-          const statusText = p.status === 'paid' ? '✓ Received' : p.status === 'pending' ? '⏳ Pending' : '📅 Upcoming';
+          if (p.status === 'paid') { totalReceived += amount; receivedCount++; }
+
+          const iconClass = p.status === 'paid' ? '' : p.status === 'pending' ? 'pending' : 'upcoming';
+          const icon = p.status === 'paid' ? '✅' : p.status === 'pending' ? '⏳' : '📅';
+          const statusClass = p.status === 'paid' ? 's-received' : p.status === 'pending' ? 's-pending' : 's-upcoming';
+          const statusText = p.status === 'paid' ? '✓ Received' : p.status === 'pending' ? '⏳ Waiting' : '📅 Upcoming';
+
           rows += `
             <div class="salary-row">
-              <div><div class="sal-month">${p.month || '—'}</div><div class="sal-date">${p.date || ''}</div></div>
+              <div class="sal-month-icon ${iconClass}">${icon}</div>
+              <div class="sal-info">
+                <div class="sal-month">${p.month || '—'}</div>
+                <div class="sal-date">${p.date ? 'Paid: ' + p.date : 'Expected end of month'}</div>
+              </div>
               <div class="sal-amount">${amount.toLocaleString()} ETB</div>
               <span class="sal-status ${statusClass}">${statusText}</span>
             </div>`;
         });
 
-        document.getElementById('stat-salary').textContent = lastSalary.toLocaleString();
+        document.getElementById('stat-received').textContent = receivedCount;
         document.getElementById('stat-months').textContent = monthsWorked;
-        document.getElementById('stat-total').textContent = 'Total: ' + totalPaid.toLocaleString() + ' ETB';
-        document.getElementById('stat-next').textContent = 'End of month';
+        document.getElementById('stat-total-received').textContent = 'Total: ' + totalReceived.toLocaleString() + ' ETB';
+        document.getElementById('history-badge').textContent = monthsWorked + ' payments';
         document.getElementById('salary-list').innerHTML = rows;
 
-      } else {
-        // No payments yet — show default view with worker salary from profile
-        const salary = data.salary || data.agreedSalary || '—';
-        document.getElementById('stat-salary').textContent = salary ? parseInt(salary).toLocaleString() : '—';
-        document.getElementById('stat-next').textContent = 'End of month';
-      }
+        // Update salary from payment if not in profile
+        if (!agreedSalary && payments.length > 0) {
+          const lastAmount = parseInt(payments[0].amount) || 0;
+          document.getElementById('stat-salary').textContent = lastAmount.toLocaleString();
+          document.getElementById('csal-amount').textContent = lastAmount.toLocaleString() + ' ETB';
+        }
 
-    } catch (error) {
-      console.log('No payments collection yet — showing default view');
-      const salary = data.salary || '—';
-      document.getElementById('stat-salary').textContent = salary;
+      }
+    } catch (err) {
+      console.log('Payments not loaded:', err.message);
     }
 
     document.getElementById('loading').style.display = 'none';
