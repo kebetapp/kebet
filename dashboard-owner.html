@@ -105,7 +105,7 @@
   <div class="sidebar-item" onclick="window.location.href='payments-owner.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
   <div class="sidebar-item" onclick="window.location.href='reviews.html'"><span class="sidebar-item-icon">⭐</span> Reviews</div>
   <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
   <div class="sidebar-section">ACCOUNT</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
@@ -239,11 +239,7 @@
   window.closeActivateModal = function() { document.getElementById('activate-modal').classList.remove('show'); }
 
   async function sendNotification(userId, type, title, message) {
-    try {
-      await addDoc(collection(db, 'notifications'), {
-        userId, type, title, message, read: false, createdAt: new Date().toISOString()
-      });
-    } catch(e) {}
+    try { await addDoc(collection(db, 'notifications'), { userId, type, title, message, read: false, createdAt: new Date().toISOString() }); } catch(e) {}
   }
 
   function openCancelModal(bookingId) {
@@ -272,10 +268,8 @@
       list.innerHTML = `<div class="card"><div class="no-bookings"><div class="no-bookings-icon">🔍</div><div class="no-bookings-title">No bookings yet</div><div class="no-bookings-sub">Find a trusted live-in worker for your home today</div><button class="btn-sm-green" onclick="window.location.href='search.html'">Browse Workers →</button></div></div>`;
       return;
     }
-
     let active = 0, pending = 0, ended = 0;
     let html = '';
-
     bookings.forEach(b => {
       const data = b.data();
       const initials = data.workerName ? data.workerName.split(' ').map(n => n[0]).join('').toUpperCase() : '??';
@@ -285,24 +279,17 @@
       if (status === 'active') active++;
       else if (status === 'pending') pending++;
       else ended++;
-
-      const statusBadge = status === 'active'
-        ? '<span class="status-badge status-active">✓ Active</span>'
-        : status === 'pending'
-        ? '<span class="status-badge status-pending">⏳ Pending</span>'
-        : '<span class="status-badge status-ended">Ended</span>';
-
+      const statusBadge = status === 'active' ? '<span class="status-badge status-active">✓ Active</span>' : status === 'pending' ? '<span class="status-badge status-pending">⏳ Pending</span>' : '<span class="status-badge status-ended">Ended</span>';
       const actionBtns = status === 'pending'
         ? `<button class="btn-sm-green" onclick="activateBooking('${b.id}','${data.workerId}','${data.workerName}','${data.ownerName || ''}')">✓ Mark Active</button>
            <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">Cancel</button>`
         : status === 'active'
-        ? `<button class="btn-sm-green" onclick="window.location.href='payments-owner.html'">💰 Salary Payments</button>
-           <button class="btn-sm-outline" onclick="window.location.href='reviews.html'">⭐ Leave Review</button>
-           <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">End Contract</button>`
+        ? `<button class="btn-sm-green" onclick="window.location.href='payments-owner.html'">💰 Salary</button>
+           <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.workerId}'">💬 Message</button>
+           <button class="btn-sm-outline" onclick="window.location.href='reviews.html'">⭐ Review</button>
+           <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">End</button>`
         : '';
-
       const services = data.services ? data.services.join(' · ') : '—';
-
       html += `
         <div class="booking-card">
           <div class="booking-av">${initials}</div>
@@ -325,7 +312,6 @@
           </div>
         </div>`;
     });
-
     list.innerHTML = html;
     document.getElementById('stat-bookings').textContent = bookings.length;
     document.getElementById('stat-active').textContent = active;
@@ -333,10 +319,7 @@
     document.getElementById('sum-active').textContent = active;
     document.getElementById('sum-pending').textContent = pending;
     document.getElementById('sum-ended').textContent = ended;
-    if (bookings.length > 0) {
-      document.getElementById('bookings-badge').textContent = bookings.length;
-      document.getElementById('bookings-badge').style.display = 'inline';
-    }
+    if (bookings.length > 0) { document.getElementById('bookings-badge').textContent = bookings.length; document.getElementById('bookings-badge').style.display = 'inline'; }
   }
 
   window.cancelBooking = function(id) { openCancelModal(id); }
@@ -348,14 +331,12 @@
     if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
     const data = userDoc.data();
     if (data.userType !== 'owner') { window.location.href = 'dashboard-worker.html'; return; }
-
     const firstName = data.firstName || '';
     const lastName = data.lastName || '';
     const fullName = firstName + ' ' + lastName;
     const initials = (firstName[0] || '') + (lastName[0] || '');
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
     document.getElementById('greeting').textContent = greet + ', ' + firstName + '! 👋';
     document.getElementById('sidebar-name').textContent = fullName;
     document.getElementById('sidebar-av').textContent = initials;
@@ -365,20 +346,14 @@
     document.getElementById('profile-loc').textContent = '📍 ' + (data.location || '—') + ', Addis Ababa';
     document.getElementById('stat-name').textContent = firstName;
     document.getElementById('stat-location').textContent = data.location || '—';
-
     const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false)));
-    if (notifSnap.size > 0) {
-      document.getElementById('notif-badge').textContent = notifSnap.size;
-      document.getElementById('notif-badge').style.display = 'inline';
-    }
-
+    if (notifSnap.size > 0) { document.getElementById('notif-badge').textContent = notifSnap.size; document.getElementById('notif-badge').style.display = 'inline'; }
     const q = query(collection(db, 'bookings'), where('ownerId', '==', user.uid));
     const snap = await getDocs(q);
     const bookings = [];
     snap.forEach(d => bookings.push(d));
     bookings.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt));
     renderBookings(bookings);
-
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
   });

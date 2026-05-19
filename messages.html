@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Messages</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+
+    /* SIDEBAR — green for owner, dark for worker (auto-detected) */
+    .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar.worker { background: #111; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar.worker .sidebar-logo-icon { background: #1a6b3c; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-item.active { background: rgba(255,255,255,0.12); color: #fff; border-left-color: #f0a500; }
+    .sidebar.worker .sidebar-item { color: rgba(255,255,255,0.6); }
+    .sidebar.worker .sidebar-item.active { background: rgba(26,107,60,0.3); border-left-color: #1a6b3c; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-badge { background: #f0a500; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar.worker .sidebar-user-av { background: #fde8c8; color: #c87800; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
+
+    /* MAIN LAYOUT */
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .topbar { padding: 20px 28px; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .topbar h1 { font-size: 20px; font-weight: 700; color: #111; }
+    .topbar p { font-size: 13px; color: #888; margin-top: 2px; }
+
+    /* CHAT LAYOUT */
+    .chat-layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* CONVERSATIONS LIST */
+    .convos-panel { width: 300px; border-right: 1px solid #eee; background: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+    .convos-header { padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 13px; font-weight: 700; color: #111; }
+    .convos-list { flex: 1; overflow-y: auto; }
+    .convo-item { display: flex; gap: 12px; align-items: center; padding: 14px 20px; cursor: pointer; border-bottom: 1px solid #f5f5f0; transition: background 0.15s; }
+    .convo-item:hover { background: #f9f9f7; }
+    .convo-item.active { background: #e8f5ee; }
+    .convo-av { width: 44px; height: 44px; border-radius: 12px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .convo-av.owner { background: #e8f5ee; color: #1a6b3c; }
+    .convo-info { flex: 1; min-width: 0; }
+    .convo-name { font-size: 14px; font-weight: 600; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .convo-preview { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .convo-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .convo-time { font-size: 10px; color: #aaa; }
+    .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #1a6b3c; }
+    .no-convos { text-align: center; padding: 40px 20px; color: #aaa; }
+    .no-convos-icon { font-size: 40px; margin-bottom: 10px; }
+    .no-convos-text { font-size: 13px; }
+
+    /* CHAT WINDOW */
+    .chat-panel { flex: 1; display: flex; flex-direction: column; background: #f5f5f0; }
+    .chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #aaa; }
+    .chat-empty-icon { font-size: 56px; margin-bottom: 14px; }
+    .chat-empty-title { font-size: 16px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .chat-empty-sub { font-size: 13px; }
+    .chat-header { background: #fff; padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .chat-header-av { width: 40px; height: 40px; border-radius: 11px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+    .chat-header-av.owner { background: #e8f5ee; color: #1a6b3c; }
+    .chat-header-name { font-size: 15px; font-weight: 700; color: #111; }
+    .chat-header-sub { font-size: 12px; color: #888; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .msg-row { display: flex; gap: 8px; align-items: flex-end; }
+    .msg-row.mine { flex-direction: row-reverse; }
+    .msg-av { width: 30px; height: 30px; border-radius: 8px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .msg-av.owner { background: #e8f5ee; color: #1a6b3c; }
+    .msg-bubble { max-width: 65%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+    .msg-bubble.theirs { background: #fff; color: #111; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .msg-bubble.mine { background: #1a6b3c; color: #fff; border-bottom-right-radius: 4px; }
+    .msg-time { font-size: 10px; color: #aaa; margin-top: 3px; text-align: right; }
+    .msg-time.theirs { text-align: left; }
+    .chat-input-area { background: #fff; padding: 16px 20px; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .chat-input { flex: 1; border: 1.5px solid #eee; border-radius: 12px; padding: 12px 16px; font-size: 14px; outline: none; font-family: inherit; resize: none; max-height: 100px; }
+    .chat-input:focus { border-color: #1a6b3c; }
+    .send-btn { background: #1a6b3c; color: #fff; border: none; width: 44px; height: 44px; border-radius: 12px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+    .send-btn:hover { background: #145530; }
+    .send-btn:disabled { background: #aaa; cursor: not-allowed; }
+    .loading-full { display: flex; align-items: center; justify-content: center; flex: 1; color: #888; font-size: 15px; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .convos-panel { width: 100%; display: none; }
+      .convos-panel.show-mobile { display: flex; }
+      .chat-panel { display: none; }
+      .chat-panel.show-mobile { display: flex; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-item" id="nav-dashboard"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" id="nav-main"><span class="sidebar-item-icon" id="nav-main-icon">🔍</span> <span id="nav-main-label">Find Workers</span></div>
+  <div class="sidebar-item" id="nav-bookings"><span class="sidebar-item-icon">📋</span> <span id="nav-bookings-label">My Bookings</span></div>
+  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> <span id="nav-payments-label">Salary Payments</span></div>
+  <div class="sidebar-item" id="nav-reviews"><span class="sidebar-item-icon">⭐</span> Reviews</div>
+  <div class="sidebar-item" id="nav-notifs"><span class="sidebar-item-icon">🔔</span> Notifications</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role" id="sidebar-role">—</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <h1>💬 Messages</h1>
+      <p id="topbar-sub">Real-time chat with your workers / owners</p>
+    </div>
+  </div>
+
+  <div id="loading-full" class="loading-full">⏳ Loading messages...</div>
+
+  <div class="chat-layout" id="chat-layout" style="display:none;">
+
+    <!-- Conversations list -->
+    <div class="convos-panel" id="convos-panel">
+      <div class="convos-header">💬 Conversations</div>
+      <div class="convos-list" id="convos-list">
+        <div class="no-convos">
+          <div class="no-convos-icon">💬</div>
+          <div class="no-convos-text">No conversations yet.<br>Book a worker to start chatting!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat window -->
+    <div class="chat-panel" id="chat-panel">
+      <div class="chat-empty" id="chat-empty">
+        <div class="chat-empty-icon">💬</div>
+        <div class="chat-empty-title">Select a conversation</div>
+        <div class="chat-empty-sub">Choose someone from the left to start chatting</div>
+      </div>
+      <div id="chat-window" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+        <div class="chat-header">
+          <div class="chat-header-av" id="chat-header-av">?</div>
+          <div>
+            <div class="chat-header-name" id="chat-header-name">—</div>
+            <div class="chat-header-sub" id="chat-header-sub">—</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+          <textarea class="chat-input" id="chat-input" placeholder="Type a message..." rows="1"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, collection, query, where,
+    getDocs, addDoc, orderBy, onSnapshot, updateDoc, serverTimestamp, Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let currentUserData = null;
+  let activeConvoId = null;
+  let messagesUnsubscribe = null;
+  let allConvos = [];
+
+  // ── Sidebar navigation based on userType ──
+  function setupSidebar(userType) {
+    const sidebar = document.getElementById('sidebar');
+    if (userType === 'worker') {
+      sidebar.classList.add('worker');
+      document.getElementById('nav-dashboard').onclick = () => window.location.href = 'dashboard-worker.html';
+      document.getElementById('nav-main').onclick = () => window.location.href = 'dashboard-worker.html';
+      document.getElementById('nav-main-icon').textContent = '🏠';
+      document.getElementById('nav-main-label').textContent = 'My Jobs';
+      document.getElementById('nav-bookings').style.display = 'none';
+      document.getElementById('nav-payments').onclick = () => window.location.href = 'payments.html';
+      document.getElementById('nav-payments-label').textContent = 'My Salary';
+      document.getElementById('nav-reviews').onclick = () => window.location.href = 'my-reviews.html';
+      document.getElementById('nav-notifs').onclick = () => window.location.href = 'notifications.html';
+      document.getElementById('sidebar-role').textContent = 'House Worker';
+    } else {
+      document.getElementById('nav-dashboard').onclick = () => window.location.href = 'dashboard-owner.html';
+      document.getElementById('nav-main').onclick = () => window.location.href = 'search.html';
+      document.getElementById('nav-bookings').onclick = () => window.location.href = 'dashboard-owner.html';
+      document.getElementById('nav-bookings-label').textContent = 'My Bookings';
+      document.getElementById('nav-payments').onclick = () => window.location.href = 'payments-owner.html';
+      document.getElementById('nav-payments-label').textContent = 'Salary Payments';
+      document.getElementById('nav-reviews').onclick = () => window.location.href = 'reviews.html';
+      document.getElementById('nav-notifs').onclick = () => window.location.href = 'notifications.html';
+      document.getElementById('sidebar-role').textContent = 'House Owner';
+    }
+    document.getElementById('signout-btn').onclick = async () => {
+      await signOut(auth);
+      window.location.href = 'signin.html';
+    };
+  }
+
+  // ── Get or create a conversation between two users ──
+  async function getOrCreateConvo(otherUserId, otherUserName, otherUserType) {
+    // Conversation ID is always sorted so it's the same regardless of who opens it
+    const ids = [currentUser.uid, otherUserId].sort();
+    const convoId = ids[0] + '_' + ids[1];
+
+    const convoRef = doc(db, 'conversations', convoId);
+    const convoSnap = await getDoc(convoRef);
+
+    if (!convoSnap.exists()) {
+      const myName = (currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '');
+      await updateDoc(convoRef, {}).catch(async () => {
+        // Create it
+        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        await setDoc(convoRef, {
+          participants: [currentUser.uid, otherUserId],
+          participantNames: {
+            [currentUser.uid]: myName.trim(),
+            [otherUserId]: otherUserName
+          },
+          participantTypes: {
+            [currentUser.uid]: currentUserData.userType,
+            [otherUserId]: otherUserType
+          },
+          lastMessage: '',
+          lastMessageAt: new Date().toISOString(),
+          createdAt: new Date().toISOString()
+        });
+      });
+    }
+    return convoId;
+  }
+
+  // ── Load all conversations for current user ──
+  async function loadConversations() {
+    const q = query(
+      collection(db, 'conversations'),
+      where('participants', 'array-contains', currentUser.uid)
+    );
+    const snap = await getDocs(q);
+    allConvos = [];
+    snap.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
+    allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
+    renderConvoList();
+  }
+
+  function renderConvoList() {
+    const list = document.getElementById('convos-list');
+    if (allConvos.length === 0) {
+      list.innerHTML = `<div class="no-convos"><div class="no-convos-icon">💬</div><div class="no-convos-text">No conversations yet.<br>Book a worker to start chatting!</div></div>`;
+      return;
+    }
+
+    list.innerHTML = allConvos.map(c => {
+      const otherId = c.participants.find(p => p !== currentUser.uid);
+      const otherName = c.participantNames?.[otherId] || 'Unknown';
+      const otherType = c.participantTypes?.[otherId] || 'worker';
+      const initials = otherName.split(' ').map(n => n[0] || '').join('').toUpperCase().slice(0, 2);
+      const isActive = c.id === activeConvoId;
+      const time = c.lastMessageAt ? new Date(c.lastMessageAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '';
+
+      return `
+        <div class="convo-item ${isActive ? 'active' : ''}" onclick="openConvo('${c.id}', '${otherId}', '${otherName.replace(/'/g,"\\'")}', '${otherType}')">
+          <div class="convo-av ${otherType === 'owner' ? 'owner' : ''}">${initials}</div>
+          <div class="convo-info">
+            <div class="convo-name">${otherName}</div>
+            <div class="convo-preview">${c.lastMessage || 'No messages yet'}</div>
+          </div>
+          <div class="convo-meta">
+            <div class="convo-time">${time}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Open a conversation ──
+  window.openConvo = async function(convoId, otherId, otherName, otherType) {
+    activeConvoId = convoId;
+
+    // Update convo list highlight
+    renderConvoList();
+
+    // Set chat header
+    const initials = otherName.split(' ').map(n => n[0] || '').join('').toUpperCase().slice(0, 2);
+    const headerAv = document.getElementById('chat-header-av');
+    headerAv.textContent = initials;
+    headerAv.className = 'chat-header-av' + (otherType === 'owner' ? ' owner' : '');
+    document.getElementById('chat-header-name').textContent = otherName;
+    document.getElementById('chat-header-sub').textContent = otherType === 'owner' ? '🏠 House Owner' : '🧹 House Worker';
+
+    document.getElementById('chat-empty').style.display = 'none';
+    document.getElementById('chat-window').style.display = 'flex';
+
+    // Unsubscribe from previous listener
+    if (messagesUnsubscribe) messagesUnsubscribe();
+
+    // Real-time messages listener
+    const msgsRef = collection(db, 'conversations', convoId, 'messages');
+    const msgsQuery = query(msgsRef, orderBy('createdAt', 'asc'));
+
+    messagesUnsubscribe = onSnapshot(msgsQuery, (snap) => {
+      const container = document.getElementById('chat-messages');
+      const myInitials = ((currentUserData.firstName?.[0] || '') + (currentUserData.lastName?.[0] || '')).toUpperCase();
+      const otherInitials = otherName.split(' ').map(n => n[0] || '').join('').toUpperCase().slice(0, 2);
+
+      container.innerHTML = snap.docs.map(d => {
+        const msg = d.data();
+        const isMine = msg.senderId === currentUser.uid;
+        const time = msg.createdAt
+          ? (msg.createdAt.toDate ? msg.createdAt.toDate() : new Date(msg.createdAt))
+              .toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+          : '';
+
+        return `
+          <div class="msg-row ${isMine ? 'mine' : ''}">
+            <div class="msg-av ${!isMine && otherType === 'owner' ? 'owner' : ''}">${isMine ? myInitials : otherInitials}</div>
+            <div>
+              <div class="msg-bubble ${isMine ? 'mine' : 'theirs'}">${escapeHtml(msg.text)}</div>
+              <div class="msg-time ${isMine ? '' : 'theirs'}">${time}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    });
+  }
+
+  // ── Send a message ──
+  window.sendMessage = async function() {
+    if (!activeConvoId) return;
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const btn = document.getElementById('send-btn');
+    btn.disabled = true;
+    input.value = '';
+
+    try {
+      const msgsRef = collection(db, 'conversations', activeConvoId, 'messages');
+      await addDoc(msgsRef, {
+        text: text,
+        senderId: currentUser.uid,
+        senderName: ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim(),
+        createdAt: serverTimestamp()
+      });
+
+      // Update conversation last message
+      const convoRef = doc(db, 'conversations', activeConvoId);
+      await updateDoc(convoRef, {
+        lastMessage: text.length > 40 ? text.slice(0, 40) + '...' : text,
+        lastMessageAt: new Date().toISOString()
+      });
+
+      // Reload convo list to show updated preview
+      await loadConversations();
+
+    } catch (err) {
+      alert('Failed to send: ' + err.message);
+    }
+    btn.disabled = false;
+    input.focus();
+  }
+
+  // Send on Enter (Shift+Enter for new line)
+  document.getElementById('chat-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/\n/g, '<br>');
+  }
+
+  // ── Check URL for ?with=USER_ID to auto-open a chat ──
+  async function checkAutoOpen() {
+    const params = new URLSearchParams(window.location.search);
+    const withId = params.get('with');
+    if (!withId) return;
+
+    try {
+      const otherSnap = await getDoc(doc(db, 'users', withId));
+      if (!otherSnap.exists()) return;
+      const otherData = otherSnap.data();
+      const otherName = ((otherData.firstName || '') + ' ' + (otherData.lastName || '')).trim();
+      const otherType = otherData.userType;
+
+      const convoId = await getOrCreateConvo(withId, otherName, otherType);
+
+      // Add to convos list if not already there
+      if (!allConvos.find(c => c.id === convoId)) {
+        allConvos.unshift({
+          id: convoId,
+          participants: [currentUser.uid, withId],
+          participantNames: {
+            [currentUser.uid]: ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim(),
+            [withId]: otherName
+          },
+          participantTypes: {
+            [currentUser.uid]: currentUserData.userType,
+            [withId]: otherType
+          },
+          lastMessage: '',
+          lastMessageAt: new Date().toISOString()
+        });
+        renderConvoList();
+      }
+
+      openConvo(convoId, withId, otherName, otherType);
+    } catch (err) {
+      console.log('Auto-open error:', err);
+    }
+  }
+
+  // ── Auth ──
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+    currentUser = user;
+
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userSnap.exists()) { window.location.href = 'signin.html'; return; }
+    currentUserData = userSnap.data();
+
+    const firstName = currentUserData.firstName || '';
+    const lastName = currentUserData.lastName || '';
+    const initials = (firstName[0] || '') + (lastName[0] || '');
+
+    document.getElementById('sidebar-av').textContent = initials;
+    document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
+    document.getElementById('topbar-sub').textContent =
+      currentUserData.userType === 'owner'
+        ? 'Chat with your workers in real-time'
+        : 'Chat with house owners in real-time';
+
+    setupSidebar(currentUserData.userType);
+    await loadConversations();
+    await checkAutoOpen();
+
+    document.getElementById('loading-full').style.display = 'none';
+    document.getElementById('chat-layout').style.display = 'flex';
+  });
+</script>
+
+</body>
+</html>

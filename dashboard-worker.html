@@ -115,7 +115,7 @@
   <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
   <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
   <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
   <div class="sidebar-section">ACCOUNT</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
@@ -237,11 +237,7 @@
   window.closeDeclineModal = function() { document.getElementById('decline-modal').classList.remove('show'); }
 
   async function sendNotification(userId, type, title, message) {
-    try {
-      await addDoc(collection(db, 'notifications'), {
-        userId, type, title, message, read: false, createdAt: new Date().toISOString()
-      });
-    } catch(e) {}
+    try { await addDoc(collection(db, 'notifications'), { userId, type, title, message, read: false, createdAt: new Date().toISOString() }); } catch(e) {}
   }
 
   function openDeclineModal(bookingId) {
@@ -260,26 +256,16 @@
       list.innerHTML = `<div class="card"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title">No job offers yet</div><div class="no-jobs-sub">Your profile is live! House owners can find and book you on Kebet.</div></div></div>`;
       return;
     }
-
     let active = 0;
     let html = '';
-
     bookings.forEach(b => {
       const data = b.data();
       const status = data.status || 'pending';
       if (status === 'active') active++;
-
       const startDate = data.startDate ? new Date(data.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
       const bookedDate = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-
-      const statusBadge = status === 'active'
-        ? '<span class="status-badge status-active">✓ Active — You are working here</span>'
-        : status === 'pending'
-        ? '<span class="status-badge status-pending">⏳ Pending — Owner will contact you</span>'
-        : '<span class="status-badge status-ended">Ended / Declined</span>';
-
+      const statusBadge = status === 'active' ? '<span class="status-badge status-active">✓ Active — You are working here</span>' : status === 'pending' ? '<span class="status-badge status-pending">⏳ Pending — Owner will contact you</span>' : '<span class="status-badge status-ended">Ended / Declined</span>';
       const services = (data.services || []).map(s => `<span class="s-tag">${s}</span>`).join('');
-
       const salaryTracker = status === 'active' ? `
         <div style="margin-top:12px; padding:12px; background:#f5f5f0; border-radius:10px;">
           <div style="font-size:12px; font-weight:700; color:#111; margin-bottom:8px;">💰 Salary tracker</div>
@@ -288,18 +274,16 @@
           <div style="display:flex; justify-content:space-between; font-size:12px; color:#555; margin-bottom:8px;"><span>Total agreed</span><span style="font-weight:700;">${(data.totalAmount || 0).toLocaleString()} ETB</span></div>
           <button class="btn-sm-green" onclick="window.location.href='payments.html'" style="width:100%;">💰 View Full Payment History</button>
         </div>` : '';
-
       const actionBtns = status === 'pending' ? `
         <div class="job-actions" style="margin-top:10px;">
           <button class="btn-sm-green" onclick="acceptJob('${b.id}','${data.ownerId}','${data.ownerName || ''}','${data.workerName || ''}')">✅ Accept</button>
-          <button class="btn-sm-outline">💬 Contact Owner</button>
+          <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.ownerId}'">💬 Message Owner</button>
           <button class="btn-sm-red" onclick="declineJob('${b.id}')">❌ Decline</button>
         </div>` : status === 'active' ? `
         <div class="job-actions" style="margin-top:10px;">
-          <button class="btn-sm-outline">💬 Message Owner</button>
+          <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.ownerId}'">💬 Message Owner</button>
           <button class="btn-sm-outline">📞 Call Kebet Help</button>
         </div>` : '';
-
       html += `
         <div class="job-offer-card">
           <div class="job-offer-top">
@@ -325,26 +309,19 @@
           ${actionBtns}
         </div>`;
     });
-
     list.innerHTML = html;
     document.getElementById('stat-jobs').textContent = bookings.length;
     document.getElementById('stat-active').textContent = active;
-    if (bookings.length > 0) {
-      document.getElementById('jobs-badge').textContent = bookings.length;
-      document.getElementById('jobs-badge').style.display = 'inline';
-    }
+    if (bookings.length > 0) { document.getElementById('jobs-badge').textContent = bookings.length; document.getElementById('jobs-badge').style.display = 'inline'; }
   }
 
   window.acceptJob = async function(bookingId, ownerId, ownerName, workerName) {
     try {
       await updateDoc(doc(db, 'bookings', bookingId), { status: 'active' });
-      // Notify the owner
-      await sendNotification(ownerId, 'accepted', '✅ ' + workerName + ' accepted your booking!', workerName + ' has accepted your job offer and is ready to start. Go to My Bookings to confirm.');
+      await sendNotification(ownerId, 'accepted', '✅ ' + workerName + ' accepted your booking!', workerName + ' accepted your job offer and is ready to start.');
       alert('✅ You accepted the job! The owner will be notified.');
       location.reload();
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
+    } catch (err) { alert('Error: ' + err.message); }
   }
 
   window.declineJob = function(bookingId) { openDeclineModal(bookingId); }
@@ -355,20 +332,17 @@
     if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
     const data = userDoc.data();
     if (data.userType !== 'worker') { window.location.href = 'dashboard-owner.html'; return; }
-
     const firstName = data.firstName || '';
     const lastName = data.lastName || '';
     const fullName = firstName + ' ' + lastName;
     const initials = (firstName[0] || '') + (lastName[0] || '');
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
     let progress = 50;
     if (data.phone) progress += 10;
     if (data.skill) progress += 20;
     if (data.location) progress += 10;
     if (data.email) progress += 10;
-
     document.getElementById('greeting').textContent = greet + ', ' + firstName + '! 👋';
     document.getElementById('sidebar-name').textContent = fullName;
     document.getElementById('sidebar-av').textContent = initials;
@@ -380,25 +354,15 @@
     document.getElementById('stat-skill').textContent = data.skill || '—';
     document.getElementById('progress-bar').style.width = progress + '%';
     document.getElementById('progress-label').textContent = progress + '% complete';
-
-    if (data.skill) {
-      document.getElementById('profile-skill').innerHTML = `<span class="skill-tag">🧹 ${data.skill}</span>`;
-    }
-
-    // Unread notification badge
+    if (data.skill) { document.getElementById('profile-skill').innerHTML = `<span class="skill-tag">🧹 ${data.skill}</span>`; }
     const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false)));
-    if (notifSnap.size > 0) {
-      document.getElementById('notif-badge').textContent = notifSnap.size;
-      document.getElementById('notif-badge').style.display = 'inline';
-    }
-
+    if (notifSnap.size > 0) { document.getElementById('notif-badge').textContent = notifSnap.size; document.getElementById('notif-badge').style.display = 'inline'; }
     const q = query(collection(db, 'bookings'), where('workerId', '==', user.uid));
     const snap = await getDocs(q);
     const bookings = [];
     snap.forEach(d => bookings.push(d));
     bookings.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt));
     renderJobs(bookings);
-
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
   });
