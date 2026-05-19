@@ -388,18 +388,25 @@
         lastMessageAt: new Date().toISOString()
       });
 
-      // 3️⃣ Write a notification for the recipient ← NEW
-      await addDoc(collection(db, 'notifications'), {
-        userId: activeOtherId,                        // who receives the alert
-        type: 'message',
-        title: '💬 New message from ' + senderName,
-        body: preview,
-        senderId: currentUser.uid,
-        senderName: senderName,
-        convoId: activeConvoId,
-        read: false,
-        createdAt: serverTimestamp()
-      });
+      // 3️⃣ Write a notification for the recipient
+      // senderId is stored so notifications.html can redirect to messages.html?with=senderId
+      try {
+        await addDoc(collection(db, 'notifications'), {
+          userId: activeOtherId,          // recipient (owner OR worker)
+          type: 'message',
+          title: '💬 New message from ' + senderName,
+          body: preview,
+          senderId: currentUser.uid,      // ← used for ?with= redirect
+          senderName: senderName,
+          convoId: activeConvoId,
+          link: 'messages.html?with=' + currentUser.uid,  // ← direct link to open this chat
+          read: false,
+          createdAt: serverTimestamp()
+        });
+      } catch (notifErr) {
+        // Notification failed (e.g. Firestore rules) but message was already sent — log only
+        console.warn('Notification write failed:', notifErr.message);
+      }
 
       await loadConversations();
 

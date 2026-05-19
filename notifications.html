@@ -8,7 +8,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
 
-    /* SIDEBAR — green for owner, dark for worker, JS switches it */
     .sidebar { width: 240px; background: var(--sb-bg, #1a6b3c); display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
     .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
     .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -33,8 +32,7 @@
     .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
     .mark-all-btn { font-size: 12px; color: #1a6b3c; background: none; border: none; cursor: pointer; font-weight: 600; }
 
-    /* Notification items */
-    .notif-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f5f5f0; cursor: pointer; transition: background 0.15s; border-radius: 8px; padding-left: 8px; padding-right: 8px; }
+    .notif-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 8px; border-bottom: 1px solid #f5f5f0; cursor: pointer; transition: background 0.15s; border-radius: 8px; }
     .notif-item:last-child { border-bottom: none; }
     .notif-item:hover { background: #f9f9f6; }
     .notif-item.unread { background: #f0fff6; }
@@ -46,6 +44,7 @@
     .notif-icon-accept  { background: #fff5e0; }
     .notif-icon-payment { background: #e8f0ff; }
     .notif-icon-review  { background: #fff0f8; }
+    .notif-icon-message { background: #e8f4ff; }
     .notif-body { flex: 1; }
     .notif-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
     .notif-title.read { font-weight: 500; color: #555; }
@@ -57,7 +56,6 @@
     .empty-icon { font-size: 48px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
     .empty-sub { font-size: 13px; color: #888; }
-
     .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
 
     @media (max-width: 900px) {
@@ -128,10 +126,14 @@
   const db = getFirestore(app);
 
   let allNotifDocs = [];
+  // store full notification data so openNotif can read senderId
+  let allNotifData = [];
 
-  function timeAgo(iso) {
-    if (!iso) return '—';
-    const diff = Date.now() - new Date(iso).getTime();
+  function timeAgo(val) {
+    if (!val) return '—';
+    // handle Firestore Timestamp or ISO string
+    const date = val.toDate ? val.toDate() : new Date(val);
+    const diff = Date.now() - date.getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return 'Just now';
     if (mins < 60) return mins + 'm ago';
@@ -139,30 +141,38 @@
     if (hrs < 24) return hrs + 'h ago';
     const days = Math.floor(hrs / 24);
     if (days < 7) return days + 'd ago';
-    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   }
 
   function iconFor(type) {
-    if (type === 'booking') return { wrap: 'notif-icon-booking', emoji: '📋' };
-    if (type === 'accepted') return { wrap: 'notif-icon-accept', emoji: '✅' };
-    if (type === 'payment') return { wrap: 'notif-icon-payment', emoji: '💰' };
-    if (type === 'review') return { wrap: 'notif-icon-review', emoji: '⭐' };
+    if (type === 'booking')  return { wrap: 'notif-icon-booking', emoji: '📋' };
+    if (type === 'accepted') return { wrap: 'notif-icon-accept',  emoji: '✅' };
+    if (type === 'payment')  return { wrap: 'notif-icon-payment', emoji: '💰' };
+    if (type === 'review')   return { wrap: 'notif-icon-review',  emoji: '⭐' };
+    if (type === 'message')  return { wrap: 'notif-icon-message', emoji: '💬' }; // ← NEW
     return { wrap: 'notif-icon-booking', emoji: '🔔' };
   }
 
-  function actionFor(type, userType) {
-    if (type === 'booking') return '→ Go to My Jobs';
+  function actionFor(type) {
+    if (type === 'booking')  return '→ Go to My Jobs';
     if (type === 'accepted') return '→ Go to My Bookings';
-    if (type === 'payment') return '→ View Payments';
-    if (type === 'review') return '→ View Reviews';
+    if (type === 'payment')  return '→ View Payments';
+    if (type === 'review')   return '→ View Reviews';
+    if (type === 'message')  return '→ Open Message';  // ← NEW
     return '';
   }
 
-  function linkFor(type, userType) {
-    if (type === 'booking') return 'dashboard-worker.html';
+  function linkFor(type, userType, notif) {
+    if (type === 'booking')  return 'dashboard-worker.html';
     if (type === 'accepted') return 'dashboard-owner.html';
-    if (type === 'payment') return 'payments.html';
-    if (type === 'review') return userType === 'worker' ? 'my-reviews.html' : 'reviews.html';
+    if (type === 'payment')  return 'payments.html';
+    if (type === 'review')   return userType === 'worker' ? 'my-reviews.html' : 'reviews.html';
+    // ✅ FIX: message notifications redirect to the specific conversation
+    if (type === 'message') {
+      if (notif.senderId) return 'messages.html?with=' + notif.senderId;
+      if (notif.link)     return notif.link;
+      return 'messages.html';
+    }
     return '#';
   }
 
@@ -183,16 +193,19 @@
 
     let html = '';
     notifs.forEach(n => {
-      const ic = iconFor(n.type);
-      const action = actionFor(n.type, userType);
-      const link = linkFor(n.type, userType);
+      const ic     = iconFor(n.type);
+      const action = actionFor(n.type);
+      const link   = linkFor(n.type, userType, n);  // ← pass full notif object
+      // show body or message field (messages.html saves as 'body', others as 'message')
+      const msgText = n.body || n.message || '';
+
       html += `
         <div class="notif-item ${n.read ? '' : 'unread'}" onclick="openNotif('${n.id}', '${link}')">
           <div class="notif-dot ${n.read ? 'read' : ''}"></div>
           <div class="notif-icon-wrap ${ic.wrap}">${ic.emoji}</div>
           <div class="notif-body">
             <div class="notif-title ${n.read ? 'read' : ''}">${n.title || 'Notification'}</div>
-            <div class="notif-msg">${n.message || ''}</div>
+            <div class="notif-msg">${msgText}</div>
             <div class="notif-time">${timeAgo(n.createdAt)}</div>
             ${action ? `<span class="notif-action">${action}</span>` : ''}
           </div>
@@ -202,13 +215,13 @@
   }
 
   window.openNotif = async function(notifId, link) {
-    // Mark as read then navigate
+    // Mark as read then navigate to the correct page
     try {
       const ref = allNotifDocs.find(d => d.id === notifId);
       if (ref && !ref.data().read) {
         await updateDoc(doc(db, 'notifications', notifId), { read: true });
       }
-    } catch(e) {}
+    } catch(e) { console.warn('Mark read failed:', e.message); }
     window.location.href = link;
   }
 
@@ -231,8 +244,9 @@
       <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
       <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
       <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
-      <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+      <div class="sidebar-item" onclick="window.location.href='payments-owner.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
       <div class="sidebar-item" onclick="window.location.href='reviews.html'"><span class="sidebar-item-icon">⭐</span> Reviews</div>
+      <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
       <div class="sidebar-item active"><span class="sidebar-item-icon">🔔</span> Notifications</div>`;
   }
 
@@ -240,12 +254,12 @@
     document.getElementById('sidebar').style.background = '#111';
     document.getElementById('settings-label').textContent = 'My Profile';
     document.getElementById('sidebar-role').textContent = 'House Worker';
-    document.getElementById('sidebar-user-av') && (document.getElementById('sidebar-user-av').style.background = '#fde8c8');
     document.getElementById('sidebar-links').innerHTML = `
       <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
       <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
       <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
       <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+      <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
       <div class="sidebar-item active"><span class="sidebar-item-icon">🔔</span> Notifications</div>`;
   }
 
@@ -258,26 +272,40 @@
     const userType = userData.userType;
 
     const firstName = userData.firstName || '';
-    const lastName = userData.lastName || '';
+    const lastName  = userData.lastName  || '';
     document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
-    document.getElementById('sidebar-av').textContent = (firstName[0] || '') + (lastName[0] || '');
+    document.getElementById('sidebar-av').textContent   = (firstName[0] || '') + (lastName[0] || '');
 
     if (userType === 'owner') buildOwnerSidebar();
     else buildWorkerSidebar();
 
     document.getElementById('page-sub').textContent = userType === 'owner'
-      ? 'Alerts when workers accept your bookings'
-      : 'Alerts when owners book you or leave a review';
+      ? 'Alerts when workers accept bookings or send messages'
+      : 'Alerts when owners book you, leave a review, or send messages';
 
-    // Load notifications
-    const snap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid)));
+    // Load notifications for this user
+    const snap = await getDocs(query(
+      collection(db, 'notifications'),
+      where('userId', '==', user.uid)
+    ));
+
     allNotifDocs = [];
+    allNotifData = [];
     const notifs = [];
+
     snap.forEach(d => {
       allNotifDocs.push(d);
-      notifs.push({ id: d.id, ...d.data() });
+      const data = { id: d.id, ...d.data() };
+      allNotifData.push(data);
+      notifs.push(data);
     });
-    notifs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // Sort newest first
+    notifs.sort((a, b) => {
+      const ta = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+      const tb = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+      return tb - ta;
+    });
 
     renderNotifs(notifs, userType);
 
