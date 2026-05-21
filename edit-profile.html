@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Edit Profile</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: #111; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar.owner { background: #1a6b3c; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar.owner .sidebar-logo-icon { background: #fff; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar.owner .sidebar-section { color: rgba(255,255,255,0.4); }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .sidebar-item.active { background: rgba(26,107,60,0.3); color: #fff; border-left-color: #1a6b3c; }
+    .sidebar.owner .sidebar-item { color: rgba(255,255,255,0.75); }
+    .sidebar.owner .sidebar-item.active { background: rgba(255,255,255,0.12); border-left-color: #f0a500; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar.owner .sidebar-user-av { background: #f0a500; color: #fff; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.3); font-size: 18px; cursor: pointer; }
+    .main { margin-left: 240px; flex: 1; padding: 32px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
+    .form-card { background: #fff; border-radius: 16px; padding: 28px; border: 1px solid #eee; margin-bottom: 20px; max-width: 600px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 18px; }
+    .avatar-row { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+    .avatar-big { width: 72px; height: 72px; border-radius: 18px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; flex-shrink: 0; }
+    .avatar-big.owner { background: #f0a500; color: #fff; }
+    .avatar-info { font-size: 13px; color: #888; line-height: 1.7; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; color: #111; outline: none; transition: border 0.2s; }
+    .form-input:focus { border-color: #1a6b3c; }
+    .form-input:disabled { background: #f9f9f9; color: #aaa; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .save-btn { background: #1a6b3c; color: #fff; border: none; padding: 13px 32px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
+    .save-btn:hover { background: #145530; }
+    .save-btn:disabled { background: #aaa; cursor: not-allowed; }
+    .success-msg { background: #e8f5ee; border: 1px solid #b2dfc6; color: #1a6b3c; font-size: 13px; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; display: none; }
+    .error-msg { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 13px; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; display: none; }
+    .loading { text-align: center; padding: 60px; color: #888; }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+      .row2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-item" id="nav-dashboard"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" id="nav-main"><span class="sidebar-item-icon" id="nav-main-icon">🏠</span> <span id="nav-main-label">My Jobs</span></div>
+  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> <span id="nav-payments-label">My Salary</span></div>
+  <div class="sidebar-item" id="nav-reviews"><span class="sidebar-item-icon">⭐</span> Reviews</div>
+  <div class="sidebar-item" id="nav-notifs"><span class="sidebar-item-icon">🔔</span> Notifications</div>
+  <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">👤</span> Edit Profile</div>
+  <div class="sidebar-item" id="nav-help" style="display:none;"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
+  <div class="sidebar-item" id="nav-settings" style="display:none;"><span class="sidebar-item-icon">⚙️</span> Settings</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role" id="sidebar-role">—</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading your profile...</div>
+  <div id="page-content" style="display:none;">
+    <div class="page-title">✏️ Edit Profile</div>
+    <div class="page-sub">Keep your information up to date</div>
+
+    <div class="form-card">
+      <div class="avatar-row">
+        <div class="avatar-big" id="avatar-big">?</div>
+        <div class="avatar-info">
+          Your initials are shown as your profile photo.<br>
+          <span style="color:#1a6b3c; font-weight:600;">Photo upload coming soon!</span>
+        </div>
+      </div>
+
+      <div class="success-msg" id="success-msg">✅ Profile updated successfully!</div>
+      <div class="error-msg" id="error-msg"></div>
+
+      <div class="section-title">👤 Personal Information</div>
+
+      <div class="row2">
+        <div class="form-group">
+          <label class="form-label">First name</label>
+          <input type="text" id="fname" class="form-input" placeholder="First name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last name</label>
+          <input type="text" id="lname" class="form-input" placeholder="Last name" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="email" class="form-input" disabled placeholder="Email cannot be changed here" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone number</label>
+        <input type="tel" id="phone" class="form-input" placeholder="09__ ___ ___" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Location (Sub-city)</label>
+        <select id="location" class="form-input">
+          <option value="">Select your sub-city</option>
+          <option>Bole</option><option>Kirkos</option><option>Yeka</option>
+          <option>Arada</option><option>Lideta</option><option>Kolfe Keranio</option>
+          <option>Gulele</option><option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
+          <option>Lemi Kura</option><option>Addis Ketema</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="skill-group" style="display:none;">
+        <label class="form-label">Your main skill</label>
+        <select id="skill" class="form-input">
+          <option value="">Select your skill</option>
+          <option>Cleaning</option><option>Cooking</option>
+          <option>Nanny / Child care</option><option>Laundry</option>
+          <option>Full-time helper</option><option>Gardening</option>
+        </select>
+      </div>
+
+      <button class="save-btn" id="save-btn" onclick="saveProfile()">💾 Save Changes</button>
+    </div>
+
+    <div class="form-card">
+      <div class="section-title">🔒 Change Password</div>
+      <div class="form-group">
+        <label class="form-label">New password</label>
+        <input type="password" id="new-password" class="form-input" placeholder="Enter new password (min 6 chars)" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm new password</label>
+        <input type="password" id="confirm-password" class="form-input" placeholder="Repeat new password" />
+      </div>
+      <div class="error-msg" id="pw-error-msg"></div>
+      <div class="success-msg" id="pw-success-msg">✅ Password updated!</div>
+      <button class="save-btn" id="pw-btn" onclick="changePassword()">🔒 Update Password</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let userType = null;
+
+  function setupSidebar(type) {
+    userType = type;
+    const sidebar = document.getElementById('sidebar');
+    if (type === 'owner') {
+      sidebar.classList.add('owner');
+      document.getElementById('nav-dashboard').onclick = () => window.location.href = 'dashboard-owner.html';
+      document.getElementById('nav-main-icon').textContent = '🔍';
+      document.getElementById('nav-main-label').textContent = 'Find Workers';
+      document.getElementById('nav-main').onclick = () => window.location.href = 'search.html';
+      document.getElementById('nav-payments').onclick = () => window.location.href = 'payments-owner.html';
+      document.getElementById('nav-payments-label').textContent = 'Salary Payments';
+      document.getElementById('nav-reviews').onclick = () => window.location.href = 'reviews.html';
+      document.getElementById('nav-notifs').onclick = () => window.location.href = 'notifications.html';
+      document.getElementById('nav-settings').style.display = 'flex';
+      document.getElementById('nav-settings').onclick = () => window.location.href = 'settings.html';
+      document.getElementById('sidebar-role').textContent = 'House Owner';
+    } else {
+      document.getElementById('nav-dashboard').onclick = () => window.location.href = 'dashboard-worker.html';
+      document.getElementById('nav-main').onclick = () => window.location.href = 'dashboard-worker.html';
+      document.getElementById('nav-payments').onclick = () => window.location.href = 'payments.html';
+      document.getElementById('nav-reviews').onclick = () => window.location.href = 'my-reviews.html';
+      document.getElementById('nav-notifs').onclick = () => window.location.href = 'notifications.html';
+      document.getElementById('nav-help').style.display = 'flex';
+      document.getElementById('nav-help').onclick = () => window.location.href = 'help.html';
+      document.getElementById('skill-group').style.display = 'block';
+      document.getElementById('sidebar-role').textContent = 'House Worker';
+    }
+  }
+
+  window.saveProfile = async function() {
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const location = document.getElementById('location').value;
+    const skill = document.getElementById('skill').value;
+    const btn = document.getElementById('save-btn');
+    const errEl = document.getElementById('error-msg');
+    const sucEl = document.getElementById('success-msg');
+
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!fname || !lname) { errEl.textContent = '⚠️ First and last name are required.'; errEl.style.display = 'block'; return; }
+    if (!location) { errEl.textContent = '⚠️ Please select your location.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
+    try {
+      const updateData = { firstName: fname, lastName: lname, phone, location };
+      if (userType === 'worker' && skill) updateData.skill = skill;
+      await updateDoc(doc(db, 'users', currentUser.uid), updateData);
+
+      // Update sidebar
+      const initials = (fname[0] || '') + (lname[0] || '');
+      document.getElementById('sidebar-av').textContent = initials;
+      document.getElementById('sidebar-name').textContent = fname + ' ' + lname;
+      document.getElementById('avatar-big').textContent = initials;
+
+      sucEl.style.display = 'block';
+      setTimeout(() => sucEl.style.display = 'none', 3000);
+    } catch (err) {
+      errEl.textContent = '❌ Error: ' + err.message;
+      errEl.style.display = 'block';
+    }
+    btn.textContent = '💾 Save Changes';
+    btn.disabled = false;
+  }
+
+  window.changePassword = async function() {
+    const newPw = document.getElementById('new-password').value;
+    const confirmPw = document.getElementById('confirm-password').value;
+    const errEl = document.getElementById('pw-error-msg');
+    const sucEl = document.getElementById('pw-success-msg');
+    const btn = document.getElementById('pw-btn');
+
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!newPw) { errEl.textContent = '⚠️ Please enter a new password.'; errEl.style.display = 'block'; return; }
+    if (newPw.length < 6) { errEl.textContent = '⚠️ Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+    if (newPw !== confirmPw) { errEl.textContent = '⚠️ Passwords do not match.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Updating...';
+    btn.disabled = true;
+
+    try {
+      await updatePassword(auth.currentUser, newPw);
+      sucEl.style.display = 'block';
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+      setTimeout(() => sucEl.style.display = 'none', 3000);
+    } catch (err) {
+      if (err.code === 'auth/requires-recent-login') {
+        errEl.textContent = '⚠️ For security, please sign out and sign in again before changing your password.';
+      } else {
+        errEl.textContent = '❌ Error: ' + err.message;
+      }
+      errEl.style.display = 'block';
+    }
+    btn.textContent = '🔒 Update Password';
+    btn.disabled = false;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+    currentUser = user;
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) { window.location.href = 'signin.html'; return; }
+    const data = snap.data();
+    const fullName = (data.firstName || '') + ' ' + (data.lastName || '');
+    const initials = (data.firstName?.[0] || '') + (data.lastName?.[0] || '');
+
+    setupSidebar(data.userType);
+
+    document.getElementById('sidebar-av').textContent = initials;
+    document.getElementById('sidebar-name').textContent = fullName;
+    document.getElementById('avatar-big').textContent = initials;
+    if (data.userType === 'owner') document.getElementById('avatar-big').classList.add('owner');
+
+    document.getElementById('fname').value = data.firstName || '';
+    document.getElementById('lname').value = data.lastName || '';
+    document.getElementById('email').value = data.email || '';
+    document.getElementById('phone').value = data.phone || '';
+    document.getElementById('location').value = data.location || '';
+    if (data.skill) document.getElementById('skill').value = data.skill;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+</body>
+</html>

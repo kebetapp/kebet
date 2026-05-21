@@ -117,8 +117,8 @@
   <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
   <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
   <div class="sidebar-section">ACCOUNT</div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
+  <div class="sidebar-item" onclick="window.location.href='edit-profile.html'"><span class="sidebar-item-icon">👤</span> My Profile</div>
+  <div class="sidebar-item" onclick="window.location.href='help.html'"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
@@ -138,7 +138,7 @@
         <h1 id="greeting">Good morning! 👋</h1>
         <p>Here is your Kebet worker dashboard</p>
       </div>
-      <button class="edit-btn">✏️ Edit My Profile</button>
+      <button class="edit-btn" onclick="window.location.href='edit-profile.html'">✏️ Edit My Profile</button>
     </div>
 
     <div class="stats-row">
@@ -175,8 +175,8 @@
         </div>
       </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn-sm-green">✏️ Edit Profile</button>
-        <button class="btn-sm-outline">👁️ View Public Profile</button>
+        <button class="btn-sm-green" onclick="window.location.href='edit-profile.html'">✏️ Edit Profile</button>
+        <button class="btn-sm-outline" onclick="window.location.href='help.html'">❓ Help & Rights</button>
       </div>
     </div>
 
@@ -192,8 +192,7 @@
         <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:50%"></div></div>
         <div class="progress-label" id="progress-label">50% complete</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
-          <button style="background:#e8f5ee; color:#1a6b3c; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">+ Add Photo</button>
-          <button style="background:#e8f5ee; color:#1a6b3c; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">+ Add Reference</button>
+          <button style="background:#e8f5ee; color:#1a6b3c; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;" onclick="window.location.href='edit-profile.html'">✏️ Complete Profile</button>
         </div>
       </div>
     </div>
@@ -264,7 +263,11 @@
       if (status === 'active') active++;
       const startDate = data.startDate ? new Date(data.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
       const bookedDate = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-      const statusBadge = status === 'active' ? '<span class="status-badge status-active">✓ Active — You are working here</span>' : status === 'pending' ? '<span class="status-badge status-pending">⏳ Pending — Owner will contact you</span>' : '<span class="status-badge status-ended">Ended / Declined</span>';
+      const statusBadge = status === 'active'
+        ? '<span class="status-badge status-active">✓ Active — You are working here</span>'
+        : status === 'pending'
+        ? '<span class="status-badge status-pending">⏳ Pending — Owner will contact you</span>'
+        : '<span class="status-badge status-ended">Ended / Declined</span>';
       const services = (data.services || []).map(s => `<span class="s-tag">${s}</span>`).join('');
       const salaryTracker = status === 'active' ? `
         <div style="margin-top:12px; padding:12px; background:#f5f5f0; border-radius:10px;">
@@ -282,7 +285,7 @@
         </div>` : status === 'active' ? `
         <div class="job-actions" style="margin-top:10px;">
           <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.ownerId}'">💬 Message Owner</button>
-          <button class="btn-sm-outline">📞 Call Kebet Help</button>
+          <button class="btn-sm-outline" onclick="window.location.href='help.html'">📞 Help & Rights</button>
         </div>` : '';
       html += `
         <div class="job-offer-card">
