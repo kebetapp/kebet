@@ -524,9 +524,32 @@
     activeOtherId = otherId;
 
     // Load other user's data (for payment numbers)
+    // First try workers collection (manually added workers), then users collection (signed up workers)
     try {
-      const snap = await getDoc(doc(db, 'users', otherId));
-      activeOtherData = snap.exists() ? snap.data() : null;
+      // Try workers collection first
+      const workersQ = query(collection(db, 'workers'), where('userId', '==', otherId));
+      const workersSnap = await getDocs(workersQ);
+      if (!workersSnap.empty) {
+        activeOtherData = workersSnap.docs[0].data();
+      } else {
+        // Try finding by matching convo name in workers collection
+        const allWorkersSnap = await getDocs(collection(db, 'workers'));
+        const otherName = document.getElementById('chat-header-name').textContent.trim();
+        const nameParts = otherName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts[1] || '';
+        let found = null;
+        allWorkersSnap.forEach(d => {
+          const data = d.data();
+          if (data.firstName === firstName && data.lastName === lastName) found = data;
+        });
+        activeOtherData = found;
+      }
+      // Fallback to users collection
+      if (!activeOtherData) {
+        const snap = await getDoc(doc(db, 'users', otherId));
+        activeOtherData = snap.exists() ? snap.data() : null;
+      }
     } catch(e) { activeOtherData = null; }
 
     renderConvoList();
