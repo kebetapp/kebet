@@ -438,7 +438,7 @@
       </div>
       <table>
         <thead><tr>
-          <th>PARTICIPANTS</th><th>LAST MESSAGE</th><th>UPDATED</th>
+          <th>PARTICIPANTS (OWNER ↔ WORKER)</th><th>LAST MESSAGE</th><th>MSGS</th><th>UPDATED</th>
         </tr></thead>
         <tbody id="messages-body">
           <tr><td colspan="3" class="table-loading">⏳ Loading...</td></tr>
@@ -579,8 +579,26 @@ async function loadReviews() {
 
 async function loadConvos() {
   const snap = await getDocs(collection(db, 'conversations'));
-  allConvos=[];
-  snap.forEach(d => allConvos.push({ id:d.id, ...d.data() }));
+  allConvos = [];
+  const convoDocs = [];
+  snap.forEach(d => convoDocs.push({ id:d.id, ...d.data() }));
+
+  await Promise.all(convoDocs.map(async c => {
+    try {
+      const msgSnap = await getDocs(collection(db, 'conversations', c.id, 'messages'));
+      c.messageCount = msgSnap.size;
+      const names = c.participantNames || {};
+      const types = c.participantTypes || {};
+      c.participantList = Object.entries(names).map(([uid, name]) => ({
+        uid, name, type: types[uid] || 'unknown'
+      }));
+    } catch(e) {
+      c.messageCount = 0;
+      c.participantList = [];
+    }
+    allConvos.push(c);
+  }));
+
   allConvos.sort((a,b) => new Date(b.lastMessageAt||0)-new Date(a.lastMessageAt||0));
   document.getElementById('cnt-messages').textContent = allConvos.length;
   renderMessages(allConvos);
@@ -702,14 +720,28 @@ function renderReviews(list) {
 // ── RENDER MESSAGES ──
 function renderMessages(list) {
   document.getElementById('messages-body').innerHTML = list.length === 0
-    ? `<tr><td colspan="3" class="table-empty">No conversations found</td></tr>`
+    ? `<tr><td colspan="4" class="table-empty">No conversations found</td></tr>`
     : list.map(c => {
-        const names = Object.values(c.participantNames||{}).join(' ↔ ') || c.id;
-        const preview = (c.lastMessage||'No messages').slice(0,60);
+        // build participants display — show owner and worker separately
+        const parts = c.participantList || Object.entries(c.participantNames||{}).map(([uid,name])=>({
+          uid, name, type: (c.participantTypes||{})[uid]||'unknown'
+        }));
+        const owner  = parts.find(p => p.type==='owner')  || parts[0] || { name:'Unknown', type:'owner'  };
+        const worker = parts.find(p => p.type==='worker') || parts[1] || { name:'Unknown', type:'worker' };
+        const preview = (c.lastMessage||'No messages yet').slice(0,60);
+        const msgCount = c.messageCount != null ? c.messageCount : '—';
         return `
         <tr>
-          <td class="user-name">${names}</td>
-          <td class="td-mono">${preview}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span class="badge badge-green">🏠 ${owner.name}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge badge-yellow">🧹 ${worker.name}</span>
+            </div>
+          </td>
+          <td class="td-mono" style="max-width:220px">${preview}</td>
+          <td class="td-mono" style="text-align:center">${msgCount}</td>
           <td class="td-mono">${fmtDate(c.lastMessageAt)}</td>
         </tr>`;
       }).join('');
