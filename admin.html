@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #222;
+      --green: #00e676;
+      --green-dim: #00e67620;
+      --red: #ff5252;
+      --red-dim: #ff525220;
+      --yellow: #ffd740;
+      --yellow-dim: #ffd74020;
+      --blue: #40c4ff;
+      --blue-dim: #40c4ff20;
+      --text: #f0f0f0;
+      --muted: #666;
+      --muted2: #444;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+
+    /* ── LOGIN SCREEN ── */
+    #login-screen {
+      position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:999;
+    }
+    .login-box {
+      width:380px; background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:40px;
+      animation: fadeUp 0.4s ease;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .login-logo { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--green); letter-spacing:3px; margin-bottom:4px; }
+    .login-sub { font-size:12px; color:var(--muted); margin-bottom:32px; font-family:'DM Mono',monospace; }
+    .login-label { font-size:11px; color:var(--muted); font-weight:600; letter-spacing:1px; margin-bottom:6px; display:block; }
+    .login-input {
+      width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+      padding:12px 14px; color:var(--text); font-size:14px; font-family:'DM Sans',sans-serif;
+      outline:none; margin-bottom:16px; transition:border-color 0.2s;
+    }
+    .login-input:focus { border-color:var(--green); }
+    .login-btn {
+      width:100%; background:var(--green); color:#000; border:none; border-radius:10px;
+      padding:13px; font-size:14px; font-weight:700; font-family:'Syne',sans-serif;
+      cursor:pointer; letter-spacing:1px; transition:opacity 0.2s;
+    }
+    .login-btn:hover { opacity:0.85; }
+    .login-err { font-size:12px; color:var(--red); margin-top:10px; text-align:center; min-height:18px; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width:220px; background:var(--surface); border-right:1px solid var(--border);
+      display:flex; flex-direction:column; padding:28px 0; position:fixed;
+      top:0; left:0; height:100vh; z-index:100;
+    }
+    .sb-logo { padding:0 20px 24px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+    .sb-logo-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--green); letter-spacing:2px; }
+    .sb-logo-badge {
+      display:inline-block; background:var(--green-dim); color:var(--green);
+      font-size:9px; font-weight:700; letter-spacing:1px; padding:2px 7px;
+      border-radius:4px; font-family:'DM Mono',monospace; margin-top:4px;
+    }
+    .sb-section { font-size:9px; color:var(--muted2); font-weight:700; letter-spacing:2px; padding:0 20px 8px; margin-top:8px; font-family:'DM Mono',monospace; }
+    .sb-item {
+      display:flex; align-items:center; gap:10px; padding:11px 20px;
+      color:var(--muted); font-size:13px; font-weight:500; cursor:pointer;
+      transition:all 0.15s; border-left:2px solid transparent;
+    }
+    .sb-item:hover { color:var(--text); background:var(--surface2); }
+    .sb-item.active { color:var(--green); border-left-color:var(--green); background:var(--green-dim); }
+    .sb-item-icon { font-size:16px; width:20px; text-align:center; }
+    .sb-count { margin-left:auto; background:var(--surface2); color:var(--muted); font-size:10px; font-family:'DM Mono',monospace; padding:2px 7px; border-radius:20px; border:1px solid var(--border); }
+    .sb-item.active .sb-count { background:var(--green-dim); color:var(--green); border-color:var(--green); }
+    .sb-bottom { margin-top:auto; padding:20px; border-top:1px solid var(--border); }
+    .sb-admin-label { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:10px; }
+    .sb-signout {
+      width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+      padding:9px; color:var(--muted); font-size:12px; cursor:pointer; transition:all 0.2s;
+      font-family:'DM Sans',sans-serif;
+    }
+    .sb-signout:hover { border-color:var(--red); color:var(--red); }
+
+    /* ── MAIN ── */
+    .main { margin-left:220px; flex:1; padding:32px; overflow-y:auto; min-height:100vh; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+    .topbar-title { font-family:'Syne',sans-serif; font-size:24px; font-weight:800; color:var(--text); }
+    .topbar-sub { font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; margin-top:3px; }
+    .refresh-btn {
+      background:var(--surface); border:1px solid var(--border); border-radius:8px;
+      padding:9px 16px; color:var(--muted); font-size:12px; cursor:pointer;
+      font-family:'DM Mono',monospace; transition:all 0.2s;
+    }
+    .refresh-btn:hover { border-color:var(--green); color:var(--green); }
+
+    /* ── TABS ── */
+    .tabs { display:flex; gap:4px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:4px; margin-bottom:28px; width:fit-content; }
+    .tab {
+      padding:9px 18px; border-radius:9px; font-size:13px; font-weight:600;
+      cursor:pointer; color:var(--muted); transition:all 0.2s; font-family:'DM Sans',sans-serif;
+    }
+    .tab:hover { color:var(--text); }
+    .tab.active { background:var(--surface2); color:var(--green); border:1px solid var(--border); }
+
+    /* ── STAT CARDS ── */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+    .stat-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:20px; position:relative; overflow:hidden; transition:border-color 0.2s;
+    }
+    .stat-card:hover { border-color:var(--muted2); }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+    .stat-card.green::before { background:var(--green); }
+    .stat-card.red::before   { background:var(--red); }
+    .stat-card.yellow::before{ background:var(--yellow); }
+    .stat-card.blue::before  { background:var(--blue); }
+    .stat-label { font-size:10px; color:var(--muted); font-family:'DM Mono',monospace; letter-spacing:1px; margin-bottom:10px; }
+    .stat-value { font-family:'Syne',sans-serif; font-size:32px; font-weight:800; line-height:1; margin-bottom:4px; }
+    .stat-card.green .stat-value { color:var(--green); }
+    .stat-card.red   .stat-value { color:var(--red); }
+    .stat-card.yellow .stat-value { color:var(--yellow); }
+    .stat-card.blue  .stat-value { color:var(--blue); }
+    .stat-sub { font-size:11px; color:var(--muted); }
+    .stat-icon { position:absolute; top:20px; right:20px; font-size:22px; opacity:0.3; }
+
+    /* ── TABLE ── */
+    .table-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:24px; }
+    .table-header { padding:18px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .table-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--text); }
+    .table-search {
+      background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+      padding:8px 12px; color:var(--text); font-size:12px; font-family:'DM Sans',sans-serif;
+      outline:none; width:200px; transition:border-color 0.2s;
+    }
+    .table-search:focus { border-color:var(--green); }
+    .table-search::placeholder { color:var(--muted); }
+    table { width:100%; border-collapse:collapse; }
+    thead th {
+      text-align:left; padding:12px 22px; font-size:10px; color:var(--muted);
+      font-family:'DM Mono',monospace; letter-spacing:1px; border-bottom:1px solid var(--border);
+      font-weight:500;
+    }
+    tbody tr { border-bottom:1px solid var(--border); transition:background 0.15s; }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:var(--surface2); }
+    tbody td { padding:14px 22px; font-size:13px; color:var(--text); vertical-align:middle; }
+    .td-mono { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
+    .badge {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
+      font-family:'DM Mono',monospace;
+    }
+    .badge-green  { background:var(--green-dim);  color:var(--green);  border:1px solid #00e67640; }
+    .badge-red    { background:var(--red-dim);    color:var(--red);    border:1px solid #ff525240; }
+    .badge-yellow { background:var(--yellow-dim); color:var(--yellow); border:1px solid #ffd74040; }
+    .badge-blue   { background:var(--blue-dim);   color:var(--blue);   border:1px solid #40c4ff40; }
+    .badge-grey   { background:#ffffff10;         color:var(--muted);  border:1px solid var(--border); }
+    .action-btn {
+      padding:5px 12px; border-radius:6px; font-size:11px; font-weight:600;
+      cursor:pointer; border:none; font-family:'DM Mono',monospace; transition:all 0.2s;
+    }
+    .btn-danger  { background:var(--red-dim);  color:var(--red);  border:1px solid #ff525240; }
+    .btn-danger:hover  { background:var(--red);  color:#000; }
+    .btn-success { background:var(--green-dim); color:var(--green); border:1px solid #00e67640; }
+    .btn-success:hover { background:var(--green); color:#000; }
+    .btn-warn    { background:var(--yellow-dim); color:var(--yellow); border:1px solid #ffd74040; }
+    .btn-warn:hover    { background:var(--yellow);  color:#000; }
+
+    /* ── EMPTY / LOADING ── */
+    .table-empty { padding:48px; text-align:center; color:var(--muted); font-family:'DM Mono',monospace; font-size:13px; }
+    .table-loading { padding:48px; text-align:center; color:var(--muted); font-size:13px; }
+
+    /* ── PANEL SECTIONS ── */
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position:fixed; inset:0; background:#000000cc; z-index:500;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity 0.2s;
+    }
+    .modal-overlay.show { opacity:1; pointer-events:all; }
+    .modal {
+      background:var(--surface); border:1px solid var(--border); border-radius:16px;
+      padding:28px; width:420px; max-width:90vw;
+      transform:scale(0.95); transition:transform 0.2s;
+    }
+    .modal-overlay.show .modal { transform:scale(1); }
+    .modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:8px; }
+    .modal-body  { font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:24px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+    .modal-cancel { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:9px 18px; color:var(--muted); font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+    .modal-confirm { background:var(--red); border:none; border-radius:8px; padding:9px 18px; color:#000; font-size:13px; font-weight:700; cursor:pointer; font-family:'Syne',sans-serif; }
+
+    /* ── TOAST ── */
+    .toast {
+      position:fixed; bottom:28px; right:28px; background:var(--surface);
+      border:1px solid var(--border); border-radius:10px; padding:12px 18px;
+      font-size:13px; color:var(--text); font-family:'DM Mono',monospace;
+      transform:translateY(20px); opacity:0; transition:all 0.3s; z-index:999;
+    }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.green { border-color:var(--green); color:var(--green); }
+    .toast.red   { border-color:var(--red);   color:var(--red);   }
+
+    .avatar {
+      width:32px; height:32px; border-radius:8px; display:inline-flex;
+      align-items:center; justify-content:center; font-size:12px; font-weight:700;
+      flex-shrink:0; font-family:'Syne',sans-serif;
+    }
+    .avatar-owner  { background:#1a6b3c40; color:#00e676; border:1px solid #1a6b3c; }
+    .avatar-worker { background:#c8780020; color:#ffd740; border:1px solid #c87800; }
+    .user-cell { display:flex; align-items:center; gap:10px; }
+    .user-name { font-size:13px; font-weight:600; color:var(--text); }
+    .user-email { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
+
+    @media(max-width:900px){
+      .sidebar{display:none;}
+      .main{margin-left:0;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">KEBET</div>
+    <div class="login-sub">// admin access only</div>
+    <label class="login-label">EMAIL</label>
+    <input class="login-input" id="login-email" type="email" placeholder="admin@kebet.com" />
+    <label class="login-label">PASSWORD</label>
+    <input class="login-input" id="login-pass" type="password" placeholder="••••••••" />
+    <button class="login-btn" onclick="doLogin()">ACCESS DASHBOARD</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar" style="display:none;">
+  <div class="sb-logo">
+    <div class="sb-logo-title">KEBET</div>
+    <div class="sb-logo-badge">ADMIN PANEL</div>
+  </div>
+  <div class="sb-section">OVERVIEW</div>
+  <div class="sb-item active" id="nav-overview" onclick="showPanel('overview')">
+    <span class="sb-item-icon">📊</span> Overview
+  </div>
+  <div class="sb-section">MANAGE</div>
+  <div class="sb-item" id="nav-owners" onclick="showPanel('owners')">
+    <span class="sb-item-icon">🏠</span> Owners
+    <span class="sb-count" id="cnt-owners">—</span>
+  </div>
+  <div class="sb-item" id="nav-workers" onclick="showPanel('workers')">
+    <span class="sb-item-icon">🧹</span> Workers
+    <span class="sb-count" id="cnt-workers">—</span>
+  </div>
+  <div class="sb-item" id="nav-bookings" onclick="showPanel('bookings')">
+    <span class="sb-item-icon">📋</span> Bookings
+    <span class="sb-count" id="cnt-bookings">—</span>
+  </div>
+  <div class="sb-item" id="nav-reviews" onclick="showPanel('reviews')">
+    <span class="sb-item-icon">⭐</span> Reviews
+    <span class="sb-count" id="cnt-reviews">—</span>
+  </div>
+  <div class="sb-item" id="nav-messages" onclick="showPanel('messages')">
+    <span class="sb-item-icon">💬</span> Messages
+    <span class="sb-count" id="cnt-messages">—</span>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-admin-label" id="admin-email-label">admin</div>
+    <button class="sb-signout" onclick="doSignout()">⏻ Sign out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-area" style="display:none;">
+
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="panel-title">Overview</div>
+      <div class="topbar-sub" id="panel-sub">Platform at a glance</div>
+    </div>
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+  </div>
+
+  <!-- TABS (shown for user panels) -->
+  <div class="tabs" id="user-tabs" style="display:none;">
+    <div class="tab active" id="tab-all" onclick="filterUsers('all')">All</div>
+    <div class="tab" id="tab-active" onclick="filterUsers('active')">Active</div>
+    <div class="tab" id="tab-disabled" onclick="filterUsers('disabled')">Disabled</div>
+  </div>
+
+  <!-- ── OVERVIEW PANEL ── -->
+  <div class="panel active" id="panel-overview">
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-icon">🏠</div>
+        <div class="stat-label">TOTAL OWNERS</div>
+        <div class="stat-value" id="stat-owners">—</div>
+        <div class="stat-sub">Registered house owners</div>
+      </div>
+      <div class="stat-card yellow">
+        <div class="stat-icon">🧹</div>
+        <div class="stat-label">TOTAL WORKERS</div>
+        <div class="stat-value" id="stat-workers">—</div>
+        <div class="stat-sub">Registered workers</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">📋</div>
+        <div class="stat-label">TOTAL BOOKINGS</div>
+        <div class="stat-value" id="stat-bookings">—</div>
+        <div class="stat-sub">All time bookings</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-label">TOTAL REVIEWS</div>
+        <div class="stat-value" id="stat-reviews">—</div>
+        <div class="stat-sub">Submitted reviews</div>
+      </div>
+    </div>
+
+    <!-- Recent users -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Recently Joined Users</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>USER</th><th>TYPE</th><th>JOINED</th><th>STATUS</th>
+        </tr></thead>
+        <tbody id="recent-users-body">
+          <tr><td colspan="4" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent bookings -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Recent Bookings</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>WORKER</th><th>OWNER</th><th>STATUS</th><th>DATE</th>
+        </tr></thead>
+        <tbody id="recent-bookings-body">
+          <tr><td colspan="4" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── OWNERS PANEL ── -->
+  <div class="panel" id="panel-owners">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">All House Owners</div>
+        <input class="table-search" id="search-owners" placeholder="🔍 Search owners..." oninput="filterSearch('owners')" />
+      </div>
+      <table>
+        <thead><tr>
+          <th>OWNER</th><th>PHONE</th><th>JOINED</th><th>STATUS</th><th>ACTION</th>
+        </tr></thead>
+        <tbody id="owners-body">
+          <tr><td colspan="5" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── WORKERS PANEL ── -->
+  <div class="panel" id="panel-workers">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">All Workers</div>
+        <input class="table-search" id="search-workers" placeholder="🔍 Search workers..." oninput="filterSearch('workers')" />
+      </div>
+      <table>
+        <thead><tr>
+          <th>WORKER</th><th>SKILLS</th><th>RATING</th><th>STATUS</th><th>ACTION</th>
+        </tr></thead>
+        <tbody id="workers-body">
+          <tr><td colspan="5" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── BOOKINGS PANEL ── -->
+  <div class="panel" id="panel-bookings">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">All Bookings</div>
+        <input class="table-search" id="search-bookings" placeholder="🔍 Search..." oninput="filterSearch('bookings')" />
+      </div>
+      <table>
+        <thead><tr>
+          <th>WORKER</th><th>OWNER</th><th>SALARY</th><th>STATUS</th><th>DATE</th><th>ACTION</th>
+        </tr></thead>
+        <tbody id="bookings-body">
+          <tr><td colspan="6" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── REVIEWS PANEL ── -->
+  <div class="panel" id="panel-reviews">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">All Reviews</div>
+        <input class="table-search" id="search-reviews" placeholder="🔍 Search reviews..." oninput="filterSearch('reviews')" />
+      </div>
+      <table>
+        <thead><tr>
+          <th>FROM</th><th>FOR WORKER</th><th>RATING</th><th>COMMENT</th><th>DATE</th><th>ACTION</th>
+        </tr></thead>
+        <tbody id="reviews-body">
+          <tr><td colspan="6" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── MESSAGES PANEL ── -->
+  <div class="panel" id="panel-messages">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">All Conversations</div>
+        <input class="table-search" id="search-messages" placeholder="🔍 Search..." oninput="filterSearch('messages')" />
+      </div>
+      <table>
+        <thead><tr>
+          <th>PARTICIPANTS</th><th>LAST MESSAGE</th><th>UPDATED</th>
+        </tr></thead>
+        <tbody id="messages-body">
+          <tr><td colspan="3" class="table-loading">⏳ Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Confirm Action</div>
+    <div class="modal-body"  id="modal-body">Are you sure?</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-confirm" id="modal-confirm-btn" onclick="confirmModal()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, getDocs, getDoc, doc,
+  updateDoc, deleteDoc, query, orderBy, limit, where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+  authDomain: "kebet-6a12b.firebaseapp.com",
+  projectId: "kebet-6a12b",
+  storageBucket: "kebet-6a12b.firebasestorage.app",
+  messagingSenderId: "1098491917554",
+  appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── ADMIN EMAILS — add yours here ──
+const ADMIN_EMAILS = ['admin@kebet.com', 'yohannes@kebet.com'];
+
+let allOwners=[], allWorkers=[], allBookings=[], allReviews=[], allConvos=[];
+let modalAction = null;
+
+// ── LOGIN ──
+window.doLogin = async function() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    errEl.textContent = '✗ ' + e.message.replace('Firebase: ','');
+  }
+};
+
+document.getElementById('login-email').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+document.getElementById('login-pass').addEventListener('keydown',  e => { if(e.key==='Enter') doLogin(); });
+
+window.doSignout = async function() {
+  await signOut(auth);
+  location.reload();
+};
+
+// ── AUTH STATE ──
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    document.getElementById('login-screen').style.display = 'flex';
+    return;
+  }
+  if (!ADMIN_EMAILS.includes(user.email)) {
+    document.getElementById('login-err').textContent = '✗ Access denied. Not an admin account.';
+    await signOut(auth);
+    return;
+  }
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('main-area').style.display = 'block';
+  document.getElementById('admin-email-label').textContent = user.email;
+  await loadAll();
+});
+
+// ── LOAD ALL DATA ──
+window.loadAll = async function() {
+  showToast('↻ Refreshing data...', '');
+  await Promise.all([loadUsers(), loadBookings(), loadReviews(), loadConvos()]);
+  renderOverview();
+  showToast('✓ Data refreshed', 'green');
+};
+
+async function loadUsers() {
+  const snap = await getDocs(collection(db, 'users'));
+  allOwners=[]; allWorkers=[];
+  snap.forEach(d => {
+    const u = { id:d.id, ...d.data() };
+    if (u.userType==='owner') allOwners.push(u);
+    else allWorkers.push(u);
+  });
+  allOwners.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  allWorkers.sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  document.getElementById('cnt-owners').textContent  = allOwners.length;
+  document.getElementById('cnt-workers').textContent = allWorkers.length;
+  document.getElementById('stat-owners').textContent  = allOwners.length;
+  document.getElementById('stat-workers').textContent = allWorkers.length;
+  renderOwners(allOwners);
+  renderWorkers(allWorkers);
+}
+
+async function loadBookings() {
+  const snap = await getDocs(collection(db, 'bookings'));
+  allBookings=[];
+  snap.forEach(d => allBookings.push({ id:d.id, ...d.data() }));
+  allBookings.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  document.getElementById('cnt-bookings').textContent = allBookings.length;
+  document.getElementById('stat-bookings').textContent = allBookings.length;
+  renderBookings(allBookings);
+}
+
+async function loadReviews() {
+  const snap = await getDocs(collection(db, 'reviews'));
+  allReviews=[];
+  snap.forEach(d => allReviews.push({ id:d.id, ...d.data() }));
+  allReviews.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  document.getElementById('cnt-reviews').textContent = allReviews.length;
+  document.getElementById('stat-reviews').textContent = allReviews.length;
+  renderReviews(allReviews);
+}
+
+async function loadConvos() {
+  const snap = await getDocs(collection(db, 'conversations'));
+  allConvos=[];
+  snap.forEach(d => allConvos.push({ id:d.id, ...d.data() }));
+  allConvos.sort((a,b) => new Date(b.lastMessageAt||0)-new Date(a.lastMessageAt||0));
+  document.getElementById('cnt-messages').textContent = allConvos.length;
+  renderMessages(allConvos);
+}
+
+// ── RENDER OVERVIEW ──
+function renderOverview() {
+  const allUsers = [...allOwners, ...allWorkers].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,8);
+  document.getElementById('recent-users-body').innerHTML = allUsers.length === 0
+    ? `<tr><td colspan="4" class="table-empty">No users yet</td></tr>`
+    : allUsers.map(u => `
+      <tr>
+        <td><div class="user-cell">
+          <div class="avatar avatar-${u.userType}">${(u.firstName||'?')[0]}${(u.lastName||'')[0]||''}</div>
+          <div><div class="user-name">${u.firstName||''} ${u.lastName||''}</div>
+          <div class="user-email">${u.email||''}</div></div>
+        </div></td>
+        <td><span class="badge ${u.userType==='owner'?'badge-green':'badge-yellow'}">${u.userType==='owner'?'🏠 Owner':'🧹 Worker'}</span></td>
+        <td class="td-mono">${fmtDate(u.createdAt)}</td>
+        <td><span class="badge ${u.disabled?'badge-red':'badge-green'}">${u.disabled?'Disabled':'Active'}</span></td>
+      </tr>`).join('');
+
+  const recentBookings = allBookings.slice(0,8);
+  document.getElementById('recent-bookings-body').innerHTML = recentBookings.length === 0
+    ? `<tr><td colspan="4" class="table-empty">No bookings yet</td></tr>`
+    : recentBookings.map(b => `
+      <tr>
+        <td class="user-name">${b.workerName||'—'}</td>
+        <td class="user-name">${b.ownerName||'—'}</td>
+        <td>${statusBadge(b.status)}</td>
+        <td class="td-mono">${fmtDate(b.createdAt)}</td>
+      </tr>`).join('');
+}
+
+// ── RENDER OWNERS ──
+function renderOwners(list) {
+  document.getElementById('owners-body').innerHTML = list.length === 0
+    ? `<tr><td colspan="5" class="table-empty">No owners found</td></tr>`
+    : list.map(u => `
+      <tr>
+        <td><div class="user-cell">
+          <div class="avatar avatar-owner">${(u.firstName||'?')[0]}${(u.lastName||'')[0]||''}</div>
+          <div><div class="user-name">${u.firstName||''} ${u.lastName||''}</div>
+          <div class="user-email">${u.email||''}</div></div>
+        </div></td>
+        <td class="td-mono">${u.phone||'—'}</td>
+        <td class="td-mono">${fmtDate(u.createdAt)}</td>
+        <td><span class="badge ${u.disabled?'badge-red':'badge-green'}">${u.disabled?'Disabled':'Active'}</span></td>
+        <td>
+          ${u.disabled
+            ? `<button class="action-btn btn-success" onclick="toggleUser('${u.id}',false,'${u.firstName} ${u.lastName}')">Enable</button>`
+            : `<button class="action-btn btn-warn"    onclick="toggleUser('${u.id}',true,'${u.firstName} ${u.lastName}')">Disable</button>`}
+          <button class="action-btn btn-danger" style="margin-left:6px" onclick="deleteUser('${u.id}','${u.firstName} ${u.lastName}')">Delete</button>
+        </td>
+      </tr>`).join('');
+}
+
+// ── RENDER WORKERS ──
+function renderWorkers(list) {
+  document.getElementById('workers-body').innerHTML = list.length === 0
+    ? `<tr><td colspan="5" class="table-empty">No workers found</td></tr>`
+    : list.map(u => {
+        const skills = Array.isArray(u.skills) ? u.skills.slice(0,2).join(', ') : (u.skills||'—');
+        const rating = u.averageRating ? '★ '+Number(u.averageRating).toFixed(1) : '—';
+        return `
+        <tr>
+          <td><div class="user-cell">
+            <div class="avatar avatar-worker">${(u.firstName||'?')[0]}${(u.lastName||'')[0]||''}</div>
+            <div><div class="user-name">${u.firstName||''} ${u.lastName||''}</div>
+            <div class="user-email">${u.email||''}</div></div>
+          </div></td>
+          <td class="td-mono">${skills}</td>
+          <td class="td-mono">${rating}</td>
+          <td><span class="badge ${u.disabled?'badge-red':'badge-green'}">${u.disabled?'Disabled':'Active'}</span></td>
+          <td>
+            ${u.disabled
+              ? `<button class="action-btn btn-success" onclick="toggleUser('${u.id}',false,'${u.firstName} ${u.lastName}')">Enable</button>`
+              : `<button class="action-btn btn-warn"    onclick="toggleUser('${u.id}',true,'${u.firstName} ${u.lastName}')">Disable</button>`}
+            <button class="action-btn btn-danger" style="margin-left:6px" onclick="deleteUser('${u.id}','${u.firstName} ${u.lastName}')">Delete</button>
+          </td>
+        </tr>`;
+      }).join('');
+}
+
+// ── RENDER BOOKINGS ──
+function renderBookings(list) {
+  document.getElementById('bookings-body').innerHTML = list.length === 0
+    ? `<tr><td colspan="6" class="table-empty">No bookings found</td></tr>`
+    : list.map(b => `
+      <tr>
+        <td class="user-name">${b.workerName||'—'}</td>
+        <td class="user-name">${b.ownerName||'—'}</td>
+        <td class="td-mono">${b.salary ? 'ETB '+b.salary : '—'}</td>
+        <td>${statusBadge(b.status)}</td>
+        <td class="td-mono">${fmtDate(b.createdAt)}</td>
+        <td><button class="action-btn btn-danger" onclick="deleteBooking('${b.id}')">Delete</button></td>
+      </tr>`).join('');
+}
+
+// ── RENDER REVIEWS ──
+function renderReviews(list) {
+  document.getElementById('reviews-body').innerHTML = list.length === 0
+    ? `<tr><td colspan="6" class="table-empty">No reviews found</td></tr>`
+    : list.map(r => {
+        const stars = '★'.repeat(r.rating||0) + '☆'.repeat(5-(r.rating||0));
+        const comment = (r.comment||r.review||'—').slice(0,60) + ((r.comment||r.review||'').length>60?'...':'');
+        return `
+        <tr>
+          <td class="user-name">${r.ownerName||r.reviewerName||'—'}</td>
+          <td class="user-name">${r.workerName||'—'}</td>
+          <td style="color:var(--yellow);font-size:13px;letter-spacing:1px">${stars}</td>
+          <td class="td-mono" style="max-width:200px">${comment}</td>
+          <td class="td-mono">${fmtDate(r.createdAt)}</td>
+          <td><button class="action-btn btn-danger" onclick="deleteReview('${r.id}')">Delete</button></td>
+        </tr>`;
+      }).join('');
+}
+
+// ── RENDER MESSAGES ──
+function renderMessages(list) {
+  document.getElementById('messages-body').innerHTML = list.length === 0
+    ? `<tr><td colspan="3" class="table-empty">No conversations found</td></tr>`
+    : list.map(c => {
+        const names = Object.values(c.participantNames||{}).join(' ↔ ') || c.id;
+        const preview = (c.lastMessage||'No messages').slice(0,60);
+        return `
+        <tr>
+          <td class="user-name">${names}</td>
+          <td class="td-mono">${preview}</td>
+          <td class="td-mono">${fmtDate(c.lastMessageAt)}</td>
+        </tr>`;
+      }).join('');
+}
+
+// ── SEARCH FILTER ──
+window.filterSearch = function(panel) {
+  const q = document.getElementById('search-'+panel).value.toLowerCase();
+  if (panel==='owners')   renderOwners(allOwners.filter(u => matches(u,q)));
+  if (panel==='workers')  renderWorkers(allWorkers.filter(u => matches(u,q)));
+  if (panel==='bookings') renderBookings(allBookings.filter(b => (b.workerName+b.ownerName+b.status||'').toLowerCase().includes(q)));
+  if (panel==='reviews')  renderReviews(allReviews.filter(r => (r.ownerName+r.workerName+r.comment+r.review||'').toLowerCase().includes(q)));
+  if (panel==='messages') renderMessages(allConvos.filter(c => JSON.stringify(c.participantNames||{}).toLowerCase().includes(q)));
+};
+
+function matches(u,q) {
+  return (u.firstName+' '+u.lastName+u.email+u.phone||'').toLowerCase().includes(q);
+}
+
+// ── USER FILTER TABS ──
+window.filterUsers = function(filter) {
+  ['all','active','disabled'].forEach(f => document.getElementById('tab-'+f).classList.toggle('active', f===filter));
+  const panel = document.getElementById('panel-owners').style.display!=='none' ? 'owners' : 'workers';
+  const list  = panel==='owners' ? allOwners : allWorkers;
+  const filtered = filter==='all' ? list : filter==='active' ? list.filter(u=>!u.disabled) : list.filter(u=>u.disabled);
+  if (panel==='owners') renderOwners(filtered); else renderWorkers(filtered);
+};
+
+// ── PANEL SWITCH ──
+window.showPanel = function(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', bookings:'Bookings', reviews:'Reviews', messages:'Conversations' };
+  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations' };
+  document.getElementById('panel-title').textContent = titles[name]||name;
+  document.getElementById('panel-sub').textContent   = subs[name]||'';
+  const showTabs = ['owners','workers'].includes(name);
+  document.getElementById('user-tabs').style.display = showTabs ? 'flex' : 'none';
+  if (showTabs) filterUsers('all');
+};
+
+// ── ACTIONS ──
+window.toggleUser = function(uid, disable, name) {
+  openModal(
+    disable ? `Disable ${name}?` : `Enable ${name}?`,
+    disable ? `This user will no longer be able to log in or appear in searches.` : `This will restore the user's access to the platform.`,
+    async () => {
+      await updateDoc(doc(db,'users',uid), { disabled: disable });
+      showToast(disable ? `✓ ${name} disabled` : `✓ ${name} enabled`, disable?'red':'green');
+      await loadUsers();
+    },
+    disable ? 'Disable' : 'Enable'
+  );
+};
+
+window.deleteUser = function(uid, name) {
+  openModal(
+    `Delete ${name}?`,
+    `This will permanently remove the user from Firestore. They can still log in via Firebase Auth — go to Firebase Console to fully remove them.`,
+    async () => {
+      await deleteDoc(doc(db,'users',uid));
+      showToast(`✓ ${name} deleted from Firestore`, 'red');
+      await loadUsers();
+    },
+    'Delete'
+  );
+};
+
+window.deleteBooking = function(bid) {
+  openModal('Delete this booking?', 'This booking record will be permanently removed.', async () => {
+    await deleteDoc(doc(db,'bookings',bid));
+    showToast('✓ Booking deleted', 'red');
+    await loadBookings();
+    renderOverview();
+  }, 'Delete');
+};
+
+window.deleteReview = function(rid) {
+  openModal('Delete this review?', 'This review will be permanently removed and the worker\'s rating may change.', async () => {
+    await deleteDoc(doc(db,'reviews',rid));
+    showToast('✓ Review deleted', 'red');
+    await loadReviews();
+  }, 'Delete');
+};
+
+// ── MODAL ──
+function openModal(title, body, action, confirmLabel='Confirm') {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent  = body;
+  document.getElementById('modal-confirm-btn').textContent = confirmLabel;
+  modalAction = action;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+window.closeModal  = () => document.getElementById('modal-overlay').classList.remove('show');
+window.confirmModal = async () => {
+  closeModal();
+  if (modalAction) await modalAction();
+  modalAction = null;
+};
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+// ── TOAST ──
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── HELPERS ──
+function fmtDate(val) {
+  if (!val) return '—';
+  const d = val.toDate ? val.toDate() : new Date(val);
+  return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+function statusBadge(s) {
+  const map = { pending:'badge-yellow', accepted:'badge-green', active:'badge-blue', completed:'badge-grey', rejected:'badge-red', cancelled:'badge-red' };
+  return `<span class="badge ${map[s]||'badge-grey'}">${s||'—'}</span>`;
+}
+</script>
+</body>
+</html>
