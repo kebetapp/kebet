@@ -152,10 +152,10 @@
     <div class="page-title">⚙️ Settings</div>
     <div class="page-sub" id="page-sub">Manage your profile and account</div>
 
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('profile')">👤 Profile</div>
-      <div class="tab" onclick="switchTab('security')">🔐 Security</div>
-      <div class="tab" id="tab-worker-skills" style="display:none;" onclick="switchTab('skills')">🛠 Skills & Info</div>
+    <div class="tabs" id="tabs-bar">
+      <div class="tab active" data-tab="profile" onclick="switchTab('profile')">👤 Profile</div>
+      <div class="tab" data-tab="security" onclick="switchTab('security')">🔐 Security</div>
+      <div class="tab" data-tab="skills" id="tab-worker-skills" style="display:none;" onclick="switchTab('skills')">🛠 Skills & Info</div>
     </div>
 
     <!-- PROFILE TAB -->
@@ -550,7 +550,8 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-' + name).classList.add('active');
-    event.target.classList.add('active');
+    const activeTab = document.querySelector('.tab[data-tab="' + name + '"]');
+    if (activeTab) activeTab.classList.add('active');
   };
 
   // ── SIGN OUT ──
