@@ -3,324 +3,668 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kebet — ከቤት</title>
+  <title>Kebet — ከቤት | Find Trusted House Workers in Addis Ababa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #fff; color: #111; overflow-x: hidden; }
 
-    nav {
-      background: #fff; padding: 16px 40px;
-      display: flex; align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      position: sticky; top: 0; z-index: 100;
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .nav-logo { display: flex; align-items: center; gap: 10px; }
-    .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
-    .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
-    .nav-logo-am { font-size: 13px; color: #f0a500; }
-    .nav-links { display: flex; gap: 28px; list-style: none; }
-    .nav-links a { text-decoration: none; color: #555; font-size: 14px; }
-    .nav-links a:hover { color: #1a6b3c; }
-    .nav-btns { display: flex; gap: 10px; }
-    .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
-    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-12px); }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(240,165,0,0.5); }
+      70%  { transform: scale(1);    box-shadow: 0 0 0 16px rgba(240,165,0,0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(240,165,0,0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes gradient-shift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes typing-cursor {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes bounce-in {
+      0%   { transform: scale(0); opacity: 0; }
+      60%  { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
 
-    .hero { background: #1a6b3c; padding: 80px 40px; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
-    .hero-left { max-width: 520px; }
-    .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); color: #f0a500; padding: 6px 16px; border-radius: 20px; font-size: 12px; margin-bottom: 20px; }
-    .hero-title { font-size: 48px; font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 8px; }
-    .hero-title span { color: #f0a500; }
-    .hero-amharic { font-size: 22px; color: rgba(255,255,255,0.7); margin-bottom: 16px; }
-    .hero-desc { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 32px; }
-    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn-white-hero { background: #fff; color: #1a6b3c; border: none; padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-gold-hero { background: #f0a500; color: #fff; border: none; padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .hero-stats { display: flex; gap: 28px; margin-top: 40px; }
-    .hero-stat-num { font-size: 24px; font-weight: 700; color: #fff; }
-    .hero-stat-lab { font-size: 11px; color: rgba(255,255,255,0.6); }
+    /* scroll-reveal base */
+    .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+    .reveal-scale { opacity: 0; transform: scale(0.85); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal-scale.visible { opacity: 1; transform: scale(1); }
 
-    .hero-right { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; min-width: 280px; }
-    .hero-card-title { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
-    .mini-worker { background: #fff; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .mini-av { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; }
-    .av-gold { background: #fde8c8; color: #c87800; }
-    .av-green { background: #e8f5ee; color: #1a6b3c; }
-    .mini-name { font-size: 13px; font-weight: 600; color: #111; }
-    .mini-role { font-size: 11px; color: #888; }
-    .mini-salary { font-size: 11px; font-weight: 700; color: #1a6b3c; margin-left: auto; text-align: right; white-space: nowrap; }
-    .mini-salary small { display: block; font-size: 9px; color: #aaa; font-weight: 400; }
-    .mini-stars { color: #f0a500; font-size: 10px; }
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 48px; display: flex; align-items: center; justify-content: space-between; transition: all 0.4s ease; }
+    nav.scrolled { background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-icon { width: 42px; height: 42px; background: linear-gradient(135deg, #1a6b3c, #2d8a56); border-radius: 13px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; box-shadow: 0 4px 14px rgba(26,107,60,0.3); transition: transform 0.3s; }
+    .nav-logo-icon:hover { transform: rotate(-8deg) scale(1.1); }
+    .nav-logo-text { font-size: 22px; font-weight: 900; color: #1a6b3c; letter-spacing: 3px; }
+    .nav-logo-am { font-size: 11px; color: #f0a500; font-weight: 700; letter-spacing: 1px; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 14px; color: #fff; text-decoration: none; font-weight: 600; transition: all 0.2s; position: relative; }
+    nav.scrolled .nav-links a { color: #444; }
+    .nav-links a::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:2px; background:#1a6b3c; transition: width 0.3s; border-radius:2px; }
+    .nav-links a:hover::after { width:100%; }
+    .nav-btns { display: flex; gap: 10px; align-items: center; }
+    .btn-outline { border: 2px solid rgba(255,255,255,0.6); color: #fff; background: transparent; padding: 9px 22px; border-radius: 24px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+    nav.scrolled .btn-outline { border-color: #1a6b3c; color: #1a6b3c; }
+    .btn-outline:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px); }
+    nav.scrolled .btn-outline:hover { background: #e8f5ee; }
+    .btn-primary { background: linear-gradient(135deg, #f0a500, #e09200); color: #fff; border: none; padding: 9px 22px; border-radius: 24px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 14px rgba(240,165,0,0.35); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(240,165,0,0.45); }
 
-    .section { padding: 70px 40px; }
-    .section-center { text-align: center; margin-bottom: 48px; }
-    .section-tag { display: inline-block; background: #e8f5ee; color: #1a6b3c; padding: 6px 16px; border-radius: 20px; font-size: 12px; margin-bottom: 12px; }
-    .section-title { font-size: 32px; font-weight: 700; color: #111; margin-bottom: 10px; }
-    .section-sub { font-size: 15px; color: #888; }
+    /* HERO */
+    .hero { min-height: 100vh; background: linear-gradient(135deg, #062c18 0%, #0d4a28 30%, #1a6b3c 70%, #2d8a56 100%); background-size: 300% 300%; animation: gradient-shift 8s ease infinite; display: flex; align-items: center; justify-content: center; text-align: center; padding: 130px 40px 80px; position: relative; overflow: hidden; }
 
-    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .step-card { background: #fff; border-radius: 16px; padding: 24px; text-align: center; border: 1px solid #eee; }
-    .step-icon { width: 56px; height: 56px; background: #e8f5ee; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; }
-    .step-num { font-size: 11px; color: #f0a500; font-weight: 600; margin-bottom: 6px; }
-    .step-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 6px; }
-    .step-desc { font-size: 12px; color: #888; line-height: 1.6; }
+    /* animated bg circles */
+    .hero-bg-circle { position: absolute; border-radius: 50%; opacity: 0.06; animation: float 6s ease-in-out infinite; }
+    .hero-bg-circle.c1 { width: 500px; height: 500px; background: #fff; top: -150px; left: -150px; animation-delay: 0s; }
+    .hero-bg-circle.c2 { width: 300px; height: 300px; background: #f0a500; bottom: -80px; right: -80px; animation-delay: 2s; }
+    .hero-bg-circle.c3 { width: 200px; height: 200px; background: #fff; top: 40%; left: 10%; animation-delay: 4s; }
 
-    .cats-section { background: #fff; padding: 70px 40px; }
-    .cats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .cat-card { background: #f5f5f0; border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; border: 2px solid transparent; }
-    .cat-card:hover { background: #e8f5ee; border-color: #1a6b3c; }
-    .cat-icon-big { width: 64px; height: 64px; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 28px; }
-    .cat-name { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 4px; }
-    .cat-count { font-size: 12px; color: #888; }
-    .cat-salary { font-size: 12px; color: #1a6b3c; font-weight: 600; margin-top: 6px; }
+    .hero-content { position: relative; z-index: 1; max-width: 780px; animation: fadeUp 1s ease both; }
 
-    .workers-section { padding: 70px 40px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 700; padding: 9px 20px; border-radius: 24px; margin-bottom: 32px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); animation: fadeIn 1s 0.3s both; letter-spacing: 0.3px; }
+    .hero-badge-dot { width: 8px; height: 8px; background: #4cff91; border-radius: 50%; animation: pulse-ring 2s infinite; }
+
+    .hero-headline { font-size: 62px; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 14px; letter-spacing: -1px; animation: fadeUp 1s 0.2s both; }
+    .hero-headline .highlight { background: linear-gradient(90deg, #f0a500, #ffd04d, #f0a500); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
+
+    .hero-am { font-size: 22px; color: rgba(255,255,255,0.65); margin-bottom: 22px; font-weight: 600; animation: fadeUp 1s 0.4s both; letter-spacing: 0.5px; }
+
+    /* Typing effect */
+    .hero-typing { font-size: 17px; color: rgba(255,255,255,0.8); margin-bottom: 40px; line-height: 1.7; animation: fadeUp 1s 0.5s both; min-height: 56px; }
+    .typing-cursor { animation: typing-cursor 0.8s infinite; color: #f0a500; font-weight: 700; }
+
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; animation: fadeUp 1s 0.7s both; }
+    .hero-btn-main { background: linear-gradient(135deg, #f0a500, #e09200); color: #fff; border: none; padding: 18px 40px; border-radius: 32px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 28px rgba(240,165,0,0.45); animation: pulse-ring 3s infinite; letter-spacing: 0.3px; }
+    .hero-btn-main:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 36px rgba(240,165,0,0.55); }
+    .hero-btn-sec { background: rgba(255,255,255,0.12); color: #fff; border: 2px solid rgba(255,255,255,0.35); padding: 18px 40px; border-radius: 32px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px); }
+    .hero-btn-sec:hover { background: rgba(255,255,255,0.22); transform: translateY(-3px); }
+
+    .hero-stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; animation: fadeUp 1s 0.9s both; }
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 38px; font-weight: 900; color: #f0a500; letter-spacing: -1px; }
+    .hero-stat-label { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 4px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+    .hero-stat-divider { width: 1px; background: rgba(255,255,255,0.15); }
+
+    /* TRUST BAR */
+    .trust-bar { background: #fff; padding: 0 40px; display: flex; align-items: center; justify-content: center; gap: 0; border-bottom: 1px solid #f0f0f0; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
+    .trust-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #444; font-weight: 700; padding: 22px 32px; border-right: 1px solid #f0f0f0; transition: all 0.3s; cursor: default; }
+    .trust-item:last-child { border-right: none; }
+    .trust-item:hover { background: #f9fff5; color: #1a6b3c; }
+    .trust-icon { font-size: 20px; transition: transform 0.3s; }
+    .trust-item:hover .trust-icon { transform: scale(1.25) rotate(-5deg); }
+
+    /* SECTION BASE */
+    .section { padding: 100px 48px; max-width: 1140px; margin: 0 auto; }
+    .section-tag { display: inline-flex; align-items: center; gap: 6px; background: #e8f5ee; color: #1a6b3c; font-size: 11px; font-weight: 800; padding: 7px 16px; border-radius: 20px; margin-bottom: 16px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .section-title { font-size: 42px; font-weight: 900; color: #111; margin-bottom: 10px; line-height: 1.15; letter-spacing: -0.5px; }
+    .section-title .green { color: #1a6b3c; }
+    .section-title .gold { color: #f0a500; }
+    .section-am { font-size: 16px; color: #999; margin-bottom: 56px; font-weight: 500; }
+
+    /* HOW IT WORKS */
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .how-card { background: #fff; border-radius: 24px; padding: 36px 28px; text-align: center; position: relative; border: 1.5px solid #f0f0f0; transition: all 0.4s ease; overflow: hidden; }
+    .how-card::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, #e8f5ee, #f9fff5); opacity:0; transition: opacity 0.4s; }
+    .how-card:hover { border-color: #1a6b3c; transform: translateY(-8px); box-shadow: 0 20px 50px rgba(26,107,60,0.12); }
+    .how-card:hover::before { opacity:1; }
+    .how-num { position: absolute; top: -1px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a6b3c, #2d8a56); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(26,107,60,0.35); z-index:1; }
+    .how-icon { font-size: 52px; margin-bottom: 18px; margin-top: 16px; position: relative; z-index:1; display: inline-block; transition: transform 0.4s; }
+    .how-card:hover .how-icon { transform: scale(1.2) rotate(-5deg); }
+    .how-title { font-size: 18px; font-weight: 800; color: #111; margin-bottom: 6px; position: relative; z-index:1; }
+    .how-title-am { font-size: 13px; color: #1a6b3c; font-weight: 700; margin-bottom: 12px; position: relative; z-index:1; }
+    .how-desc { font-size: 14px; color: #666; line-height: 1.7; position: relative; z-index:1; }
+    .how-arrow { display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 28px; margin-top: 40px; }
+
+    /* WORKERS */
+    .workers-section { background: linear-gradient(180deg, #f9fffe 0%, #f0fff7 100%); padding: 100px 0; }
+    .workers-inner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
     .workers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .worker-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; }
+    .worker-card { background: #fff; border-radius: 22px; padding: 24px; border: 1.5px solid #f0f0f0; transition: all 0.4s; cursor: pointer; position: relative; overflow: hidden; }
+    .worker-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: linear-gradient(90deg,#1a6b3c,#f0a500); transform: scaleX(0); transition: transform 0.4s; }
+    .worker-card:hover { box-shadow: 0 16px 44px rgba(0,0,0,0.1); transform: translateY(-6px); border-color: transparent; }
+    .worker-card:hover::after { transform: scaleX(1); }
     .worker-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
-    .worker-av { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; flex-shrink: 0; }
-    .worker-name { font-size: 15px; font-weight: 600; color: #111; }
-    .worker-role { font-size: 12px; color: #888; margin: 2px 0; }
-    .worker-loc { font-size: 11px; color: #1a6b3c; }
-    .verified { background: #e8f5ee; color: #1a6b3c; font-size: 10px; padding: 3px 8px; border-radius: 8px; margin-left: auto; }
+    .worker-av { width: 54px; height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; flex-shrink: 0; transition: transform 0.3s; }
+    .worker-card:hover .worker-av { transform: scale(1.1) rotate(-3deg); }
+    .worker-av.c1 { background: linear-gradient(135deg,#fde8c8,#ffd4a0); color: #c87800; }
+    .worker-av.c2 { background: linear-gradient(135deg,#e8f5ee,#c8eedd); color: #1a6b3c; }
+    .worker-av.c3 { background: linear-gradient(135deg,#f0e8fd,#ddc8fd); color: #7800c8; }
+    .worker-name { font-size: 15px; font-weight: 800; color: #111; }
+    .worker-role { font-size: 12px; color: #888; margin: 3px 0; font-weight: 500; }
+    .worker-loc { font-size: 11px; color: #1a6b3c; font-weight: 600; }
+    .verified-tag { background: linear-gradient(135deg,#e8f5ee,#c8eedd); color: #1a6b3c; font-size: 10px; padding: 4px 10px; border-radius: 10px; margin-left: auto; white-space: nowrap; font-weight: 800; }
     .worker-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .skill { background: #f5f5f0; color: #555; font-size: 11px; padding: 4px 10px; border-radius: 8px; }
-    .worker-bottom { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 12px; }
-    .worker-salary { font-size: 15px; font-weight: 700; color: #1a6b3c; }
-    .worker-salary span { font-size: 11px; color: #888; font-weight: 400; }
-    .stars { color: #f0a500; font-size: 12px; }
-    .hire-btn { background: #1a6b3c; color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .live-in-tag { background: #fff5e0; color: #c87800; font-size: 10px; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 3px; }
+    .skill { background: #f5f5f0; color: #555; font-size: 11px; padding: 5px 12px; border-radius: 10px; font-weight: 600; transition: all 0.2s; }
+    .worker-card:hover .skill { background: #e8f5ee; color: #1a6b3c; }
+    .worker-bottom { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f5f5f0; padding-top: 14px; }
+    .worker-salary { font-size: 16px; font-weight: 800; color: #1a6b3c; }
+    .worker-salary span { font-size: 11px; color: #aaa; font-weight: 500; }
+    .stars { color: #f0a500; font-size: 12px; font-weight: 700; }
+    .hire-btn { background: linear-gradient(135deg,#1a6b3c,#2d8a56); color: #fff; border: none; padding: 9px 18px; border-radius: 18px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+    .hire-btn:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(26,107,60,0.35); }
 
-    .cta-section { background: #1a6b3c; padding: 70px 40px; text-align: center; }
-    .cta-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 10px; }
-    .cta-sub { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
-    .cta-btns { display: flex; gap: 12px; justify-content: center; }
+    /* TESTIMONIALS */
+    .testi-section { padding: 100px 48px; max-width: 1140px; margin: 0 auto; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .testi-card { background: #fff; border-radius: 22px; padding: 28px; border: 1.5px solid #f0f0f0; transition: all 0.4s; position: relative; overflow: hidden; }
+    .testi-card::before { content:'"'; position:absolute; top:-10px; right:20px; font-size:120px; color:#f0f0f0; font-family:Georgia,serif; line-height:1; transition: color 0.4s; }
+    .testi-card:hover { box-shadow: 0 16px 44px rgba(0,0,0,0.08); transform: translateY(-6px); border-color: #f0a500; }
+    .testi-card:hover::before { color: #fff5e0; }
+    .testi-stars { color: #f0a500; font-size: 18px; margin-bottom: 14px; letter-spacing: 2px; }
+    .testi-text { font-size: 14px; color: #444; line-height: 1.8; margin-bottom: 10px; font-style: italic; position: relative; z-index:1; }
+    .testi-text-am { font-size: 12px; color: #bbb; margin-bottom: 18px; position: relative; z-index:1; }
+    .testi-divider { height: 1px; background: #f5f5f0; margin-bottom: 16px; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-av { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .testi-name { font-size: 14px; font-weight: 800; color: #111; }
+    .testi-loc { font-size: 11px; color: #aaa; font-weight: 500; margin-top: 1px; }
 
-    footer { background: #111; padding: 40px; display: flex; align-items: center; justify-content: space-between; }
-    .footer-logo { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 2px; }
-    .footer-am { font-size: 13px; color: #f0a500; }
-    .footer-links { display: flex; gap: 20px; }
-    .footer-links a { color: #888; font-size: 13px; text-decoration: none; }
-    .footer-copy { color: #555; font-size: 12px; }
+    /* WHY KEBET */
+    .why-section { background: linear-gradient(180deg,#f9f9f7,#fff); padding: 100px 0; }
+    .why-inner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .why-card { background: #fff; border-radius: 22px; padding: 28px; border: 1.5px solid #f0f0f0; transition: all 0.4s; position: relative; overflow: hidden; }
+    .why-card:hover { border-color: #1a6b3c; transform: translateY(-6px); box-shadow: 0 16px 44px rgba(26,107,60,0.1); }
+    .why-icon-wrap { width: 56px; height: 56px; background: linear-gradient(135deg,#e8f5ee,#c8eedd); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 18px; transition: transform 0.4s; }
+    .why-card:hover .why-icon-wrap { transform: scale(1.15) rotate(-5deg); }
+    .why-title { font-size: 16px; font-weight: 800; color: #111; margin-bottom: 4px; }
+    .why-title-am { font-size: 12px; color: #1a6b3c; font-weight: 700; margin-bottom: 10px; }
+    .why-desc { font-size: 13px; color: #777; line-height: 1.7; }
 
-    @media (max-width: 768px) {
-      .hero { flex-direction: column; padding: 40px 20px; }
-      .hero-title { font-size: 32px; }
-      .steps-grid { grid-template-columns: 1fr 1fr; }
-      .cats-grid { grid-template-columns: 1fr 1fr; }
-      .workers-grid { grid-template-columns: 1fr; }
-      nav { padding: 16px 20px; }
+    /* CTA */
+    .cta-section { background: linear-gradient(135deg, #062c18, #0d4a28, #1a6b3c); background-size: 300% 300%; animation: gradient-shift 8s ease infinite; padding: 100px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cta-section::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E"); }
+    .cta-content { position: relative; z-index:1; }
+    .cta-section h2 { font-size: 48px; font-weight: 900; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
+    .cta-section h2 .gold { background: linear-gradient(90deg,#f0a500,#ffd04d,#f0a500); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: shimmer 3s linear infinite; }
+    .cta-section p { font-size: 17px; color: rgba(255,255,255,0.75); margin-bottom: 6px; }
+    .cta-am { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 44px; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* CONTACT BAR */
+    .contact-bar { background: #0d0d0d; padding: 32px 48px; display: flex; align-items: center; justify-content: center; gap: 56px; flex-wrap: wrap; }
+    .contact-item { display: flex; align-items: center; gap: 14px; color: #fff; text-decoration: none; transition: all 0.3s; }
+    .contact-item:hover { transform: translateY(-3px); }
+    .contact-icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: transform 0.3s; }
+    .contact-icon-wrap.tel { background: linear-gradient(135deg,#1a6b3c,#2d8a56); }
+    .contact-icon-wrap.tg { background: linear-gradient(135deg,#0088cc,#00aaff); }
+    .contact-icon-wrap.loc { background: linear-gradient(135deg,#e63946,#ff6b6b); }
+    .contact-item:hover .contact-icon-wrap { transform: scale(1.1) rotate(-5deg); }
+    .contact-label { font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .contact-value { font-size: 16px; font-weight: 800; color: #fff; margin-top: 2px; }
+    .contact-item:hover .contact-value { color: #f0a500; }
+
+    /* FOOTER */
+    footer { background: #080808; padding: 48px; text-align: center; border-top: 1px solid #1a1a1a; }
+    .footer-logo { font-size: 28px; font-weight: 900; color: #1a6b3c; letter-spacing: 4px; margin-bottom: 4px; }
+    .footer-am { font-size: 13px; color: #f0a500; margin-bottom: 24px; font-weight: 700; letter-spacing: 1px; }
+    .footer-links { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .footer-links a { font-size: 13px; color: #555; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+    .footer-links a:hover { color: #1a6b3c; }
+    .footer-copy { font-size: 12px; color: #333; }
+
+    /* FLOATING BUTTONS */
+    .float-contact { position: fixed; bottom: 28px; right: 28px; z-index: 999; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+    .float-btn { display: flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 30px; font-size: 14px; font-weight: 800; text-decoration: none; color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,0.25); transition: all 0.3s; }
+    .float-btn:hover { transform: translateX(-4px) scale(1.04); box-shadow: 0 10px 32px rgba(0,0,0,0.3); }
+    .float-btn.telegram { background: linear-gradient(135deg,#0088cc,#00aaff); }
+    .float-btn.phone { background: linear-gradient(135deg,#1a6b3c,#2d8a56); }
+    .float-label { font-size: 13px; }
+
+    /* COUNTER */
+    .count-num { display: inline-block; }
+
+    @media (max-width: 900px) {
+      nav { padding: 14px 20px; }
       .nav-links { display: none; }
-      .section { padding: 40px 20px; }
-      .cats-section { padding: 40px 20px; }
-      .workers-section { padding: 40px 20px; }
-      footer { flex-direction: column; gap: 20px; text-align: center; }
+      .hero-headline { font-size: 36px; }
+      .hero { padding: 110px 24px 70px; }
+      .hero-stats { gap: 28px; }
+      .trust-bar { flex-wrap: wrap; gap: 0; }
+      .trust-item { padding: 14px 18px; font-size: 12px; }
+      .section { padding: 70px 24px; }
+      .how-grid, .workers-grid, .testi-grid, .why-grid { grid-template-columns: 1fr; }
+      .workers-inner, .why-inner { padding: 0 24px; }
+      .testi-section { padding: 70px 24px; }
+      .contact-bar { gap: 28px; padding: 28px 24px; }
+      .cta-section h2 { font-size: 32px; }
+      .float-label { display: none; }
+      .float-btn { padding: 13px 16px; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">
     <div class="nav-logo-icon">🏠</div>
     <div>
       <div class="nav-logo-text">KEBET</div>
       <div class="nav-logo-am">ከቤት</div>
     </div>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#workers">Workers</a>
+    <a href="#why">Why Kebet</a>
+    <a href="#contact">Contact</a>
   </div>
-  <ul class="nav-links">
-    <li><a href="#">Home</a></li>
-    <li><a href="search.html">Find Workers</a></li>
-    <li><a href="signup.html">For Workers</a></li>
-    <li><a href="#">How it works</a></li>
-  </ul>
   <div class="nav-btns">
-    <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
-    <button class="btn-green" onclick="window.location.href='signup.html'">Get Started</button>
+    <button class="btn-outline" onclick="window.location.href='signin.html'">Sign in</button>
+    <button class="btn-primary" onclick="window.location.href='signup.html'">Get Started</button>
   </div>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
-  <div class="hero-left">
-    <div class="hero-badge">🇪🇹 #1 House Worker Platform in Ethiopia</div>
-    <div class="hero-title">Find Trusted<br/><span>House Workers</span><br/>Near You</div>
-    <div class="hero-amharic">ቤትዎን እናስተዳድርልዎ</div>
-    <div class="hero-desc">Connect with verified live-in house workers in Addis Ababa. Pay monthly salary. Safe, reliable and trusted.</div>
+  <div class="hero-bg-circle c1"></div>
+  <div class="hero-bg-circle c2"></div>
+  <div class="hero-bg-circle c3"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      🇪🇹 Addis Ababa's #1 House Worker Platform
+    </div>
+    <h1 class="hero-headline">Find Trusted<br><span class="highlight">House Workers</span><br>in Minutes</h1>
+    <div class="hero-am">ታማኝ የቤት ሰራተኛ በቀላሉ ያግኙ</div>
+    <div class="hero-typing" id="hero-typing"></div>
     <div class="hero-btns">
-      <button class="btn-white-hero" onclick="window.location.href='search.html'">Find a Worker</button>
-      <button class="btn-gold-hero" onclick="window.location.href='signup.html'">Join as Worker</button>
+      <button class="hero-btn-main" onclick="window.location.href='search.html'">🔍 Find a Worker Now</button>
+      <button class="hero-btn-sec" onclick="window.location.href='signup.html'">📝 Register as Worker</button>
     </div>
     <div class="hero-stats">
-      <div><div class="hero-stat-num">500+</div><div class="hero-stat-lab">Workers</div></div>
-      <div><div class="hero-stat-num">1,200+</div><div class="hero-stat-lab">Happy homes</div></div>
-      <div><div class="hero-stat-num">4.9★</div><div class="hero-stat-lab">Average rating</div></div>
-    </div>
-  </div>
-  <div class="hero-right">
-    <div class="hero-card-title">Available workers near you 📍</div>
-    <div class="mini-worker">
-      <div class="mini-av av-gold">SA</div>
-      <div>
-        <div class="mini-name">Sara Alemu</div>
-        <div class="mini-role">Cleaner · Nanny</div>
-        <div class="mini-stars">★★★★★</div>
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span class="count-num" data-target="50">0</span>+</div>
+        <div class="hero-stat-label">Verified Workers</div>
       </div>
-      <div class="mini-salary">3,500 ETB<small>/month</small></div>
-    </div>
-    <div class="mini-worker">
-      <div class="mini-av av-green">MT</div>
-      <div>
-        <div class="mini-name">Marta Tadesse</div>
-        <div class="mini-role">Cook · Cleaner</div>
-        <div class="mini-stars">★★★★☆</div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span class="count-num" data-target="100">0</span>+</div>
+        <div class="hero-stat-label">Happy Families</div>
       </div>
-      <div class="mini-salary">3,000 ETB<small>/month</small></div>
-    </div>
-    <div class="mini-worker">
-      <div class="mini-av av-gold">HG</div>
-      <div>
-        <div class="mini-name">Hiwot Girma</div>
-        <div class="mini-role">Full-time help</div>
-        <div class="mini-stars">★★★★★</div>
-      </div>
-      <div class="mini-salary">4,500 ETB<small>/month</small></div>
-    </div>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-center">
-    <div class="section-tag">How it works</div>
-    <div class="section-title">Find help in 4 simple steps</div>
-    <div class="section-sub">Easy to use for everyone</div>
-  </div>
-  <div class="steps-grid">
-    <div class="step-card"><div class="step-icon">📍</div><div class="step-num">STEP 01</div><div class="step-title">Set your location</div><div class="step-desc">Tell us where you are and we show workers near you</div></div>
-    <div class="step-card"><div class="step-icon">🔍</div><div class="step-num">STEP 02</div><div class="step-title">Browse workers</div><div class="step-desc">See profiles, ratings, skills and monthly salary</div></div>
-    <div class="step-card"><div class="step-icon">📅</div><div class="step-num">STEP 03</div><div class="step-title">Book & agree salary</div><div class="step-desc">Choose your start date and agree on monthly salary</div></div>
-    <div class="step-card"><div class="step-icon">⭐</div><div class="step-num">STEP 04</div><div class="step-title">Rate & review</div><div class="step-desc">After each month rate the worker and help the community</div></div>
-  </div>
-</div>
-
-<div class="cats-section">
-  <div class="section-center">
-    <div class="section-tag">Categories</div>
-    <div class="section-title">What do you need help with?</div>
-    <div class="section-sub">All workers are live-in — they stay in your home</div>
-  </div>
-  <div class="cats-grid">
-    <div class="cat-card" onclick="window.location.href='search.html'">
-      <div class="cat-icon-big">🧹</div>
-      <div class="cat-name">Cleaning</div>
-      <div class="cat-count">120+ workers</div>
-      <div class="cat-salary">2,500 – 3,500 ETB/mo</div>
-    </div>
-    <div class="cat-card" onclick="window.location.href='search.html'">
-      <div class="cat-icon-big">🍳</div>
-      <div class="cat-name">Cooking</div>
-      <div class="cat-count">80+ workers</div>
-      <div class="cat-salary">3,000 – 4,000 ETB/mo</div>
-    </div>
-    <div class="cat-card" onclick="window.location.href='search.html'">
-      <div class="cat-icon-big">👶</div>
-      <div class="cat-name">Nanny</div>
-      <div class="cat-count">95+ workers</div>
-      <div class="cat-salary">3,500 – 4,500 ETB/mo</div>
-    </div>
-    <div class="cat-card" onclick="window.location.href='search.html'">
-      <div class="cat-icon-big">🏠</div>
-      <div class="cat-name">Full-time Help</div>
-      <div class="cat-count">60+ workers</div>
-      <div class="cat-salary">3,000 – 5,000 ETB/mo</div>
-    </div>
-  </div>
-</div>
-
-<div class="workers-section">
-  <div class="section-center">
-    <div class="section-tag">Top workers</div>
-    <div class="section-title">Trusted & verified workers</div>
-    <div class="section-sub">All workers are background checked, verified and ready to live in your home</div>
-  </div>
-  <div class="workers-grid">
-    <div class="worker-card">
-      <div class="worker-top">
-        <div class="worker-av av-gold">SA</div>
-        <div>
-          <div class="worker-name">Sara Alemu</div>
-          <div class="worker-role">Cleaner · Nanny · Cook</div>
-          <div class="worker-loc">📍 Bole, Addis Ababa</div>
-          <span class="live-in-tag">🛏️ Live-in</span>
-        </div>
-        <div class="verified">✓ Verified</div>
-      </div>
-      <div class="worker-skills"><span class="skill">Cleaning</span><span class="skill">Child care</span><span class="skill">Cooking</span></div>
-      <div class="worker-bottom">
-        <div>
-          <div class="worker-salary">3,500 ETB <span>/month</span></div>
-          <div class="stars">★★★★★ 4.9</div>
-        </div>
-        <button class="hire-btn" onclick="window.location.href='profile.html'">Hire now</button>
-      </div>
-    </div>
-    <div class="worker-card">
-      <div class="worker-top">
-        <div class="worker-av av-green">MT</div>
-        <div>
-          <div class="worker-name">Marta Tadesse</div>
-          <div class="worker-role">Cook · Cleaner</div>
-          <div class="worker-loc">📍 Kazanchis, Addis</div>
-          <span class="live-in-tag">🛏️ Live-in</span>
-        </div>
-        <div class="verified">✓ Verified</div>
-      </div>
-      <div class="worker-skills"><span class="skill">Ethiopian food</span><span class="skill">Cleaning</span><span class="skill">Laundry</span></div>
-      <div class="worker-bottom">
-        <div>
-          <div class="worker-salary">3,000 ETB <span>/month</span></div>
-          <div class="stars">★★★★☆ 4.7</div>
-        </div>
-        <button class="hire-btn" onclick="window.location.href='profile.html'">Hire now</button>
-      </div>
-    </div>
-    <div class="worker-card">
-      <div class="worker-top">
-        <div class="worker-av av-gold">HG</div>
-        <div>
-          <div class="worker-name">Hiwot Girma</div>
-          <div class="worker-role">Full-time helper</div>
-          <div class="worker-loc">📍 Piassa, Addis Ababa</div>
-          <span class="live-in-tag">🛏️ Live-in</span>
-        </div>
-        <div class="verified">✓ Verified</div>
-      </div>
-      <div class="worker-skills"><span class="skill">All home tasks</span><span class="skill">Ironing</span><span class="skill">Shopping</span></div>
-      <div class="worker-bottom">
-        <div>
-          <div class="worker-salary">4,500 ETB <span>/month</span></div>
-          <div class="stars">★★★★★ 5.0</div>
-        </div>
-        <button class="hire-btn" onclick="window.location.href='profile.html'">Hire now</button>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">4.8★</div>
+        <div class="hero-stat-label">Average Rating</div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-icon">✅</span> ID Verified Workers</div>
+  <div class="trust-item"><span class="trust-icon">💬</span> Direct Chat</div>
+  <div class="trust-item"><span class="trust-icon">💳</span> Telebirr & CBE Payments</div>
+  <div class="trust-item"><span class="trust-icon">⭐</span> Real Reviews</div>
+  <div class="trust-item"><span class="trust-icon">🆓</span> 100% Free</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how">
+  <div style="text-align:center; margin-bottom:56px;">
+    <div class="section-tag reveal">✦ HOW IT WORKS · እንዴት ይሰራል</div>
+    <div class="section-title reveal" style="transition-delay:0.1s;">Simple as <span class="green">1, 2, 3</span></div>
+    <div class="section-am reveal" style="transition-delay:0.2s;">ቀላል ደረጃዎችን ይከተሉ — ሰራተኛ ያግኙ</div>
+  </div>
+  <div class="how-grid">
+    <div class="how-card reveal" style="transition-delay:0.1s;">
+      <div class="how-num">1</div>
+      <div class="how-icon">🔍</div>
+      <div class="how-title">Search Workers</div>
+      <div class="how-title-am">ሰራተኛ ይፈልጉ</div>
+      <div class="how-desc">Browse verified house workers in your area. Filter by location, salary, and skills to find the perfect match.</div>
+    </div>
+    <div class="how-card reveal" style="transition-delay:0.2s;">
+      <div class="how-num">2</div>
+      <div class="how-icon">💬</div>
+      <div class="how-title">Chat & Agree</div>
+      <div class="how-title-am">ይነጋገሩ ይስማሙ</div>
+      <div class="how-desc">Message workers directly. Discuss salary, start date, and responsibilities. No middleman, no agent fees.</div>
+    </div>
+    <div class="how-card reveal" style="transition-delay:0.3s;">
+      <div class="how-num">3</div>
+      <div class="how-icon">✅</div>
+      <div class="how-title">Hire & Pay Safely</div>
+      <div class="how-title-am">ይቅጠሩ ደህንነቱ ይጠብቁ</div>
+      <div class="how-desc">Pay via Telebirr or CBE Birr. Upload payment proof and track every payment in your dashboard.</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKERS -->
+<div class="workers-section" id="workers">
+  <div class="workers-inner">
+    <div style="text-align:center; margin-bottom:56px;">
+      <div class="section-tag reveal">✦ AVAILABLE WORKERS · ሰራተኞች</div>
+      <div class="section-title reveal" style="transition-delay:0.1s;">Meet Our <span class="green">Verified Workers</span></div>
+      <div class="section-am reveal" style="transition-delay:0.2s;">እነዚህ ሰራተኞች ዝግጁ ናቸው — ዛሬ ይቅጠሩ</div>
+    </div>
+    <div class="workers-grid">
+      <div class="worker-card reveal" style="transition-delay:0.1s;">
+        <div class="worker-top">
+          <div class="worker-av c1">SA</div>
+          <div>
+            <div class="worker-name">Sara Alemu</div>
+            <div class="worker-role">Cleaner · Nanny · Cook</div>
+            <div class="worker-loc">📍 Bole, Addis Ababa</div>
+          </div>
+          <div class="verified-tag">✓ Verified</div>
+        </div>
+        <div class="worker-skills">
+          <span class="skill">Cleaning</span><span class="skill">Nanny</span><span class="skill">Cooking</span>
+        </div>
+        <div class="worker-bottom">
+          <div><div class="worker-salary">3,500 ETB <span>/month</span></div><div class="stars">★★★★☆ 4.9</div></div>
+          <button class="hire-btn" onclick="window.location.href='search.html'">Hire now</button>
+        </div>
+      </div>
+      <div class="worker-card reveal" style="transition-delay:0.2s;">
+        <div class="worker-top">
+          <div class="worker-av c2">TB</div>
+          <div>
+            <div class="worker-name">Tigist Bekele</div>
+            <div class="worker-role">Cook · Cleaner</div>
+            <div class="worker-loc">📍 Kirkos, Addis Ababa</div>
+          </div>
+          <div class="verified-tag">✓ Verified</div>
+        </div>
+        <div class="worker-skills">
+          <span class="skill">Cooking</span><span class="skill">Cleaning</span>
+        </div>
+        <div class="worker-bottom">
+          <div><div class="worker-salary">4,000 ETB <span>/month</span></div><div class="stars">★★★★☆ 4.7</div></div>
+          <button class="hire-btn" onclick="window.location.href='search.html'">Hire now</button>
+        </div>
+      </div>
+      <div class="worker-card reveal" style="transition-delay:0.3s;">
+        <div class="worker-top">
+          <div class="worker-av c3">HG</div>
+          <div>
+            <div class="worker-name">Hana Girma</div>
+            <div class="worker-role">Cook · Nanny · Cleaner</div>
+            <div class="worker-loc">📍 Bole, Addis Ababa</div>
+          </div>
+          <div class="verified-tag">✓ Verified</div>
+        </div>
+        <div class="worker-skills">
+          <span class="skill">Cooking</span><span class="skill">Nanny</span><span class="skill">Cleaning</span>
+        </div>
+        <div class="worker-bottom">
+          <div><div class="worker-salary">4,500 ETB <span>/month</span></div><div class="stars">★★★★★ 5.0</div></div>
+          <button class="hire-btn" onclick="window.location.href='search.html'">Hire now</button>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="text-align:center; margin-top:44px; transition-delay:0.4s;">
+      <button class="btn-primary" style="padding:16px 40px; font-size:15px; border-radius:28px;" onclick="window.location.href='search.html'">View All Workers →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testi-section">
+  <div style="text-align:center; margin-bottom:56px;">
+    <div class="section-tag reveal">✦ REVIEWS · አስተያየቶች</div>
+    <div class="section-title reveal" style="transition-delay:0.1s;">What <span class="gold">Families Say</span></div>
+    <div class="section-am reveal" style="transition-delay:0.2s;">ቤተሰቦቹ ምን ይላሉ — እውነተኛ አስተያየቶች</div>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal" style="transition-delay:0.1s;">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"I found an amazing nanny within 2 days! Sara is wonderful with my kids. The chat feature made everything so easy before hiring."</div>
+      <div class="testi-text-am">"በ2 ቀን ውስጥ ጥሩ ሰራተኛ አገኘሁ — ሳራ ከልጆቼ ጋር በጣም ጥሩ ናት"</div>
+      <div class="testi-divider"></div>
+      <div class="testi-author">
+        <div class="testi-av" style="background:linear-gradient(135deg,#1a6b3c,#2d8a56);">FT</div>
+        <div><div class="testi-name">Feven Tadesse</div><div class="testi-loc">📍 Bole, Addis Ababa</div></div>
+      </div>
+    </div>
+    <div class="testi-card reveal" style="transition-delay:0.2s;">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"I was worried about paying online but Kebet made it so safe. Sent money via Telebirr, uploaded screenshot, and everything was tracked perfectly."</div>
+      <div class="testi-text-am">"ቴሌብር በኩል ክፍያ አደረግሁ — ሁሉም ነገር ደህንነቱ ተጠብቆ ነበር"</div>
+      <div class="testi-divider"></div>
+      <div class="testi-author">
+        <div class="testi-av" style="background:linear-gradient(135deg,#f0a500,#ffd04d);">BH</div>
+        <div><div class="testi-name">Biruk Haile</div><div class="testi-loc">📍 Kazanchis, Addis Ababa</div></div>
+      </div>
+    </div>
+    <div class="testi-card reveal" style="transition-delay:0.3s;">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"As a working mother I needed someone trustworthy. Kebet's verified badge and real reviews gave me confidence. Highly recommend to every Addis family!"</div>
+      <div class="testi-text-am">"ማረጋገጫ ባጅ እና ግምገማዎቹ እምነት ሰጡኝ — ለሁሉም ቤተሰብ እመክራለሁ"</div>
+      <div class="testi-divider"></div>
+      <div class="testi-author">
+        <div class="testi-av" style="background:linear-gradient(135deg,#7800c8,#aa44ff);">MA</div>
+        <div><div class="testi-name">Meron Alemu</div><div class="testi-loc">📍 Yeka, Addis Ababa</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY KEBET -->
+<div class="why-section" id="why">
+  <div class="why-inner">
+    <div style="text-align:center; margin-bottom:56px;">
+      <div class="section-tag reveal">✦ WHY KEBET · ለምን ከቤት</div>
+      <div class="section-title reveal" style="transition-delay:0.1s;">Safe, Simple & <span class="green">Free</span></div>
+      <div class="section-am reveal" style="transition-delay:0.2s;">ደህንነቱ ተጠብቆ — ቀላል — ነጻ</div>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal" style="transition-delay:0.1s;">
+        <div class="why-icon-wrap">✅</div>
+        <div class="why-title">ID Verified Workers</div>
+        <div class="why-title-am">መታወቂያ የተረጋገጡ ሰራተኞች</div>
+        <div class="why-desc">Every worker is manually reviewed before listing. We check ID and background so you can hire with confidence.</div>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.15s;">
+        <div class="why-icon-wrap">💬</div>
+        <div class="why-title">Direct Chat — No Middleman</div>
+        <div class="why-title-am">ቀጥታ ውይይት — ደላላ የለም</div>
+        <div class="why-desc">Talk directly with workers. Agree on salary and start date in real-time. No agent fees, no commissions ever.</div>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.2s;">
+        <div class="why-icon-wrap">💳</div>
+        <div class="why-title">Pay via Telebirr & CBE</div>
+        <div class="why-title-am">በቴሌብር እና CBE ይክፈሉ</div>
+        <div class="why-desc">Send salary through Ethiopia's most trusted systems. Upload proof and track every payment in your dashboard.</div>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.25s;">
+        <div class="why-icon-wrap">🆓</div>
+        <div class="why-title">Completely Free</div>
+        <div class="why-title-am">ሙሉ በሙሉ ነጻ</div>
+        <div class="why-desc">No hidden fees. No subscription. No commission. Kebet is 100% free for both owners and workers — always.</div>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.3s;">
+        <div class="why-icon-wrap">⭐</div>
+        <div class="why-title">Real Reviews & Ratings</div>
+        <div class="why-title-am">እውነተኛ ግምገማዎች</div>
+        <div class="why-desc">Read honest reviews from other families. Rate workers after service to help the whole community.</div>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.35s;">
+        <div class="why-icon-wrap">📱</div>
+        <div class="why-title">Works on Any Phone</div>
+        <div class="why-title-am">በማንኛውም ስልክ ይሰራል</div>
+        <div class="why-desc">No app download needed. Open Kebet in any phone browser and find workers instantly — even on slow internet.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
 <div class="cta-section">
-  <div class="cta-title">Ready to find your perfect house worker?</div>
-  <div class="cta-sub">Join thousands of happy homes in Addis Ababa today</div>
-  <div class="cta-btns">
-    <button class="btn-white-hero" onclick="window.location.href='search.html'">Find a Worker Now</button>
-    <button class="btn-gold-hero" onclick="window.location.href='signup.html'">Register as Worker</button>
+  <div class="cta-content reveal">
+    <h2>Ready to Find Your <span class="gold">Perfect Worker?</span></h2>
+    <p>Join hundreds of Addis Ababa families using Kebet today</p>
+    <div class="cta-am">ዛሬ ይጀምሩ — ሙሉ በሙሉ ነጻ!</div>
+    <div class="cta-btns">
+      <button class="hero-btn-main" onclick="window.location.href='search.html'">🔍 Find Workers Now</button>
+      <button class="hero-btn-sec" onclick="window.location.href='signup.html'">📝 Create Free Account</button>
+    </div>
   </div>
 </div>
 
+<!-- CONTACT -->
+<div class="contact-bar" id="contact">
+  <a class="contact-item" href="tel:0979559549">
+    <div class="contact-icon-wrap tel">📞</div>
+    <div><div class="contact-label">Call or WhatsApp</div><div class="contact-value">0979 559 549</div></div>
+  </a>
+  <a class="contact-item" href="https://t.me/kebetappp" target="_blank">
+    <div class="contact-icon-wrap tg">✈️</div>
+    <div><div class="contact-label">Telegram</div><div class="contact-value">@kebetappp</div></div>
+  </a>
+  <div class="contact-item">
+    <div class="contact-icon-wrap loc">📍</div>
+    <div><div class="contact-label">Location</div><div class="contact-value">Addis Ababa, Ethiopia</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
 <footer>
-  <div><div class="footer-logo">KEBET</div><div class="footer-am">ከቤት · ቤትዎን እናስተዳድርልዎ</div></div>
-  <div class="footer-links"><a href="#">About</a><a href="#">How it works</a><a href="#">Contact</a><a href="#">Privacy</a></div>
-  <div class="footer-copy">© 2024 Kebet. All rights reserved.</div>
+  <div class="footer-logo">KEBET</div>
+  <div class="footer-am">ከቤት — Ethiopia's House Worker Platform</div>
+  <div class="footer-links">
+    <a href="search.html">Find Workers</a>
+    <a href="signup.html">Register as Worker</a>
+    <a href="signin.html">Sign In</a>
+    <a href="https://t.me/kebetappp" target="_blank">Telegram</a>
+    <a href="tel:0979559549">Call Us</a>
+  </div>
+  <div class="footer-copy">© 2026 Kebet · ከቤት — All rights reserved · Addis Ababa, Ethiopia</div>
 </footer>
+
+<!-- FLOATING BUTTONS -->
+<div class="float-contact">
+  <a class="float-btn telegram" href="https://t.me/kebetappp" target="_blank">
+    <span>✈️</span><span class="float-label">Chat on Telegram</span>
+  </a>
+  <a class="float-btn phone" href="tel:0979559549">
+    <span>📞</span><span class="float-label">Call Us</span>
+  </a>
+</div>
+
+<script>
+  // ── Navbar scroll effect ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // ── Scroll reveal ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+    observer.observe(el);
+  });
+
+  // ── Typing effect ──
+  const phrases = [
+    "Verified cleaners, nannies & cooks in Addis Ababa.",
+    "Chat directly. Agree on salary. Hire safely.",
+    "ሰራተኛ ፈልጉ — ያነጋግሩ — ይቅጠሩ።",
+    "Pay via Telebirr or CBE Birr — fast & safe.",
+    "100% Free. No agent fees. No commissions."
+  ];
+  let phraseIndex = 0, charIndex = 0, isDeleting = false;
+  const typingEl = document.getElementById('hero-typing');
+
+  function type() {
+    const current = phrases[phraseIndex];
+    if (isDeleting) {
+      typingEl.innerHTML = current.substring(0, charIndex - 1) + '<span class="typing-cursor">|</span>';
+      charIndex--;
+      if (charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; setTimeout(type, 400); return; }
+      setTimeout(type, 40);
+    } else {
+      typingEl.innerHTML = current.substring(0, charIndex + 1) + '<span class="typing-cursor">|</span>';
+      charIndex++;
+      if (charIndex === current.length) { isDeleting = true; setTimeout(type, 2200); return; }
+      setTimeout(type, 55);
+    }
+  }
+  setTimeout(type, 1200);
+
+  // ── Count up animation ──
+  function animateCount(el) {
+    const target = parseInt(el.dataset.target);
+    const duration = 1800;
+    const step = target / (duration / 16);
+    let current = 0;
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) { el.textContent = target; clearInterval(timer); return; }
+      el.textContent = Math.floor(current);
+    }, 16);
+  }
+
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCount(entry.target);
+        countObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.count-num').forEach(el => countObserver.observe(el));
+</script>
 
 </body>
 </html>
