@@ -10,72 +10,44 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #fff; color: #111; overflow-x: hidden; }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes slideLeft {
-      from { opacity: 0; transform: translateX(-40px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideRight {
-      from { opacity: 0; transform: translateX(40px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.85); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50%       { transform: translateY(-12px); }
-    }
-    @keyframes pulse-ring {
-      0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(240,165,0,0.5); }
-      70%  { transform: scale(1);    box-shadow: 0 0 0 16px rgba(240,165,0,0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(240,165,0,0); }
-    }
-    @keyframes shimmer {
-      0%   { background-position: -200% center; }
-      100% { background-position: 200% center; }
-    }
-    @keyframes countUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes gradient-shift {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes typing-cursor {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0; }
-    }
-    @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-    @keyframes bounce-in {
-      0%   { transform: scale(0); opacity: 0; }
-      60%  { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
+    @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(240,165,0,0.5); } 70% { transform: scale(1); box-shadow: 0 0 0 16px rgba(240,165,0,0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(240,165,0,0); } }
+    @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+    @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes typing-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-    /* scroll-reveal base */
     .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal-left.visible { opacity: 1; transform: translateX(0); }
-    .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal-right.visible { opacity: 1; transform: translateX(0); }
-    .reveal-scale { opacity: 0; transform: scale(0.85); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+    /* LANGUAGE TOGGLE */
+    .lang-toggle {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px; padding: 4px;
+      cursor: pointer; margin-right: 8px;
+    }
+    nav.scrolled .lang-toggle {
+      background: #f0f0f0;
+      border-color: #ddd;
+    }
+    .lang-btn {
+      padding: 5px 12px; border-radius: 16px;
+      font-size: 12px; font-weight: 800;
+      cursor: pointer; border: none;
+      background: transparent; color: rgba(255,255,255,0.7);
+      transition: all 0.2s; letter-spacing: 0.5px;
+    }
+    nav.scrolled .lang-btn { color: #888; }
+    .lang-btn.active {
+      background: #fff; color: #1a6b3c;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    nav.scrolled .lang-btn.active {
+      background: #1a6b3c; color: #fff;
+    }
 
     /* NAV */
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 48px; display: flex; align-items: center; justify-content: space-between; transition: all 0.4s ease; }
@@ -100,33 +72,23 @@
 
     /* HERO */
     .hero { min-height: 100vh; background: linear-gradient(135deg, #062c18 0%, #0d4a28 30%, #1a6b3c 70%, #2d8a56 100%); background-size: 300% 300%; animation: gradient-shift 8s ease infinite; display: flex; align-items: center; justify-content: center; text-align: center; padding: 130px 40px 80px; position: relative; overflow: hidden; }
-
-    /* animated bg circles */
     .hero-bg-circle { position: absolute; border-radius: 50%; opacity: 0.06; animation: float 6s ease-in-out infinite; }
-    .hero-bg-circle.c1 { width: 500px; height: 500px; background: #fff; top: -150px; left: -150px; animation-delay: 0s; }
+    .hero-bg-circle.c1 { width: 500px; height: 500px; background: #fff; top: -150px; left: -150px; }
     .hero-bg-circle.c2 { width: 300px; height: 300px; background: #f0a500; bottom: -80px; right: -80px; animation-delay: 2s; }
     .hero-bg-circle.c3 { width: 200px; height: 200px; background: #fff; top: 40%; left: 10%; animation-delay: 4s; }
-
     .hero-content { position: relative; z-index: 1; max-width: 780px; animation: fadeUp 1s ease both; }
-
-    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 700; padding: 9px 20px; border-radius: 24px; margin-bottom: 32px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); animation: fadeIn 1s 0.3s both; letter-spacing: 0.3px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 700; padding: 9px 20px; border-radius: 24px; margin-bottom: 32px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); animation: fadeIn 1s 0.3s both; }
     .hero-badge-dot { width: 8px; height: 8px; background: #4cff91; border-radius: 50%; animation: pulse-ring 2s infinite; }
-
     .hero-headline { font-size: 62px; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 14px; letter-spacing: -1px; animation: fadeUp 1s 0.2s both; }
     .hero-headline .highlight { background: linear-gradient(90deg, #f0a500, #ffd04d, #f0a500); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
-
-    .hero-am { font-size: 22px; color: rgba(255,255,255,0.65); margin-bottom: 22px; font-weight: 600; animation: fadeUp 1s 0.4s both; letter-spacing: 0.5px; }
-
-    /* Typing effect */
+    .hero-am { font-size: 22px; color: rgba(255,255,255,0.65); margin-bottom: 22px; font-weight: 600; animation: fadeUp 1s 0.4s both; }
     .hero-typing { font-size: 17px; color: rgba(255,255,255,0.8); margin-bottom: 40px; line-height: 1.7; animation: fadeUp 1s 0.5s both; min-height: 56px; }
     .typing-cursor { animation: typing-cursor 0.8s infinite; color: #f0a500; font-weight: 700; }
-
     .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; animation: fadeUp 1s 0.7s both; }
-    .hero-btn-main { background: linear-gradient(135deg, #f0a500, #e09200); color: #fff; border: none; padding: 18px 40px; border-radius: 32px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 28px rgba(240,165,0,0.45); animation: pulse-ring 3s infinite; letter-spacing: 0.3px; }
-    .hero-btn-main:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 36px rgba(240,165,0,0.55); }
+    .hero-btn-main { background: linear-gradient(135deg, #f0a500, #e09200); color: #fff; border: none; padding: 18px 40px; border-radius: 32px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 28px rgba(240,165,0,0.45); animation: pulse-ring 3s infinite; }
+    .hero-btn-main:hover { transform: translateY(-3px) scale(1.03); }
     .hero-btn-sec { background: rgba(255,255,255,0.12); color: #fff; border: 2px solid rgba(255,255,255,0.35); padding: 18px 40px; border-radius: 32px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px); }
     .hero-btn-sec:hover { background: rgba(255,255,255,0.22); transform: translateY(-3px); }
-
     .hero-stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; animation: fadeUp 1s 0.9s both; }
     .hero-stat { text-align: center; }
     .hero-stat-num { font-size: 38px; font-weight: 900; color: #f0a500; letter-spacing: -1px; }
@@ -135,13 +97,13 @@
 
     /* TRUST BAR */
     .trust-bar { background: #fff; padding: 0 40px; display: flex; align-items: center; justify-content: center; gap: 0; border-bottom: 1px solid #f0f0f0; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
-    .trust-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #444; font-weight: 700; padding: 22px 32px; border-right: 1px solid #f0f0f0; transition: all 0.3s; cursor: default; }
+    .trust-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #444; font-weight: 700; padding: 22px 32px; border-right: 1px solid #f0f0f0; transition: all 0.3s; }
     .trust-item:last-child { border-right: none; }
     .trust-item:hover { background: #f9fff5; color: #1a6b3c; }
     .trust-icon { font-size: 20px; transition: transform 0.3s; }
     .trust-item:hover .trust-icon { transform: scale(1.25) rotate(-5deg); }
 
-    /* SECTION BASE */
+    /* SECTIONS */
     .section { padding: 100px 48px; max-width: 1140px; margin: 0 auto; }
     .section-tag { display: inline-flex; align-items: center; gap: 6px; background: #e8f5ee; color: #1a6b3c; font-size: 11px; font-weight: 800; padding: 7px 16px; border-radius: 20px; margin-bottom: 16px; letter-spacing: 1.5px; text-transform: uppercase; }
     .section-title { font-size: 42px; font-weight: 900; color: #111; margin-bottom: 10px; line-height: 1.15; letter-spacing: -0.5px; }
@@ -159,9 +121,8 @@
     .how-icon { font-size: 52px; margin-bottom: 18px; margin-top: 16px; position: relative; z-index:1; display: inline-block; transition: transform 0.4s; }
     .how-card:hover .how-icon { transform: scale(1.2) rotate(-5deg); }
     .how-title { font-size: 18px; font-weight: 800; color: #111; margin-bottom: 6px; position: relative; z-index:1; }
-    .how-title-am { font-size: 13px; color: #1a6b3c; font-weight: 700; margin-bottom: 12px; position: relative; z-index:1; }
+    .how-title-am { font-size: 13px; color: #1a6b3c; font-weight: 700; margin-bottom: 12px; position: relative; z-index:1; display: none; }
     .how-desc { font-size: 14px; color: #666; line-height: 1.7; position: relative; z-index:1; }
-    .how-arrow { display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 28px; margin-top: 40px; }
 
     /* WORKERS */
     .workers-section { background: linear-gradient(180deg, #f9fffe 0%, #f0fff7 100%); padding: 100px 0; }
@@ -211,17 +172,17 @@
     .why-section { background: linear-gradient(180deg,#f9f9f7,#fff); padding: 100px 0; }
     .why-inner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
     .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .why-card { background: #fff; border-radius: 22px; padding: 28px; border: 1.5px solid #f0f0f0; transition: all 0.4s; position: relative; overflow: hidden; }
+    .why-card { background: #fff; border-radius: 22px; padding: 28px; border: 1.5px solid #f0f0f0; transition: all 0.4s; }
     .why-card:hover { border-color: #1a6b3c; transform: translateY(-6px); box-shadow: 0 16px 44px rgba(26,107,60,0.1); }
     .why-icon-wrap { width: 56px; height: 56px; background: linear-gradient(135deg,#e8f5ee,#c8eedd); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 18px; transition: transform 0.4s; }
     .why-card:hover .why-icon-wrap { transform: scale(1.15) rotate(-5deg); }
     .why-title { font-size: 16px; font-weight: 800; color: #111; margin-bottom: 4px; }
-    .why-title-am { font-size: 12px; color: #1a6b3c; font-weight: 700; margin-bottom: 10px; }
+    .why-title-am { font-size: 12px; color: #1a6b3c; font-weight: 700; margin-bottom: 10px; display: none; }
     .why-desc { font-size: 13px; color: #777; line-height: 1.7; }
 
     /* CTA */
     .cta-section { background: linear-gradient(135deg, #062c18, #0d4a28, #1a6b3c); background-size: 300% 300%; animation: gradient-shift 8s ease infinite; padding: 100px 40px; text-align: center; position: relative; overflow: hidden; }
-    .cta-section::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E"); }
+    .cta-section::before { content:''; position:absolute; inset:0; opacity:0.3; }
     .cta-content { position: relative; z-index:1; }
     .cta-section h2 { font-size: 48px; font-weight: 900; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
     .cta-section h2 .gold { background: linear-gradient(90deg,#f0a500,#ffd04d,#f0a500); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: shimmer 3s linear infinite; }
@@ -229,7 +190,7 @@
     .cta-am { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 44px; }
     .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 
-    /* CONTACT BAR */
+    /* CONTACT */
     .contact-bar { background: #0d0d0d; padding: 32px 48px; display: flex; align-items: center; justify-content: center; gap: 56px; flex-wrap: wrap; }
     .contact-item { display: flex; align-items: center; gap: 14px; color: #fff; text-decoration: none; transition: all 0.3s; }
     .contact-item:hover { transform: translateY(-3px); }
@@ -251,16 +212,29 @@
     .footer-links a:hover { color: #1a6b3c; }
     .footer-copy { font-size: 12px; color: #333; }
 
-    /* FLOATING BUTTONS */
+    /* FLOATING */
     .float-contact { position: fixed; bottom: 28px; right: 28px; z-index: 999; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
     .float-btn { display: flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 30px; font-size: 14px; font-weight: 800; text-decoration: none; color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,0.25); transition: all 0.3s; }
-    .float-btn:hover { transform: translateX(-4px) scale(1.04); box-shadow: 0 10px 32px rgba(0,0,0,0.3); }
+    .float-btn:hover { transform: translateX(-4px) scale(1.04); }
     .float-btn.telegram { background: linear-gradient(135deg,#0088cc,#00aaff); }
     .float-btn.phone { background: linear-gradient(135deg,#1a6b3c,#2d8a56); }
     .float-label { font-size: 13px; }
-
-    /* COUNTER */
     .count-num { display: inline-block; }
+
+    /* AMHARIC MODE */
+    body.am-mode .en { display: none !important; }
+    body.am-mode .am { display: block !important; }
+    body:not(.am-mode) .am { display: none !important; }
+    body:not(.am-mode) .en { display: block !important; }
+    .am { display: none; }
+
+    /* hide am subtitle in how cards by default */
+    .how-title-am { display: none; }
+    body.am-mode .how-title-am { display: block; }
+    body.am-mode .how-title { display: none; }
+    .why-title-am { display: none; }
+    body.am-mode .why-title-am { display: block; }
+    body.am-mode .why-title { display: none; }
 
     @media (max-width: 900px) {
       nav { padding: 14px 20px; }
@@ -268,7 +242,7 @@
       .hero-headline { font-size: 36px; }
       .hero { padding: 110px 24px 70px; }
       .hero-stats { gap: 28px; }
-      .trust-bar { flex-wrap: wrap; gap: 0; }
+      .trust-bar { flex-wrap: wrap; }
       .trust-item { padding: 14px 18px; font-size: 12px; }
       .section { padding: 70px 24px; }
       .how-grid, .workers-grid, .testi-grid, .why-grid { grid-template-columns: 1fr; }
@@ -293,14 +267,23 @@
     </div>
   </a>
   <div class="nav-links">
-    <a href="#how">How it works</a>
-    <a href="#workers">Workers</a>
-    <a href="#why">Why Kebet</a>
-    <a href="#contact">Contact</a>
+    <a href="#how"><span class="en">How it works</span><span class="am">እንዴት ይሰራል</span></a>
+    <a href="#workers"><span class="en">Workers</span><span class="am">ሰራተኞች</span></a>
+    <a href="#why"><span class="en">Why Kebet</span><span class="am">ለምን ከቤት</span></a>
+    <a href="#contact"><span class="en">Contact</span><span class="am">አግኙን</span></a>
   </div>
   <div class="nav-btns">
-    <button class="btn-outline" onclick="window.location.href='signin.html'">Sign in</button>
-    <button class="btn-primary" onclick="window.location.href='signup.html'">Get Started</button>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+    </div>
+    <button class="btn-outline" onclick="window.location.href='signin.html'">
+      <span class="en">Sign in</span><span class="am">ግባ</span>
+    </button>
+    <button class="btn-primary" onclick="window.location.href='signup.html'">
+      <span class="en">Get Started</span><span class="am">ጀምር</span>
+    </button>
   </div>
 </nav>
 
@@ -312,29 +295,42 @@
   <div class="hero-content">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      🇪🇹 Addis Ababa's #1 House Worker Platform
+      <span class="en">🇪🇹 Addis Ababa's #1 House Worker Platform</span>
+      <span class="am">🇪🇹 አዲስ አበባ ቁ.1 የቤት ሰራተኛ መድረክ</span>
     </div>
-    <h1 class="hero-headline">Find Trusted<br><span class="highlight">House Workers</span><br>in Minutes</h1>
-    <div class="hero-am">ታማኝ የቤት ሰራተኛ በቀላሉ ያግኙ</div>
+    <h1 class="hero-headline">
+      <span class="en">Find Trusted<br><span class="highlight">House Workers</span><br>in Minutes</span>
+      <span class="am">ታማኝ<br><span class="highlight">የቤት ሰራተኛ</span><br>ፈጥኖ ያግኙ</span>
+    </h1>
+    <div class="hero-am">
+      <span class="en">ታማኝ የቤት ሰራተኛ በቀላሉ ያግኙ</span>
+      <span class="am">Find trusted house workers easily</span>
+    </div>
     <div class="hero-typing" id="hero-typing"></div>
     <div class="hero-btns">
-      <button class="hero-btn-main" onclick="window.location.href='search.html'">🔍 Find a Worker Now</button>
-      <button class="hero-btn-sec" onclick="window.location.href='signup.html'">📝 Register as Worker</button>
+      <button class="hero-btn-main" onclick="window.location.href='search.html'">
+        <span class="en">🔍 Find a Worker Now</span>
+        <span class="am">🔍 ሰራተኛ ፈልግ</span>
+      </button>
+      <button class="hero-btn-sec" onclick="window.location.href='signup.html'">
+        <span class="en">📝 Register as Worker</span>
+        <span class="am">📝 እንደ ሰራተኛ ተመዝገብ</span>
+      </button>
     </div>
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="hero-stat-num"><span class="count-num" data-target="50">0</span>+</div>
-        <div class="hero-stat-label">Verified Workers</div>
+        <div class="hero-stat-label"><span class="en">Verified Workers</span><span class="am">የተረጋገጡ ሰራተኞች</span></div>
       </div>
       <div class="hero-stat-divider"></div>
       <div class="hero-stat">
         <div class="hero-stat-num"><span class="count-num" data-target="100">0</span>+</div>
-        <div class="hero-stat-label">Happy Families</div>
+        <div class="hero-stat-label"><span class="en">Happy Families</span><span class="am">ደስተኛ ቤተሰቦች</span></div>
       </div>
       <div class="hero-stat-divider"></div>
       <div class="hero-stat">
         <div class="hero-stat-num">4.8★</div>
-        <div class="hero-stat-label">Average Rating</div>
+        <div class="hero-stat-label"><span class="en">Average Rating</span><span class="am">አማካይ ደረጃ</span></div>
       </div>
     </div>
   </div>
@@ -342,19 +338,19 @@
 
 <!-- TRUST BAR -->
 <div class="trust-bar">
-  <div class="trust-item"><span class="trust-icon">✅</span> ID Verified Workers</div>
-  <div class="trust-item"><span class="trust-icon">💬</span> Direct Chat</div>
-  <div class="trust-item"><span class="trust-icon">💳</span> Telebirr & CBE Payments</div>
-  <div class="trust-item"><span class="trust-icon">⭐</span> Real Reviews</div>
-  <div class="trust-item"><span class="trust-icon">🆓</span> 100% Free</div>
+  <div class="trust-item"><span class="trust-icon">✅</span><span class="en">ID Verified Workers</span><span class="am">መታወቂያ የተረጋገጡ</span></div>
+  <div class="trust-item"><span class="trust-icon">💬</span><span class="en">Direct Chat</span><span class="am">ቀጥታ ውይይት</span></div>
+  <div class="trust-item"><span class="trust-icon">💳</span><span class="en">Telebirr & CBE Payments</span><span class="am">ቴሌብር እና CBE ክፍያ</span></div>
+  <div class="trust-item"><span class="trust-icon">⭐</span><span class="en">Real Reviews</span><span class="am">እውነተኛ ግምገማዎች</span></div>
+  <div class="trust-item"><span class="trust-icon">🆓</span><span class="en">100% Free</span><span class="am">ሙሉ በሙሉ ነጻ</span></div>
 </div>
 
 <!-- HOW IT WORKS -->
 <div class="section" id="how">
   <div style="text-align:center; margin-bottom:56px;">
-    <div class="section-tag reveal">✦ HOW IT WORKS · እንዴት ይሰራል</div>
-    <div class="section-title reveal" style="transition-delay:0.1s;">Simple as <span class="green">1, 2, 3</span></div>
-    <div class="section-am reveal" style="transition-delay:0.2s;">ቀላል ደረጃዎችን ይከተሉ — ሰራተኛ ያግኙ</div>
+    <div class="section-tag reveal">✦ <span class="en">HOW IT WORKS</span><span class="am">እንዴት ይሰራል</span></div>
+    <div class="section-title reveal" style="transition-delay:0.1s;"><span class="en">Simple as <span class="green">1, 2, 3</span></span><span class="am">ቀላል <span class="green">3 ደረጃዎች</span></span></div>
+    <div class="section-am reveal" style="transition-delay:0.2s;"><span class="en">ቀላል ደረጃዎችን ይከተሉ — ሰራተኛ ያግኙ</span><span class="am">Follow simple steps — find your worker</span></div>
   </div>
   <div class="how-grid">
     <div class="how-card reveal" style="transition-delay:0.1s;">
@@ -362,21 +358,21 @@
       <div class="how-icon">🔍</div>
       <div class="how-title">Search Workers</div>
       <div class="how-title-am">ሰራተኛ ይፈልጉ</div>
-      <div class="how-desc">Browse verified house workers in your area. Filter by location, salary, and skills to find the perfect match.</div>
+      <div class="how-desc"><span class="en">Browse verified house workers in your area. Filter by location, salary and skills.</span><span class="am">በአካባቢዎ የተረጋገጡ ሰራተኞችን ይፈልጉ። በቦታ፣ ደሞዝ እና ክህሎት ያጣሩ።</span></div>
     </div>
     <div class="how-card reveal" style="transition-delay:0.2s;">
       <div class="how-num">2</div>
       <div class="how-icon">💬</div>
       <div class="how-title">Chat & Agree</div>
       <div class="how-title-am">ይነጋገሩ ይስማሙ</div>
-      <div class="how-desc">Message workers directly. Discuss salary, start date, and responsibilities. No middleman, no agent fees.</div>
+      <div class="how-desc"><span class="en">Message workers directly. Discuss salary and start date. No middleman, no agent fees.</span><span class="am">ከሰራተኞች ቀጥታ ይነጋገሩ። ደሞዝ እና የጀምሪ ቀን ይወያዩ። ደላላ የለም።</span></div>
     </div>
     <div class="how-card reveal" style="transition-delay:0.3s;">
       <div class="how-num">3</div>
       <div class="how-icon">✅</div>
       <div class="how-title">Hire & Pay Safely</div>
       <div class="how-title-am">ይቅጠሩ ደህንነቱ ይጠብቁ</div>
-      <div class="how-desc">Pay via Telebirr or CBE Birr. Upload payment proof and track every payment in your dashboard.</div>
+      <div class="how-desc"><span class="en">Pay via Telebirr or CBE Birr. Track every payment in your dashboard safely.</span><span class="am">በቴሌብር ወይም CBE ይክፈሉ። እያንዳንዱ ክፍያ በዳሽቦርድዎ ይከታተሉ።</span></div>
     </div>
   </div>
 </div>
@@ -385,9 +381,9 @@
 <div class="workers-section" id="workers">
   <div class="workers-inner">
     <div style="text-align:center; margin-bottom:56px;">
-      <div class="section-tag reveal">✦ AVAILABLE WORKERS · ሰራተኞች</div>
-      <div class="section-title reveal" style="transition-delay:0.1s;">Meet Our <span class="green">Verified Workers</span></div>
-      <div class="section-am reveal" style="transition-delay:0.2s;">እነዚህ ሰራተኞች ዝግጁ ናቸው — ዛሬ ይቅጠሩ</div>
+      <div class="section-tag reveal">✦ <span class="en">AVAILABLE WORKERS</span><span class="am">ዝግጁ ሰራተኞች</span></div>
+      <div class="section-title reveal" style="transition-delay:0.1s;"><span class="en">Meet Our <span class="green">Verified Workers</span></span><span class="am">የተረጋገጡ <span class="green">ሰራተኞቻችን</span></span></div>
+      <div class="section-am reveal" style="transition-delay:0.2s;"><span class="en">These workers are ready — hire today</span><span class="am">እነዚህ ሰራተኞች ዝግጁ ናቸው — ዛሬ ይቅጠሩ</span></div>
     </div>
     <div class="workers-grid">
       <div class="worker-card reveal" style="transition-delay:0.1s;">
@@ -395,17 +391,22 @@
           <div class="worker-av c1">SA</div>
           <div>
             <div class="worker-name">Sara Alemu</div>
-            <div class="worker-role">Cleaner · Nanny · Cook</div>
+            <div class="worker-role"><span class="en">Cleaner · Nanny · Cook</span><span class="am">አፅዳ · አሳዳጊ · ምግብ ሰሪ</span></div>
             <div class="worker-loc">📍 Bole, Addis Ababa</div>
           </div>
-          <div class="verified-tag">✓ Verified</div>
+          <div class="verified-tag">✓ <span class="en">Verified</span><span class="am">የተረጋገጠ</span></div>
         </div>
         <div class="worker-skills">
-          <span class="skill">Cleaning</span><span class="skill">Nanny</span><span class="skill">Cooking</span>
+          <span class="skill"><span class="en">Cleaning</span><span class="am">ማፅዳት</span></span>
+          <span class="skill"><span class="en">Nanny</span><span class="am">ልጅ ማሳደግ</span></span>
+          <span class="skill"><span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></span>
         </div>
         <div class="worker-bottom">
-          <div><div class="worker-salary">3,500 ETB <span>/month</span></div><div class="stars">★★★★☆ 4.9</div></div>
-          <button class="hire-btn" onclick="window.location.href='search.html'">Hire now</button>
+          <div>
+            <div class="worker-salary">3,500 ETB <span>/<span class="en">month</span><span class="am">ወር</span></span></div>
+            <div class="stars">★★★★☆ 4.9</div>
+          </div>
+          <button class="hire-btn" onclick="window.location.href='search.html'"><span class="en">Hire now</span><span class="am">ቅጠር</span></button>
         </div>
       </div>
       <div class="worker-card reveal" style="transition-delay:0.2s;">
@@ -413,17 +414,21 @@
           <div class="worker-av c2">TB</div>
           <div>
             <div class="worker-name">Tigist Bekele</div>
-            <div class="worker-role">Cook · Cleaner</div>
+            <div class="worker-role"><span class="en">Cook · Cleaner</span><span class="am">ምግብ ሰሪ · አፅዳ</span></div>
             <div class="worker-loc">📍 Kirkos, Addis Ababa</div>
           </div>
-          <div class="verified-tag">✓ Verified</div>
+          <div class="verified-tag">✓ <span class="en">Verified</span><span class="am">የተረጋገጠ</span></div>
         </div>
         <div class="worker-skills">
-          <span class="skill">Cooking</span><span class="skill">Cleaning</span>
+          <span class="skill"><span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></span>
+          <span class="skill"><span class="en">Cleaning</span><span class="am">ማፅዳት</span></span>
         </div>
         <div class="worker-bottom">
-          <div><div class="worker-salary">4,000 ETB <span>/month</span></div><div class="stars">★★★★☆ 4.7</div></div>
-          <button class="hire-btn" onclick="window.location.href='search.html'">Hire now</button>
+          <div>
+            <div class="worker-salary">4,000 ETB <span>/<span class="en">month</span><span class="am">ወር</span></span></div>
+            <div class="stars">★★★★☆ 4.7</div>
+          </div>
+          <button class="hire-btn" onclick="window.location.href='search.html'"><span class="en">Hire now</span><span class="am">ቅጠር</span></button>
         </div>
       </div>
       <div class="worker-card reveal" style="transition-delay:0.3s;">
@@ -431,22 +436,29 @@
           <div class="worker-av c3">HG</div>
           <div>
             <div class="worker-name">Hana Girma</div>
-            <div class="worker-role">Cook · Nanny · Cleaner</div>
+            <div class="worker-role"><span class="en">Cook · Nanny · Cleaner</span><span class="am">ምግብ ሰሪ · አሳዳጊ · አፅዳ</span></div>
             <div class="worker-loc">📍 Bole, Addis Ababa</div>
           </div>
-          <div class="verified-tag">✓ Verified</div>
+          <div class="verified-tag">✓ <span class="en">Verified</span><span class="am">የተረጋገጠ</span></div>
         </div>
         <div class="worker-skills">
-          <span class="skill">Cooking</span><span class="skill">Nanny</span><span class="skill">Cleaning</span>
+          <span class="skill"><span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></span>
+          <span class="skill"><span class="en">Nanny</span><span class="am">ልጅ ማሳደግ</span></span>
+          <span class="skill"><span class="en">Cleaning</span><span class="am">ማፅዳት</span></span>
         </div>
         <div class="worker-bottom">
-          <div><div class="worker-salary">4,500 ETB <span>/month</span></div><div class="stars">★★★★★ 5.0</div></div>
-          <button class="hire-btn" onclick="window.location.href='search.html'">Hire now</button>
+          <div>
+            <div class="worker-salary">4,500 ETB <span>/<span class="en">month</span><span class="am">ወር</span></span></div>
+            <div class="stars">★★★★★ 5.0</div>
+          </div>
+          <button class="hire-btn" onclick="window.location.href='search.html'"><span class="en">Hire now</span><span class="am">ቅጠር</span></button>
         </div>
       </div>
     </div>
     <div class="reveal" style="text-align:center; margin-top:44px; transition-delay:0.4s;">
-      <button class="btn-primary" style="padding:16px 40px; font-size:15px; border-radius:28px;" onclick="window.location.href='search.html'">View All Workers →</button>
+      <button class="btn-primary" style="padding:16px 40px; font-size:15px; border-radius:28px;" onclick="window.location.href='search.html'">
+        <span class="en">View All Workers →</span><span class="am">ሁሉም ሰራተኞች →</span>
+      </button>
     </div>
   </div>
 </div>
@@ -454,15 +466,15 @@
 <!-- TESTIMONIALS -->
 <div class="testi-section">
   <div style="text-align:center; margin-bottom:56px;">
-    <div class="section-tag reveal">✦ REVIEWS · አስተያየቶች</div>
-    <div class="section-title reveal" style="transition-delay:0.1s;">What <span class="gold">Families Say</span></div>
-    <div class="section-am reveal" style="transition-delay:0.2s;">ቤተሰቦቹ ምን ይላሉ — እውነተኛ አስተያየቶች</div>
+    <div class="section-tag reveal">✦ <span class="en">REVIEWS</span><span class="am">አስተያየቶች</span></div>
+    <div class="section-title reveal" style="transition-delay:0.1s;"><span class="en">What <span class="gold">Families Say</span></span><span class="am">ቤተሰቦቹ <span class="gold">ምን ይላሉ</span></span></div>
+    <div class="section-am reveal" style="transition-delay:0.2s;"><span class="en">Real reviews from real Ethiopian families</span><span class="am">Real reviews from real Ethiopian families</span></div>
   </div>
   <div class="testi-grid">
     <div class="testi-card reveal" style="transition-delay:0.1s;">
       <div class="testi-stars">★★★★★</div>
-      <div class="testi-text">"I found an amazing nanny within 2 days! Sara is wonderful with my kids. The chat feature made everything so easy before hiring."</div>
-      <div class="testi-text-am">"በ2 ቀን ውስጥ ጥሩ ሰራተኛ አገኘሁ — ሳራ ከልጆቼ ጋር በጣም ጥሩ ናት"</div>
+      <div class="testi-text en">"I found an amazing nanny within 2 days! Sara is wonderful with my kids. The chat feature made everything so easy."</div>
+      <div class="testi-text am">"በ2 ቀን ውስጥ ጥሩ ሰራተኛ አገኘሁ! ሳራ ከልጆቼ ጋር በጣም ጥሩ ናት። ቻቱ ሁሉን ነገር ቀላል አደረገ።"</div>
       <div class="testi-divider"></div>
       <div class="testi-author">
         <div class="testi-av" style="background:linear-gradient(135deg,#1a6b3c,#2d8a56);">FT</div>
@@ -471,8 +483,8 @@
     </div>
     <div class="testi-card reveal" style="transition-delay:0.2s;">
       <div class="testi-stars">★★★★★</div>
-      <div class="testi-text">"I was worried about paying online but Kebet made it so safe. Sent money via Telebirr, uploaded screenshot, and everything was tracked perfectly."</div>
-      <div class="testi-text-am">"ቴሌብር በኩል ክፍያ አደረግሁ — ሁሉም ነገር ደህንነቱ ተጠብቆ ነበር"</div>
+      <div class="testi-text en">"I was worried about paying online but Kebet made it so safe. Sent money via Telebirr and everything was tracked perfectly."</div>
+      <div class="testi-text am">"ኦንላይን ክፍያ ስጋት ነበረኝ ግን ከቤት ደህንነቱን ጠበቀ። ቴሌብር በኩል ላክሁ — ሁሉም ነገር ተመዘገበ።"</div>
       <div class="testi-divider"></div>
       <div class="testi-author">
         <div class="testi-av" style="background:linear-gradient(135deg,#f0a500,#ffd04d);">BH</div>
@@ -481,8 +493,8 @@
     </div>
     <div class="testi-card reveal" style="transition-delay:0.3s;">
       <div class="testi-stars">★★★★★</div>
-      <div class="testi-text">"As a working mother I needed someone trustworthy. Kebet's verified badge and real reviews gave me confidence. Highly recommend to every Addis family!"</div>
-      <div class="testi-text-am">"ማረጋገጫ ባጅ እና ግምገማዎቹ እምነት ሰጡኝ — ለሁሉም ቤተሰብ እመክራለሁ"</div>
+      <div class="testi-text en">"As a working mother I needed someone trustworthy. Kebet's verified badge and real reviews gave me confidence!"</div>
+      <div class="testi-text am">"እንደ ሰርቷ እናት ታማኝ ሰው ያስፈልገኝ ነበር። ከቤት ማረጋገጫ እና ግምገማዎቹ እምነት ሰጡኝ!"</div>
       <div class="testi-divider"></div>
       <div class="testi-author">
         <div class="testi-av" style="background:linear-gradient(135deg,#7800c8,#aa44ff);">MA</div>
@@ -496,46 +508,46 @@
 <div class="why-section" id="why">
   <div class="why-inner">
     <div style="text-align:center; margin-bottom:56px;">
-      <div class="section-tag reveal">✦ WHY KEBET · ለምን ከቤት</div>
-      <div class="section-title reveal" style="transition-delay:0.1s;">Safe, Simple & <span class="green">Free</span></div>
-      <div class="section-am reveal" style="transition-delay:0.2s;">ደህንነቱ ተጠብቆ — ቀላል — ነጻ</div>
+      <div class="section-tag reveal">✦ <span class="en">WHY KEBET</span><span class="am">ለምን ከቤት</span></div>
+      <div class="section-title reveal" style="transition-delay:0.1s;"><span class="en">Safe, Simple & <span class="green">Free</span></span><span class="am">ደህንነቱ ተጠብቆ — ቀላል — <span class="green">ነጻ</span></span></div>
+      <div class="section-am reveal" style="transition-delay:0.2s;"><span class="en">ደህንነቱ ተጠብቆ — ቀላል — ነጻ</span><span class="am">Safe, Simple and completely Free</span></div>
     </div>
     <div class="why-grid">
       <div class="why-card reveal" style="transition-delay:0.1s;">
         <div class="why-icon-wrap">✅</div>
         <div class="why-title">ID Verified Workers</div>
         <div class="why-title-am">መታወቂያ የተረጋገጡ ሰራተኞች</div>
-        <div class="why-desc">Every worker is manually reviewed before listing. We check ID and background so you can hire with confidence.</div>
+        <div class="why-desc"><span class="en">Every worker is manually reviewed before listing. We check ID so you can hire with confidence.</span><span class="am">እያንዳንዱ ሰራተኛ ከዝርዝር በፊት ይፈተሻል። መታወቂያ ይፈተሻል — በእምነት ይቅጠሩ።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.15s;">
         <div class="why-icon-wrap">💬</div>
         <div class="why-title">Direct Chat — No Middleman</div>
         <div class="why-title-am">ቀጥታ ውይይት — ደላላ የለም</div>
-        <div class="why-desc">Talk directly with workers. Agree on salary and start date in real-time. No agent fees, no commissions ever.</div>
+        <div class="why-desc"><span class="en">Talk directly with workers. Agree on salary in real-time. No agent fees, no commissions ever.</span><span class="am">ከሰራተኞች ቀጥታ ይነጋገሩ። ደሞዝ ይወስኑ። ምንም ዓይነት ክፍያ የለም።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.2s;">
         <div class="why-icon-wrap">💳</div>
         <div class="why-title">Pay via Telebirr & CBE</div>
         <div class="why-title-am">በቴሌብር እና CBE ይክፈሉ</div>
-        <div class="why-desc">Send salary through Ethiopia's most trusted systems. Upload proof and track every payment in your dashboard.</div>
+        <div class="why-desc"><span class="en">Send salary through Ethiopia's most trusted systems. Track every payment in your dashboard.</span><span class="am">በኢትዮጵያ በጣም ታማኝ ስርዓቶች ደሞዝ ይላኩ። እያንዳንዱ ክፍያ ይከታተሉ።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.25s;">
         <div class="why-icon-wrap">🆓</div>
         <div class="why-title">Completely Free</div>
         <div class="why-title-am">ሙሉ በሙሉ ነጻ</div>
-        <div class="why-desc">No hidden fees. No subscription. No commission. Kebet is 100% free for both owners and workers — always.</div>
+        <div class="why-desc"><span class="en">No hidden fees. No subscription. No commission. Kebet is 100% free for everyone — always.</span><span class="am">ምንም ደብቅ ክፍያ የለም። ምንም ደንብ የለም። ከቤት ለሁሉም ሙሉ በሙሉ ነጻ ነው።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.3s;">
         <div class="why-icon-wrap">⭐</div>
         <div class="why-title">Real Reviews & Ratings</div>
         <div class="why-title-am">እውነተኛ ግምገማዎች</div>
-        <div class="why-desc">Read honest reviews from other families. Rate workers after service to help the whole community.</div>
+        <div class="why-desc"><span class="en">Read honest reviews from other families. Rate workers after service to help the community.</span><span class="am">ከሌሎች ቤተሰቦች ግምገማ ያንብቡ። ከአገልግሎቱ በኋላ ሰራተኛውን ይገምግሙ።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.35s;">
         <div class="why-icon-wrap">📱</div>
         <div class="why-title">Works on Any Phone</div>
         <div class="why-title-am">በማንኛውም ስልክ ይሰራል</div>
-        <div class="why-desc">No app download needed. Open Kebet in any phone browser and find workers instantly — even on slow internet.</div>
+        <div class="why-desc"><span class="en">No app download needed. Open Kebet in any phone browser and find workers instantly.</span><span class="am">አፕ ማውረድ አያስፈልግም። በማንኛውም ስልክ ብሮዘር ይክፈቱ — ሰራተኛ ያግኙ።</span></div>
       </div>
     </div>
   </div>
@@ -544,12 +556,16 @@
 <!-- CTA -->
 <div class="cta-section">
   <div class="cta-content reveal">
-    <h2>Ready to Find Your <span class="gold">Perfect Worker?</span></h2>
-    <p>Join hundreds of Addis Ababa families using Kebet today</p>
-    <div class="cta-am">ዛሬ ይጀምሩ — ሙሉ በሙሉ ነጻ!</div>
+    <h2><span class="en">Ready to Find Your <span class="gold">Perfect Worker?</span></span><span class="am">ፍጹም <span class="gold">ሰራተኛ</span> ለማግኘት ዝግጁ ነዎት?</span></h2>
+    <p><span class="en">Join hundreds of Addis Ababa families using Kebet today</span><span class="am">ዛሬ ከቤትን እየተጠቀሙ ካሉ በመቶዎች የሚቆጠሩ ቤተሰቦች ጋር ይቀላቀሉ</span></p>
+    <div class="cta-am"><span class="en">ዛሬ ይጀምሩ — ሙሉ በሙሉ ነጻ!</span><span class="am">Start today — completely free!</span></div>
     <div class="cta-btns">
-      <button class="hero-btn-main" onclick="window.location.href='search.html'">🔍 Find Workers Now</button>
-      <button class="hero-btn-sec" onclick="window.location.href='signup.html'">📝 Create Free Account</button>
+      <button class="hero-btn-main" onclick="window.location.href='search.html'">
+        <span class="en">🔍 Find Workers Now</span><span class="am">🔍 ሰራተኛ ፈልግ</span>
+      </button>
+      <button class="hero-btn-sec" onclick="window.location.href='signup.html'">
+        <span class="en">📝 Create Free Account</span><span class="am">📝 ነጻ መለያ ፍጠር</span>
+      </button>
     </div>
   </div>
 </div>
@@ -558,44 +574,120 @@
 <div class="contact-bar" id="contact">
   <a class="contact-item" href="tel:0979559549">
     <div class="contact-icon-wrap tel">📞</div>
-    <div><div class="contact-label">Call or WhatsApp</div><div class="contact-value">0979 559 549</div></div>
+    <div>
+      <div class="contact-label"><span class="en">Call or WhatsApp</span><span class="am">ይደውሉ ወይም WhatsApp</span></div>
+      <div class="contact-value">0979 559 549</div>
+    </div>
   </a>
   <a class="contact-item" href="https://t.me/kebetappp" target="_blank">
     <div class="contact-icon-wrap tg">✈️</div>
-    <div><div class="contact-label">Telegram</div><div class="contact-value">@kebetappp</div></div>
+    <div>
+      <div class="contact-label">Telegram</div>
+      <div class="contact-value">@kebetappp</div>
+    </div>
   </a>
   <div class="contact-item">
     <div class="contact-icon-wrap loc">📍</div>
-    <div><div class="contact-label">Location</div><div class="contact-value">Addis Ababa, Ethiopia</div></div>
+    <div>
+      <div class="contact-label"><span class="en">Location</span><span class="am">አካባቢ</span></div>
+      <div class="contact-value"><span class="en">Addis Ababa, Ethiopia</span><span class="am">አዲስ አበባ, ኢትዮጵያ</span></div>
+    </div>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">KEBET</div>
-  <div class="footer-am">ከቤት — Ethiopia's House Worker Platform</div>
+  <div class="footer-am">ከቤት — <span class="en">Ethiopia's House Worker Platform</span><span class="am">የኢትዮጵያ የቤት ሰራተኛ መድረክ</span></div>
   <div class="footer-links">
-    <a href="search.html">Find Workers</a>
-    <a href="signup.html">Register as Worker</a>
-    <a href="signin.html">Sign In</a>
-    <a href="https://t.me/kebetappp" target="_blank">Telegram</a>
-    <a href="tel:0979559549">Call Us</a>
+    <a href="search.html"><span class="en">Find Workers</span><span class="am">ሰራተኛ ፈልግ</span></a>
+    <a href="signup.html"><span class="en">Register as Worker</span><span class="am">እንደ ሰራተኛ ተመዝገብ</span></a>
+    <a href="signin.html"><span class="en">Sign In</span><span class="am">ግባ</span></a>
+    <a href="https://t.me/kebetappp" target="_blank">Telegram</div></a>
+    <a href="tel:0979559549"><span class="en">Call Us</span><span class="am">ይደውሉ</span></a>
   </div>
-  <div class="footer-copy">© 2026 Kebet · ከቤት — All rights reserved · Addis Ababa, Ethiopia</div>
+  <div class="footer-copy">© 2026 Kebet · ከቤት — <span class="en">All rights reserved · Addis Ababa, Ethiopia</span><span class="am">መብቱ በሕግ የተጠበቀ · አዲስ አበባ, ኢትዮጵያ</span></div>
 </footer>
 
 <!-- FLOATING BUTTONS -->
 <div class="float-contact">
   <a class="float-btn telegram" href="https://t.me/kebetappp" target="_blank">
-    <span>✈️</span><span class="float-label">Chat on Telegram</span>
+    <span>✈️</span><span class="float-label"><span class="en">Chat on Telegram</span><span class="am">Telegram ላይ ያግኙን</span></span>
   </a>
   <a class="float-btn phone" href="tel:0979559549">
-    <span>📞</span><span class="float-label">Call Us</span>
+    <span>📞</span><span class="float-label"><span class="en">Call Us</span><span class="am">ይደውሉ</span></span>
   </a>
 </div>
 
 <script>
-  // ── Navbar scroll effect ──
+  // ── Language System ──
+  let currentLang = localStorage.getItem('kebet-lang') || 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('kebet-lang', lang);
+
+    if (lang === 'am') {
+      document.body.classList.add('am-mode');
+      document.getElementById('btn-am').classList.add('active');
+      document.getElementById('btn-en').classList.remove('active');
+      updateTypingPhrases('am');
+    } else {
+      document.body.classList.remove('am-mode');
+      document.getElementById('btn-en').classList.add('active');
+      document.getElementById('btn-am').classList.remove('active');
+      updateTypingPhrases('en');
+    }
+  }
+
+  // Apply saved language on load
+  window.addEventListener('DOMContentLoaded', () => {
+    setLang(currentLang);
+  });
+
+  // ── Typing Effect ──
+  const phrasesEN = [
+    "Verified cleaners, nannies & cooks in Addis Ababa.",
+    "Chat directly. Agree on salary. Hire safely.",
+    "Pay via Telebirr or CBE Birr — fast & safe.",
+    "100% Free. No agent fees. No commissions."
+  ];
+  const phrasesAM = [
+    "ሰራተኛ ፈልጉ — ያነጋግሩ — ይቅጠሩ።",
+    "ቴሌብር ወይም CBE ይክፈሉ — ፈጣን እና ደህንነቱ ተጠብቆ።",
+    "ሙሉ በሙሉ ነጻ — ምንም ደላላ የለም።",
+    "የተረጋገጡ ሰራተኞች — ዛሬ ይቅጠሩ።"
+  ];
+
+  let phrases = phrasesEN;
+  let phraseIndex = 0, charIndex = 0, isDeleting = false;
+  const typingEl = document.getElementById('hero-typing');
+  let typingTimer;
+
+  function updateTypingPhrases(lang) {
+    phrases = lang === 'am' ? phrasesAM : phrasesEN;
+    phraseIndex = 0; charIndex = 0; isDeleting = false;
+    clearTimeout(typingTimer);
+    type();
+  }
+
+  function type() {
+    const current = phrases[phraseIndex];
+    if (isDeleting) {
+      typingEl.innerHTML = current.substring(0, charIndex - 1) + '<span class="typing-cursor">|</span>';
+      charIndex--;
+      if (charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typingTimer = setTimeout(type, 400); return; }
+      typingTimer = setTimeout(type, 40);
+    } else {
+      typingEl.innerHTML = current.substring(0, charIndex + 1) + '<span class="typing-cursor">|</span>';
+      charIndex++;
+      if (charIndex === current.length) { isDeleting = true; typingTimer = setTimeout(type, 2200); return; }
+      typingTimer = setTimeout(type, 55);
+    }
+  }
+  setTimeout(type, 1200);
+
+  // ── Navbar scroll ──
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 50);
@@ -603,45 +695,13 @@
 
   // ── Scroll reveal ──
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
-    observer.observe(el);
-  });
-
-  // ── Typing effect ──
-  const phrases = [
-    "Verified cleaners, nannies & cooks in Addis Ababa.",
-    "Chat directly. Agree on salary. Hire safely.",
-    "ሰራተኛ ፈልጉ — ያነጋግሩ — ይቅጠሩ።",
-    "Pay via Telebirr or CBE Birr — fast & safe.",
-    "100% Free. No agent fees. No commissions."
-  ];
-  let phraseIndex = 0, charIndex = 0, isDeleting = false;
-  const typingEl = document.getElementById('hero-typing');
-
-  function type() {
-    const current = phrases[phraseIndex];
-    if (isDeleting) {
-      typingEl.innerHTML = current.substring(0, charIndex - 1) + '<span class="typing-cursor">|</span>';
-      charIndex--;
-      if (charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; setTimeout(type, 400); return; }
-      setTimeout(type, 40);
-    } else {
-      typingEl.innerHTML = current.substring(0, charIndex + 1) + '<span class="typing-cursor">|</span>';
-      charIndex++;
-      if (charIndex === current.length) { isDeleting = true; setTimeout(type, 2200); return; }
-      setTimeout(type, 55);
-    }
-  }
-  setTimeout(type, 1200);
-
-  // ── Count up animation ──
+  // ── Count up ──
   function animateCount(el) {
     const target = parseInt(el.dataset.target);
     const duration = 1800;
@@ -653,16 +713,11 @@
       el.textContent = Math.floor(current);
     }, 16);
   }
-
   const countObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCount(entry.target);
-        countObserver.unobserve(entry.target);
-      }
+      if (entry.isIntersecting) { animateCount(entry.target); countObserver.unobserve(entry.target); }
     });
   }, { threshold: 0.5 });
-
   document.querySelectorAll('.count-num').forEach(el => countObserver.observe(el));
 </script>
 
