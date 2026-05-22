@@ -532,18 +532,22 @@
       if (!workersSnap.empty) {
         activeOtherData = workersSnap.docs[0].data();
       } else {
-        // Try finding by matching convo name in workers collection
-        const allWorkersSnap = await getDocs(collection(db, 'workers'));
-        const otherName = document.getElementById('chat-header-name').textContent.trim();
-        const nameParts = otherName.split(' ');
+        // Search workers collection by first+last name match
+        const nameParts = otherName.trim().split(' ');
         const firstName = nameParts[0] || '';
-        const lastName = nameParts[1] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        console.log('Searching workers for:', firstName, lastName);
+        const allWorkersSnap = await getDocs(collection(db, 'workers'));
         let found = null;
         allWorkersSnap.forEach(d => {
           const data = d.data();
-          if (data.firstName === firstName && data.lastName === lastName) found = data;
+          console.log('Worker doc:', data.firstName, data.lastName, 'telebirr:', data.telebirr, 'cbe:', data.cbe);
+          const fMatch = (data.firstName||'').trim().toLowerCase() === firstName.toLowerCase();
+          const lMatch = (data.lastName||'').trim().toLowerCase() === lastName.toLowerCase();
+          if (fMatch && lMatch) found = data;
         });
         activeOtherData = found;
+        console.log('activeOtherData result:', activeOtherData);
       }
       // Fallback to users collection
       if (!activeOtherData) {
