@@ -6,7 +6,7 @@
   <title>Kebet — Reviews</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
     .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
     .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
     .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -69,8 +69,11 @@
       .main { margin-left: 0; padding: 20px; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
@@ -99,7 +102,7 @@
 </div>
 
 <div class="main">
-  <div id="loading" class="loading">⏳ Loading...</div>
+  <div id="loading" class="loading">Loading...</div>
   <div id="page-content" style="display:none;">
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">⭐ Reviews</div><div class="lang-toggle" style="margin-left:auto;">
@@ -109,8 +112,8 @@
     <div class="page-sub">Rate your workers — your reviews help build trust on Kebet</div>
 
     <!-- Active workers to review -->
-    <div class="card">
-      <div class="section-title">📋 Your Active Workers</div>
+    <div class="card ks-reveal">
+      <div class="section-title ks-reveal">📋 Your Active Workers</div>
       <div id="workers-list">
         <div class="no-workers">
           <div class="no-workers-icon">👤</div>
@@ -120,8 +123,8 @@
     </div>
 
     <!-- Write review form (hidden until worker selected) -->
-    <div class="card" id="review-form-card" style="display:none;">
-      <div class="section-title" id="review-form-title">⭐ Leave a Review</div>
+    <div class="card ks-reveal" id="review-form-card" style="display:none;">
+      <div class="section-title ks-reveal" id="review-form-title">⭐ Leave a Review</div>
       <div class="star-label"><span class="en">Your rating</span><span class="am">ደረጃዎ</span></div>
       <div class="star-row" id="star-row">
         <button class="star-btn" data-val="1">★</button>
@@ -138,8 +141,8 @@
     </div>
 
     <!-- Past reviews given by this owner -->
-    <div class="card">
-      <div class="section-title">📝 Reviews You've Given</div>
+    <div class="card ks-reveal">
+      <div class="section-title ks-reveal">📝 Reviews You've Given</div>
       <div id="past-reviews">
         <div class="no-reviews"><span class="en">No reviews given yet.</span><span class="am">እስካሁን ምንም ግምገማ አልሰጡም።</span></div>
       </div>
@@ -312,7 +315,7 @@
           : '<span class="worker-status status-active"><span class="en">Review now</span><span class="am">አሁን ይገምግሙ</span></span>';
         const clickAttr = alreadyReviewed ? '' : `onclick="selectWorker('${b.id}', '${b.workerId}', '${b.workerName}')"`;
         html += `
-          <div class="worker-tab" data-booking="${b.id}" ${clickAttr} style="${alreadyReviewed ? 'opacity:0.6; cursor:default;' : ''}">
+          <div class="worker-tab ks-reveal" data-booking="${b.id}" ${clickAttr} style="${alreadyReviewed ? 'opacity:0.6; cursor:default;' : ''}">
             <div class="worker-av">${initials}</div>
             <div>
               <div class="worker-name">${b.workerName || '—'}</div>
@@ -333,7 +336,7 @@
       reviewsGiven.forEach(r => {
         const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
         html += `
-          <div class="review-item">
+          <div class="review-item ks-reveal">
             <div class="review-top">
               <div class="review-av">${r.ownerInitials || '??'}</div>
               <div>

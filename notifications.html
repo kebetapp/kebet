@@ -6,7 +6,7 @@
   <title>Kebet — Notifications</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
 
     .sidebar { width: 240px; background: var(--sb-bg, #1a6b3c); display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
     .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
@@ -63,8 +63,11 @@
       .main { margin-left: 0; padding: 20px; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
@@ -89,13 +92,13 @@
 </div>
 
 <div class="main">
-  <div id="loading" class="loading">⏳ Loading notifications...</div>
+  <div id="loading" class="loading">Loading...</div>
   <div id="page-content" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">🔔 Notifications</div>
     <div class="page-sub" id="page-sub"><span class="en">Your latest alerts</span><span class="am">የቅርብ ጊዜ ማሳወቂያዎችዎ</span></div>
 
-    <div class="card">
-      <div class="section-title">
+    <div class="card ks-reveal">
+      <div class="section-title ks-reveal">
         <span>All Notifications <span id="unread-count" style="font-size:13px; color:#888; font-weight:400;"></span></span>
         <button class="mark-all-btn" onclick="markAllRead()"><span class="en">✓ Mark all as read</span><span class="am">✓ ሁሉንም እንደተነበበ ምልክት አድርግ</span></button>
       </div>

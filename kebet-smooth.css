@@ -1,0 +1,240 @@
+/* ============================================
+   KEBET — Global Smooth Styles
+   Include on every page: <link rel="stylesheet" href="kebet-smooth.css"/>
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ── Reset & Base ── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: #f5f5f0;
+  color: #111;
+  overflow-x: hidden;
+  opacity: 0;
+  animation: ks-pagein 0.45s ease forwards;
+}
+
+/* ── Page fade-in ── */
+@keyframes ks-pagein {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Subtle background for dashboard pages ── */
+.ks-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #f5f5f0;
+  overflow: hidden;
+}
+.ks-bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.045;
+  animation: ks-float 10s ease-in-out infinite;
+  pointer-events: none;
+}
+.ks-bg-blob.b1 { width: 520px; height: 520px; background: #1a6b3c; top: -160px; left: -160px; animation-delay: 0s; }
+.ks-bg-blob.b2 { width: 340px; height: 340px; background: #f0a500; bottom: -100px; right: -80px; animation-delay: 3s; }
+.ks-bg-blob.b3 { width: 220px; height: 220px; background: #1a6b3c; top: 45%; left: 60%; animation-delay: 6s; }
+
+@keyframes ks-float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-18px) scale(1.03); }
+}
+
+/* ── Scroll reveal ── */
+.ks-reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.ks-reveal.ks-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  transition: box-shadow 0.3s ease;
+}
+.sidebar-item {
+  transition: background 0.25s ease, color 0.25s ease, border-left-color 0.25s ease, padding-left 0.2s ease !important;
+}
+.sidebar-item:hover {
+  padding-left: 24px !important;
+}
+
+/* ── Cards ── */
+.card, .booking-card, .job-offer-card, .stat-card {
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease !important;
+}
+.card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.07) !important;
+  transform: translateY(-2px) !important;
+}
+.stat-card:hover {
+  box-shadow: 0 6px 24px rgba(26,107,60,0.1) !important;
+  transform: translateY(-3px) !important;
+  border-color: #d0eedd !important;
+}
+
+/* ── Buttons ── */
+.btn-sm-green, .btn-sm-outline, .btn-sm-red,
+.find-btn, .edit-btn, .submit-btn, .hire-big-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease !important;
+}
+.btn-sm-green:hover  { transform: translateY(-2px) !important; box-shadow: 0 4px 14px rgba(26,107,60,0.3) !important; }
+.btn-sm-outline:hover{ transform: translateY(-2px) !important; }
+.btn-sm-red:hover    { transform: translateY(-2px) !important; }
+.find-btn:hover, .edit-btn:hover { transform: translateY(-2px) !important; box-shadow: 0 4px 14px rgba(26,107,60,0.25) !important; }
+
+/* ── Status badges ── */
+.status-badge { transition: opacity 0.2s ease; }
+
+/* ── Modals ── */
+.modal-overlay {
+  transition: opacity 0.25s ease !important;
+  opacity: 0;
+  pointer-events: none;
+}
+.modal-overlay.show {
+  opacity: 1 !important;
+  pointer-events: all;
+}
+.modal {
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease !important;
+  transform: scale(0.93) translateY(10px);
+  opacity: 0;
+}
+.modal-overlay.show .modal {
+  transform: scale(1) translateY(0) !important;
+  opacity: 1 !important;
+}
+
+/* ── Input focus ── */
+input, select, textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(26,107,60,0.1) !important;
+}
+
+/* ── Links ── */
+a { transition: color 0.2s ease, opacity 0.2s ease; }
+
+/* ── Loading spinner ── */
+.ks-loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+}
+.ks-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid #e8f5ee;
+  border-top-color: #1a6b3c;
+  border-radius: 50%;
+  animation: ks-spin 0.7s linear infinite;
+}
+@keyframes ks-spin { to { transform: rotate(360deg); } }
+.ks-loading-text { font-size: 14px; color: #aaa; font-weight: 500; }
+
+/* ── Notification badge pulse ── */
+.sidebar-badge {
+  animation: ks-badge-pulse 2.5s ease infinite;
+}
+@keyframes ks-badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+/* ── Topbar greeting ── */
+.topbar-title h1 {
+  animation: ks-pagein 0.5s 0.1s ease both;
+}
+
+/* ── Dashboard stat counter ── */
+.stat-num {
+  transition: color 0.3s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Review stars ── */
+.rating-box-stars, .review-stars, .testi-stars {
+  transition: letter-spacing 0.3s ease;
+}
+
+/* ── Scrollbar (webkit) ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ddd; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #1a6b3c; }
+
+/* ── Sidebar logo icon hover ── */
+.sidebar-logo-icon {
+  transition: transform 0.3s ease;
+}
+.sidebar-logo-icon:hover {
+  transform: rotate(-8deg) scale(1.1);
+}
+
+/* ── Smooth sidebar badge appear ── */
+.sidebar-badge[style*="display:none"] { opacity: 0; }
+.sidebar-badge { transition: opacity 0.3s ease; opacity: 1; }
+
+/* ── Job/booking card hover accent ── */
+.job-offer-card, .booking-card {
+  position: relative;
+  overflow: hidden;
+}
+.job-offer-card::after, .booking-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a6b3c, #f0a500);
+  transform: scaleX(0);
+  transition: transform 0.35s ease;
+  transform-origin: left;
+}
+.job-offer-card:hover::after, .booking-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* ── Notification item ── */
+.notif-item {
+  transition: background 0.2s ease, transform 0.2s ease !important;
+}
+.notif-item:hover {
+  transform: translateX(4px) !important;
+}
+
+/* ── Worker tab ── */
+.worker-tab {
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease !important;
+}
+.worker-tab:hover {
+  transform: translateX(3px) !important;
+}
+
+/* ── Review items ── */
+.review-item {
+  transition: background 0.2s ease !important;
+}
+.review-item:hover {
+  background: #fafff8 !important;
+  border-radius: 10px;
+  padding-left: 8px;
+}
+
+/* ── Smooth page transitions (outgoing) ── */
+a[href]:not([href^="#"]):not([href^="http"]):not([href^="tel"]):not([href^="mailto"]) {
+  /* handled by JS */
+}

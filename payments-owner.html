@@ -6,7 +6,7 @@
   <title>Kebet — Salary Payments</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
 
     .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
     .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
@@ -112,8 +112,11 @@
       .form-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
@@ -160,25 +163,25 @@
 
     <!-- Stats -->
     <div class="stats-row">
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-green">💰</div>
         <div class="stat-num" id="stat-salary">—</div>
         <div class="stat-label">Monthly salary (ETB)</div>
         <div class="stat-sub">Agreed amount</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-gold">✅</div>
         <div class="stat-num" id="stat-paid">0</div>
         <div class="stat-label">Months paid</div>
         <div class="stat-sub" id="stat-total-paid">Total: 0 ETB</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-blue">📅</div>
         <div class="stat-num" id="stat-next">—</div>
         <div class="stat-label">Next payment due</div>
         <div class="stat-sub">End of month</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-pink">🛏️</div>
         <div class="stat-num" id="stat-worker-name">—</div>
         <div class="stat-label">Your worker</div>
@@ -187,7 +190,7 @@
     </div>
 
     <!-- Worker salary box -->
-    <div class="card" id="worker-card">
+    <div class="card ks-reveal" id="worker-card">
       <div class="card-title">
         🛏️ Your Current Worker
         <span class="card-badge" id="worker-badge">Active</span>
@@ -207,7 +210,7 @@
     </div>
 
     <!-- Add new payment -->
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">➕ Record a Salary Payment</div>
       <div class="add-payment-form">
         <div class="form-row">
@@ -242,7 +245,7 @@
     </div>
 
     <!-- Payment history -->
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">
         📋 Payment History
         <span class="card-badge" id="history-badge">0 payments</span>

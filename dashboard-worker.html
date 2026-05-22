@@ -6,7 +6,7 @@
   <title>Kebet — Worker Dashboard</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
     .sidebar { width: 240px; background: #111; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
     .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
     .sidebar-logo-icon { width: 36px; height: 36px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -101,8 +101,11 @@
       .job-offer-top { flex-wrap: wrap; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
@@ -133,7 +136,7 @@
 </div>
 
 <div class="main">
-  <div id="loading" class="loading">⏳ Loading your dashboard...</div>
+  <div id="loading" class="loading">Loading...</div>
   <div id="dashboard-content" style="display:none;">
 
     <div class="topbar">
@@ -145,10 +148,10 @@
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label"><span class="en">Your name</span><span class="am">ስምዎ</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-gold">🏠</div><div class="stat-num" id="stat-jobs">0</div><div class="stat-label"><span class="en">Job offers</span><span class="am">የስራ ቅናሾች</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-blue">✅</div><div class="stat-num" id="stat-active">0</div><div class="stat-label"><span class="en">Active jobs</span><span class="am">ንቁ ስራዎች</span></div></div>
-      <div class="stat-card"><div class="stat-icon icon-pink">🧹</div><div class="stat-num" id="stat-skill">—</div><div class="stat-label"><span class="en">Your skill</span><span class="am">ችሎታዎ</span></div></div>
+      <div class="stat-card ks-reveal"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label"><span class="en">Your name</span><span class="am">ስምዎ</span></div></div>
+      <div class="stat-card ks-reveal"><div class="stat-icon icon-gold">🏠</div><div class="stat-num" id="stat-jobs">0</div><div class="stat-label"><span class="en">Job offers</span><span class="am">የስራ ቅናሾች</span></div></div>
+      <div class="stat-card ks-reveal"><div class="stat-icon icon-blue">✅</div><div class="stat-num" id="stat-active">0</div><div class="stat-label"><span class="en">Active jobs</span><span class="am">ንቁ ስራዎች</span></div></div>
+      <div class="stat-card ks-reveal"><div class="stat-icon icon-pink">🧹</div><div class="stat-num" id="stat-skill">—</div><div class="stat-label"><span class="en">Your skill</span><span class="am">ችሎታዎ</span></div></div>
     </div>
 
     <div class="rights-card">
@@ -163,11 +166,11 @@
       </div>
     </div>
 
-    <div class="section-title" id="jobs-section">🏠 My Job Offers & Bookings</div>
+    <div class="section-title ks-reveal" id="jobs-section">🏠 My Job Offers & Bookings</div>
     <div id="jobs-list"></div>
 
-    <div class="section-title">👤 My Profile</div>
-    <div class="card">
+    <div class="section-title ks-reveal">👤 My Profile</div>
+    <div class="card ks-reveal">
       <div class="profile-row">
         <div class="profile-av" id="profile-av">?</div>
         <div>
@@ -184,14 +187,14 @@
     </div>
 
     <div class="two-col">
-      <div class="card">
-        <div class="section-title">💡 Tips to get hired faster</div>
+      <div class="card ks-reveal">
+        <div class="section-title ks-reveal">💡 Tips to get hired faster</div>
         <div class="tip-item"><div class="tip-icon icon-green">📸</div><div><div class="tip-title"><span class="en">Complete your profile</span><span class="am">መገለጫዎን ያሟሉ</span></div><div class="tip-text"><span class="en">Workers with full profiles get hired 3x faster.</span><span class="am">ሙሉ መገለጫ ያላቸው ሰራተኞች 3 እጥፍ ፈጠን ይቀጠራሉ።</span></div></div></div>
         <div class="tip-item"><div class="tip-icon icon-gold">⭐</div><div><div class="tip-title"><span class="en">Ask for references</span><span class="am">ምስክርነት ይጠይቁ</span></div><div class="tip-text"><span class="en">References from past employers build trust.</span><span class="am">ከቀደሙ ቀጣሪዎች ምስክርነት እምነት ይገነባል።</span></div></div></div>
         <div class="tip-item"><div class="tip-icon icon-blue">📍</div><div><div class="tip-title"><span class="en">Set your location</span><span class="am">አካባቢዎን ያስቀምጡ</span></div><div class="tip-text"><span class="en">Owners search by location — keep yours updated.</span><span class="am">ባለቤቶች በአካባቢ ይፈልጋሉ — የዎን ወቅታዊ ያድርጉ።</span></div></div></div>
       </div>
-      <div class="card">
-        <div class="section-title">👤 Profile Completion</div>
+      <div class="card ks-reveal">
+        <div class="section-title ks-reveal">👤 Profile Completion</div>
         <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:50%"></div></div>
         <div class="progress-label" id="progress-label">50% complete</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
@@ -255,7 +258,7 @@
   function renderJobs(bookings) {
     const list = document.getElementById('jobs-list');
     if (bookings.length === 0) {
-      list.innerHTML = `<div class="card"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title"><span class="en">No job offers yet</span><span class="am">እስካሁን የስራ ቅናሽ የለም</span></div><div class="no-jobs-sub"><span class="en">Your profile is live! House owners can find and book you on Kebet.</span><span class="am">መገለጫዎ ንቁ ነው! የቤት ባለቤቶች በከቤት ላይ ሊያገኙዎ እና ሊይዙዎ ይችላሉ።</span></div></div></div>`;
+      list.innerHTML = `<div class="card ks-reveal"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title"><span class="en">No job offers yet</span><span class="am">እስካሁን የስራ ቅናሽ የለም</span></div><div class="no-jobs-sub"><span class="en">Your profile is live! House owners can find and book you on Kebet.</span><span class="am">መገለጫዎ ንቁ ነው! የቤት ባለቤቶች በከቤት ላይ ሊያገኙዎ እና ሊይዙዎ ይችላሉ።</span></div></div></div>`;
       return;
     }
     let active = 0;
@@ -291,7 +294,7 @@
           <button class="btn-sm-outline" onclick="window.location.href='help.html'">📞 Help & Rights</button>
         </div>` : '';
       html += `
-        <div class="job-offer-card">
+        <div class="job-offer-card ks-reveal">
           <div class="job-offer-top">
             <div class="job-house-av">🏡</div>
             <div style="flex:1;">

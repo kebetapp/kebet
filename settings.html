@@ -6,7 +6,7 @@
   <title>Kebet — Settings</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
 
     /* SIDEBAR */
     .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
@@ -118,8 +118,11 @@
       .form-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
@@ -163,7 +166,7 @@
 
     <!-- PROFILE TAB -->
     <div class="panel active" id="panel-profile">
-      <div class="card">
+      <div class="card ks-reveal">
         <div class="card-header">
           <div class="card-header-icon">👤</div>
           <div>
@@ -227,7 +230,7 @@
 
     <!-- SECURITY TAB -->
     <div class="panel" id="panel-security">
-      <div class="card">
+      <div class="card ks-reveal">
         <div class="card-header">
           <div class="card-header-icon">🔐</div>
           <div>
@@ -266,7 +269,7 @@
 
     <!-- SKILLS & INFO TAB (workers only) -->
     <div class="panel" id="panel-skills">
-      <div class="card">
+      <div class="card ks-reveal">
         <div class="card-header">
           <div class="card-header-icon">🛠</div>
           <div>

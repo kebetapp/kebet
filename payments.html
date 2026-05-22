@@ -6,7 +6,7 @@
   <title>Kebet — My Salary</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #111; color: #111; display: flex; min-height: 100vh; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #111; color: #111; display: flex; min-height: 100vh; }
 
     /* Dark sidebar for worker */
     .sidebar { width: 240px; background: #1a1a1a; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
@@ -112,8 +112,11 @@
       .how-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
@@ -168,25 +171,25 @@
 
     <!-- Stats -->
     <div class="stats-row">
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-green">💰</div>
         <div class="stat-num" id="stat-salary">—</div>
         <div class="stat-label">My monthly salary (ETB)</div>
         <div class="stat-sub">Agreed amount</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-gold">✅</div>
         <div class="stat-num" id="stat-received">0</div>
         <div class="stat-label">Payments received</div>
         <div class="stat-sub" id="stat-total-received">Total: 0 ETB</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-blue">📅</div>
         <div class="stat-num" id="stat-months">0</div>
         <div class="stat-label">Months worked</div>
         <div class="stat-sub">Since you started</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card ks-reveal">
         <div class="stat-icon icon-pink">⏳</div>
         <div class="stat-num" id="stat-next">Soon</div>
         <div class="stat-label">Next payment</div>
@@ -195,7 +198,7 @@
     </div>
 
     <!-- Current salary box -->
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">
         My Current Salary
         <span class="card-badge">🛏️ Live-in Worker</span>
@@ -215,7 +218,7 @@
     </div>
 
     <!-- Salary history -->
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">
         📋 Salary History
         <span class="card-badge" id="history-badge">0 payments</span>
@@ -230,7 +233,7 @@
     </div>
 
     <!-- How salary works -->
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">ℹ️ How salary works on Kebet</div>
       <div class="how-grid">
         <div class="how-item"><div class="how-num">1</div><div class="how-text">You and your employer agree on a monthly salary before work starts</div></div>
