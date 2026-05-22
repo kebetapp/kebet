@@ -69,6 +69,8 @@
       .main { margin-left: 0; padding: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -77,20 +79,20 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
   <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
   <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">⭐</span> Reviews</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
-      <div class="sidebar-user-role">House Owner</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+      <div class="sidebar-user-role"><span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
@@ -100,7 +102,10 @@
   <div id="loading" class="loading">⏳ Loading...</div>
   <div id="page-content" style="display:none;">
 
-    <div class="page-title">⭐ Reviews</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">⭐ Reviews</div><div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div></div></div>
     <div class="page-sub">Rate your workers — your reviews help build trust on Kebet</div>
 
     <!-- Active workers to review -->
@@ -117,7 +122,7 @@
     <!-- Write review form (hidden until worker selected) -->
     <div class="card" id="review-form-card" style="display:none;">
       <div class="section-title" id="review-form-title">⭐ Leave a Review</div>
-      <div class="star-label">Your rating</div>
+      <div class="star-label"><span class="en">Your rating</span><span class="am">ደረጃዎ</span></div>
       <div class="star-row" id="star-row">
         <button class="star-btn" data-val="1">★</button>
         <button class="star-btn" data-val="2">★</button>
@@ -125,18 +130,18 @@
         <button class="star-btn" data-val="4">★</button>
         <button class="star-btn" data-val="5">★</button>
       </div>
-      <div class="star-label" style="margin-top:4px;">Your comment (optional)</div>
+      <div class="star-label" style="margin-top:4px;"><span class="en">Your comment (optional)</span><span class="am">አስተያየትዎ (አማራጭ)</span></div>
       <textarea class="review-textarea" id="review-comment" placeholder="How was your experience? e.g. Very hardworking, always on time, great with kids..."></textarea>
       <div class="error-box" id="error-box"></div>
       <div class="success-box" id="success-box">✅ Review submitted! Thank you.</div>
-      <button class="submit-btn" id="submit-btn" onclick="submitReview()">Submit Review ⭐</button>
+      <button class="submit-btn" id="submit-btn" onclick="submitReview()"><span class="en">Submit Review ⭐</span><span class="am">ግምገማ ያስገቡ ⭐</span></button>
     </div>
 
     <!-- Past reviews given by this owner -->
     <div class="card">
       <div class="section-title">📝 Reviews You've Given</div>
       <div id="past-reviews">
-        <div class="no-reviews">No reviews given yet.</div>
+        <div class="no-reviews"><span class="en">No reviews given yet.</span><span class="am">እስካሁን ምንም ግምገማ አልሰጡም።</span></div>
       </div>
     </div>
 
@@ -303,8 +308,8 @@
         const initials = b.workerName ? b.workerName.split(' ').map(n => n[0]).join('').toUpperCase() : '??';
         const alreadyReviewed = reviewedBookingIds.has(b.id);
         const statusBadge = alreadyReviewed
-          ? '<span class="worker-status status-reviewed">✓ Reviewed</span>'
-          : '<span class="worker-status status-active">Review now</span>';
+          ? '<span class="worker-status status-reviewed"><span class="en">✓ Reviewed</span><span class="am">✓ ተገምግሟል</span></span>'
+          : '<span class="worker-status status-active"><span class="en">Review now</span><span class="am">አሁን ይገምግሙ</span></span>';
         const clickAttr = alreadyReviewed ? '' : `onclick="selectWorker('${b.id}', '${b.workerId}', '${b.workerName}')"`;
         html += `
           <div class="worker-tab" data-booking="${b.id}" ${clickAttr} style="${alreadyReviewed ? 'opacity:0.6; cursor:default;' : ''}">
@@ -322,7 +327,7 @@
     // Render past reviews
     const pastEl = document.getElementById('past-reviews');
     if (reviewsGiven.length === 0) {
-      pastEl.innerHTML = '<div class="no-reviews">No reviews given yet.</div>';
+      pastEl.innerHTML = '<div class="no-reviews"><span class="en">No reviews given yet.</span><span class="am">እስካሁን ምንም ግምገማ አልሰጡም።</span></div>';
     } else {
       let html = '';
       reviewsGiven.forEach(r => {

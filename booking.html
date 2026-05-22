@@ -93,6 +93,8 @@
     .modal-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
     @media (max-width: 768px) { .main { flex-direction: column; padding: 0 20px 40px; } .right-col { width: 100%; } nav { padding: 16px 20px; } .back-bar { padding: 12px 20px; } .live-in-banner { padding: 0 20px 20px; } .salary-grid { grid-template-columns: repeat(3, 1fr); } .duration-grid { grid-template-columns: repeat(4, 1fr); } }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -102,13 +104,14 @@
     <div><div class="nav-logo-text">KEBET</div><div class="nav-logo-am">ከቤት</div></div>
   </div>
 </nav>
+<div style="position:fixed;top:12px;right:20px;z-index:200;"><div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div></div>
 
 <div class="back-bar">
-  <button class="back-btn" onclick="window.location.href='profile.html'">← Back to profile</button>
+  <button class="back-btn" onclick="window.location.href='profile.html'"><span class="en">← Back to profile</span><span class="am">← ወደ መገለጫ ተመለስ</span></button>
 </div>
 
-<div class="page-title">
-  <h1>Book Your Live-in House Worker</h1>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">
+  <h1><span class="en">Book Your Live-in House Worker</span><span class="am">የቤት ሰራተኛዎን ያዙ</span></h1>
   <p>የቤት ሰራተኛ — Monthly contract, lives in your home</p>
 </div>
 
@@ -244,7 +247,7 @@
         <div class="sum-av" id="sum-av">SA</div>
         <div><div class="sum-name" id="sum-name">Sara Alemu</div><div class="sum-role">Live-in · የቤት ሰራተኛ</div></div>
       </div>
-      <div class="sum-row"><span>Work type</span><span>🛏️ Live-in</span></div>
+      <div class="sum-row"><span><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
       <div class="sum-row"><span>Contract</span><span id="sum-duration">1 month</span></div>
       <div class="sum-row"><span>Monthly salary</span><span id="sum-rate">3,500 ETB</span></div>
       <div class="sum-row"><span>Kebet fee</span><span>Free 🎉</span></div>

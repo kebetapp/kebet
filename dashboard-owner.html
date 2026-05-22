@@ -90,6 +90,8 @@
       .booking-right { flex-direction: row; align-items: center; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -98,7 +100,7 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
   <div class="sidebar-item" onclick="scrollToBookings()"><span class="sidebar-item-icon">📋</span> My Bookings <span class="sidebar-badge" id="bookings-badge" style="display:none;">0</span></div>
@@ -106,14 +108,14 @@
   <div class="sidebar-item" onclick="window.location.href='reviews.html'"><span class="sidebar-item-icon">⭐</span> Reviews</div>
   <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
   <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item" onclick="window.location.href='edit-profile.html'"><span class="sidebar-item-icon">👤</span> Edit Profile</div>
   <div class="sidebar-item" onclick="window.location.href='settings.html'"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
-      <div class="sidebar-user-role">House Owner</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+      <div class="sidebar-user-role"><span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
@@ -126,18 +128,22 @@
     <div class="topbar">
       <div class="topbar-title">
         <h1 id="greeting">Good morning! 👋</h1>
-        <p>Welcome to your Kebet dashboard</p>
+        <p><span class="en">Welcome to your Kebet dashboard</span><span class="am">ወደ ከቤት ዳሽቦርዱ እንኳን ደህና መጡ</span></p>
       </div>
       <div class="topbar-right">
-        <button class="find-btn" onclick="window.location.href='search.html'">+ Find Worker</button>
+        <div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div>
+        <button class="find-btn" onclick="window.location.href='search.html'"><span class="en">+ Find Worker</span><span class="am">+ ሰራተኛ ፈልግ</span></button>
       </div>
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label">Your name</div></div>
-      <div class="stat-card"><div class="stat-icon icon-gold">📋</div><div class="stat-num" id="stat-bookings">0</div><div class="stat-label">Total bookings</div></div>
-      <div class="stat-card"><div class="stat-icon icon-blue">🛏️</div><div class="stat-num" id="stat-active">0</div><div class="stat-label">Active workers</div></div>
-      <div class="stat-card"><div class="stat-icon icon-pink">📍</div><div class="stat-num" id="stat-location">—</div><div class="stat-label">Your location</div></div>
+      <div class="stat-card"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label"><span class="en">Your name</span><span class="am">ስምዎ</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-gold">📋</div><div class="stat-num" id="stat-bookings">0</div><div class="stat-label"><span class="en">Total bookings</span><span class="am">ጠቅላላ ቦታ ማስያዣ</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-blue">🛏️</div><div class="stat-num" id="stat-active">0</div><div class="stat-label"><span class="en">Active workers</span><span class="am">ንቁ ሰራተኞች</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-pink">📍</div><div class="stat-num" id="stat-location">—</div><div class="stat-label"><span class="en">Your location</span><span class="am">አካባቢዎ</span></div></div>
     </div>
 
     <div id="bookings-section">
@@ -146,9 +152,9 @@
         <div class="card">
           <div class="no-bookings">
             <div class="no-bookings-icon">🔍</div>
-            <div class="no-bookings-title">No bookings yet</div>
-            <div class="no-bookings-sub">Find a trusted live-in worker for your home today</div>
-            <button class="btn-sm-green" onclick="window.location.href='search.html'">Browse Workers →</button>
+            <div class="no-bookings-title"><span class="en">No bookings yet</span><span class="am">እስካሁን ቦታ ማስያዣ የለም</span></div>
+            <div class="no-bookings-sub"><span class="en">Find a trusted live-in worker for your home today</span><span class="am">ዛሬ ለቤትዎ ታማኝ የቤት ሰራተኛ ያግኙ</span></div>
+            <button class="btn-sm-green" onclick="window.location.href='search.html'"><span class="en">Browse Workers →</span><span class="am">ሰራተኞች ይፈልጉ →</span></button>
           </div>
         </div>
       </div>
@@ -167,24 +173,24 @@
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <button class="btn-sm-green" onclick="window.location.href='search.html'">🔍 Find a Worker</button>
         <button class="btn-sm-outline" onclick="window.location.href='edit-profile.html'">✏️ Edit Profile</button>
-        <button class="btn-sm-outline" onclick="window.location.href='settings.html'">⚙️ Settings</button>
+        <button class="btn-sm-outline" onclick="window.location.href='settings.html'"><span class="en">⚙️ Settings</span><span class="am">⚙️ ቅንብሮች</span></button>
       </div>
     </div>
 
     <div class="two-col">
       <div class="card">
         <div class="section-title">💡 Tips</div>
-        <div class="tip-item"><div class="tip-icon icon-green">🔍</div><div><div class="tip-title">Search for workers</div><div class="tip-text">Browse verified workers in your area by skill and salary.</div></div></div>
-        <div class="tip-item"><div class="tip-icon icon-gold">💰</div><div><div class="tip-title">Agree on monthly salary</div><div class="tip-text">Average in Addis is 2,500 – 4,500 ETB per month.</div></div></div>
-        <div class="tip-item"><div class="tip-icon icon-blue">⭐</div><div><div class="tip-title">Rate your worker monthly</div><div class="tip-text">Ratings build trust for the whole community.</div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-green">🔍</div><div><div class="tip-title"><span class="en">Search for workers</span><span class="am">ሰራተኞችን ፈልግ</span></div><div class="tip-text"><span class="en">Browse verified workers in your area by skill and salary.</span><span class="am">በአካባቢዎ ያሉ የተረጋገጡ ሰራተኞችን በችሎታ እና ደሞዝ ይፈልጉ።</span></div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-gold">💰</div><div><div class="tip-title"><span class="en">Agree on monthly salary</span><span class="am">ወርሃዊ ደሞዝ ይስማሙ</span></div><div class="tip-text"><span class="en">Average in Addis is 2,500 – 4,500 ETB per month.</span><span class="am">በአዲስ አበባ አማካይ ወርሃዊ ደሞዝ 2,500 – 4,500 ብር ነው።</span></div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-blue">⭐</div><div><div class="tip-title"><span class="en">Rate your worker monthly</span><span class="am">ሰራተኛዎን በወር ያረጋግጡ</span></div><div class="tip-text"><span class="en">Ratings build trust for the whole community.</span><span class="am">ደረጃ መስጠት ለሙሉ ማህበረሰቡ እምነት ይገነባል።</span></div></div></div>
       </div>
       <div class="card">
         <div class="section-title">📊 Booking Summary</div>
         <div style="display:flex; flex-direction:column; gap:12px;">
-          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Total bookings</span><span id="sum-total" style="font-weight:700;">0</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Active now</span><span id="sum-active" style="font-weight:700; color:#1a6b3c;">0</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Pending</span><span id="sum-pending" style="font-weight:700; color:#c87800;">0</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;">Ended</span><span id="sum-ended" style="font-weight:700; color:#888;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;"><span class="en">Total bookings</span><span class="am">ጠቅላላ ቦታ ማስያዣ</span></span><span id="sum-total" style="font-weight:700;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;"><span class="en">Active now</span><span class="am">አሁን ንቁ</span></span><span id="sum-active" style="font-weight:700; color:#1a6b3c;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;"><span class="en">Pending</span><span class="am">በመጠባበቅ ላይ</span></span><span id="sum-pending" style="font-weight:700; color:#c87800;">0</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:#888;"><span class="en">Ended</span><span class="am">ያለቀ</span></span><span id="sum-ended" style="font-weight:700; color:#888;">0</span></div>
         </div>
       </div>
     </div>
@@ -267,7 +273,7 @@
   function renderBookings(bookings) {
     const list = document.getElementById('bookings-list');
     if (bookings.length === 0) {
-      list.innerHTML = `<div class="card"><div class="no-bookings"><div class="no-bookings-icon">🔍</div><div class="no-bookings-title">No bookings yet</div><div class="no-bookings-sub">Find a trusted live-in worker for your home today</div><button class="btn-sm-green" onclick="window.location.href='search.html'">Browse Workers →</button></div></div>`;
+      list.innerHTML = `<div class="card"><div class="no-bookings"><div class="no-bookings-icon">🔍</div><div class="no-bookings-title"><span class="en">No bookings yet</span><span class="am">እስካሁን ቦታ ማስያዣ የለም</span></div><div class="no-bookings-sub"><span class="en">Find a trusted live-in worker for your home today</span><span class="am">ዛሬ ለቤትዎ ታማኝ የቤት ሰራተኛ ያግኙ</span></div><button class="btn-sm-green" onclick="window.location.href='search.html'"><span class="en">Browse Workers →</span><span class="am">ሰራተኞች ይፈልጉ →</span></button></div></div>`;
       return;
     }
     let active = 0, pending = 0, ended = 0;
@@ -281,10 +287,10 @@
       if (status === 'active') active++;
       else if (status === 'pending') pending++;
       else ended++;
-      const statusBadge = status === 'active' ? '<span class="status-badge status-active">✓ Active</span>' : status === 'pending' ? '<span class="status-badge status-pending">⏳ Pending</span>' : '<span class="status-badge status-ended">Ended</span>';
+      const statusBadge = status === 'active' ? '<span class="status-badge status-active">✓ Active</span>' : status === 'pending' ? '<span class="status-badge status-pending">⏳ Pending</span>' : '<span class="status-badge status-ended"><span class="en">Ended</span><span class="am">ያለቀ</span></span>';
       const actionBtns = status === 'pending'
         ? `<button class="btn-sm-green" onclick="activateBooking('${b.id}','${data.workerId}','${data.workerName}','${data.ownerName || ''}')">✓ Mark Active</button>
-           <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">Cancel</button>`
+           <button class="btn-sm-red" onclick="cancelBooking('${b.id}')"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>`
         : status === 'active'
         ? `<button class="btn-sm-green" onclick="window.location.href='payments-owner.html'">💰 Salary</button>
            <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.workerId}'">💬 Message</button>

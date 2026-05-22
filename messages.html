@@ -185,6 +185,8 @@
       .convos-panel { width: 100%; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -193,20 +195,21 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item" id="nav-dashboard"><span class="sidebar-item-icon">📊</span> Dashboard</div>
-  <div class="sidebar-item" id="nav-main"><span class="sidebar-item-icon" id="nav-main-icon">🔍</span> <span id="nav-main-label">Find Workers</span></div>
-  <div class="sidebar-item" id="nav-bookings"><span class="sidebar-item-icon">📋</span> <span id="nav-bookings-label">My Bookings</span></div>
-  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> <span id="nav-payments-label">Salary Payments</span></div>
+  <div class="sidebar-item" id="nav-main"><span class="sidebar-item-icon" id="nav-main-icon">🔍</span> <span id="nav-main-label"><span class="en">Find Workers</span><span class="am">ሰራተኞች ፈልግ</span></span></div>
+  <div class="sidebar-item" id="nav-bookings"><span class="sidebar-item-icon">📋</span> <span id="nav-bookings-label"><span class="en">My Bookings</span><span class="am">ቦታ ማስያዣዎቼ</span></span></div>
+  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> <span id="nav-payments-label"><span class="en">Salary Payments</span><span class="am">ደሞዝ ክፍያዎች</span></span></div>
   <div class="sidebar-item" id="nav-reviews"><span class="sidebar-item-icon">⭐</span> Reviews</div>
   <div class="sidebar-item" id="nav-notifs"><span class="sidebar-item-icon">🔔</span> Notifications</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">💬</span> Messages</div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
       <div class="sidebar-user-role" id="sidebar-role">—</div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
@@ -216,7 +219,7 @@
 <div class="main">
   <div class="topbar">
     <div>
-      <h1>💬 Messages</h1>
+      <h1><span class="en">💬 Messages</span><span class="am">💬 መልዕክቶች</span></h1>
       <p id="topbar-sub">Real-time chat with your workers / owners</p>
     </div>
   </div>
@@ -271,7 +274,7 @@
     <div class="steps">
       <div class="step">
         <div class="step-dot active" id="dot-1">1</div>
-        <div class="step-label active" id="lbl-1">Amount</div>
+        <div class="step-label active" id="lbl-1"><span class="en">Amount</span><span class="am">መጠን</span></div>
       </div>
       <div class="step-line" id="line-1"></div>
       <div class="step">
@@ -314,7 +317,7 @@
           <div class="pay-detail-value" id="summary-worker">—</div>
         </div>
         <div class="pay-detail-row">
-          <div class="pay-detail-label">Amount</div>
+          <div class="pay-detail-label"><span class="en">Amount</span><span class="am">መጠን</span></div>
           <div class="pay-detail-value" id="summary-amount">0 ETB</div>
         </div>
         <div class="pay-detail-row">

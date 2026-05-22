@@ -38,6 +38,8 @@
     .success-msg { background: #e8f5ee; border: 1px solid #b2dfc6; color: #1a6b3c; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
     @media (max-width: 768px) { body { flex-direction: column; } .left { width: 100%; height: auto; padding: 40px 20px; position: relative; } .right { padding: 40px 20px; } }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -46,38 +48,38 @@
     <div class="logo-icon">🏠</div>
     <div><div class="logo-text">KEBET</div><div class="logo-am">ከቤት</div></div>
   </div>
-  <div class="left-title">Join Kebet Today</div>
-  <div class="left-sub">Ethiopia's #1 platform connecting house owners with trusted workers</div>
-  <div class="feature"><div class="feature-icon">✅</div><div class="feature-text">All workers verified and background checked</div></div>
-  <div class="feature"><div class="feature-icon">⭐</div><div class="feature-text">Real ratings and reviews from real people</div></div>
-  <div class="feature"><div class="feature-icon">💬</div><div class="feature-text">Chat directly with workers before hiring</div></div>
-  <div class="feature"><div class="feature-icon">💰</div><div class="feature-text">Transparent monthly salary — no hidden fees</div></div>
-  <div class="feature"><div class="feature-icon">📍</div><div class="feature-text">Find workers near you in Addis Ababa</div></div>
+  <div class="left-title"><span class="en">Join Kebet Today</span><span class="am">ዛሬ ወደ ከቤት ይቀላቀሉ</span></div>
+  <div class="left-sub"><span class="en">Ethiopia's #1 platform connecting house owners with trusted workers</span><span class="am">የቤት ባለቤቶችን ከታማኝ ሰራተኞች ጋር የሚያገናኝ የኢትዮጵያ ቁጥር 1 መድረክ</span></div>
+  <div class="feature"><div class="feature-icon">✅</div><div class="feature-text"><span class="en">All workers verified and background checked</span><span class="am">ሁሉም ሰራተኞች የተረጋገጡ እና ምርመራ የተደረገላቸው</span></div></div>
+  <div class="feature"><div class="feature-icon">⭐</div><div class="feature-text"><span class="en">Real ratings and reviews from real people</span><span class="am">ከእውነተኛ ሰዎች እውነተኛ ደረጃዎች እና ግምገማዎች</span></div></div>
+  <div class="feature"><div class="feature-icon">💬</div><div class="feature-text"><span class="en">Chat directly with workers before hiring</span><span class="am">ከቅጥር በፊት ከሰራተኞች ጋር በቀጥታ ያናግሩ</span></div></div>
+  <div class="feature"><div class="feature-icon">💰</div><div class="feature-text"><span class="en">Transparent monthly salary — no hidden fees</span><span class="am">ግልፅ ወርሃዊ ደሞዝ — ምንም ድብቅ ክፍያ የለም</span></div></div>
+  <div class="feature"><div class="feature-icon">📍</div><div class="feature-text"><span class="en">Find workers near you in Addis Ababa</span><span class="am">በአዲስ አበባ አካባቢዎ ሰራተኞችን ያግኙ</span></div></div>
 </div>
 
-<div class="right">
+<div class="right"><div style="text-align:right;padding:16px 40px 0;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
   <div class="form-box">
-    <div class="form-title">Create your account</div>
-    <div class="form-sub">It's free and takes less than 2 minutes</div>
+    <div class="form-title"><span class="en">Create your account</span><span class="am">መለያዎን ይፍጠሩ</span></div>
+    <div class="form-sub"><span class="en">It's free and takes less than 2 minutes</span><span class="am">ነፃ ነው እና ከ2 ደቂቃ ያነሰ ጊዜ ይወስዳል</span></div>
 
     <div class="type-toggle">
-      <button class="type-btn active" onclick="setType('owner', this)">🏠 House Owner</button>
-      <button class="type-btn" onclick="setType('worker', this)">🧹 House Worker</button>
+      <button class="type-btn active" onclick="setType('owner', this)"><span class="en">🏠 House Owner</span><span class="am">🏠 የቤት ባለቤት</span></button>
+      <button class="type-btn" onclick="setType('worker', this)"><span class="en">🧹 House Worker</span><span class="am">🧹 የቤት ሰራተኛ</span></button>
     </div>
 
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
 
     <div class="row2">
-      <div class="form-group"><label>First name</label><input type="text" id="fname" placeholder="Abebe" /></div>
-      <div class="form-group"><label>Last name</label><input type="text" id="lname" placeholder="Kebede" /></div>
+      <div class="form-group"><label><span class="en">First name</span><span class="am">ስም</span></label><input type="text" id="fname" placeholder="Abebe" /></div>
+      <div class="form-group"><label><span class="en">Last name</span><span class="am">የአባት ስም</span></label><input type="text" id="lname" placeholder="Kebede" /></div>
     </div>
-    <div class="form-group"><label>Phone number</label><input type="tel" id="phone" placeholder="09__ ___ ___" /></div>
-    <div class="form-group"><label>Email address</label><input type="email" id="email" placeholder="abebe@email.com" /></div>
+    <div class="form-group"><label><span class="en">Phone number</span><span class="am">ስልክ ቁጥር</span></label><input type="tel" id="phone" placeholder="09__ ___ ___" /></div>
+    <div class="form-group"><label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label><input type="email" id="email" placeholder="abebe@email.com" /></div>
     <div class="form-group">
-      <label>Location (Sub-city)</label>
+      <label><span class="en">Location (Sub-city)</span><span class="am">አካባቢ (ክፍለ ከተማ)</span></label>
       <select id="location">
-        <option value="">Select your sub-city</option>
+        <option value=""><span class="en">Select your sub-city</span></option>
         <option>Bole</option><option>Kirkos</option><option>Yeka</option>
         <option>Arada</option><option>Lideta</option><option>Kolfe Keranio</option>
         <option>Gulele</option><option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
@@ -85,7 +87,7 @@
       </select>
     </div>
     <div class="form-group" id="skill-group" style="display:none;">
-      <label>Your main skill</label>
+      <label><span class="en">Your main skill</span><span class="am">ዋና ችሎታዎ</span></label>
       <select id="skill">
         <option value="">Select your skill</option>
         <option>Cleaning</option><option>Cooking</option>
@@ -93,10 +95,10 @@
         <option>Full-time helper</option><option>Gardening</option>
       </select>
     </div>
-    <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Create a strong password" /></div>
+    <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="ጠንካራ የይለፍ ቃል ይፍጠሩ" /></div>
 
-    <button class="submit-btn" id="signup-btn" onclick="handleSignUp()">Create Account →</button>
-    <div class="signin-link">Already have an account? <a href="signin.html">Sign in here</a></div>
+    <button class="submit-btn" id="signup-btn" onclick="handleSignUp()"><span class="en">Create Account →</span><span class="am">መለያ ፍጠር →</span></button>
+    <div class="signin-link"><span class="en">Already have an account?</span><span class="am">መለያ አለዎት?</span> <a href="signin.html"><span class="en">Sign in here</span><span class="am">እዚህ ይግቡ</span></a></div>
   </div>
 </div>
 

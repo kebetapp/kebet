@@ -112,6 +112,8 @@
       .form-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -120,18 +122,19 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
-      <div class="sidebar-user-role">House Owner</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+      <div class="sidebar-user-role"><span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
@@ -142,7 +145,7 @@
   <div id="main-content" style="display:none;">
 
     <div class="page-header">
-      <div class="page-title">💰 Salary Payments</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">💰 Salary Payments</div>
       <div class="page-sub" id="page-sub">Track and record your worker's monthly salary</div>
     </div>
 
@@ -192,7 +195,7 @@
       <div class="worker-salary-box">
         <div class="wsb-left">
           <div class="wsb-label">Live-in worker · የቤት ሰራተኛ</div>
-          <div class="wsb-worker" id="wsb-worker-name">Loading...</div>
+          <div class="wsb-worker" id="wsb-worker-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
           <div class="wsb-role" id="wsb-worker-role">—</div>
         </div>
         <div class="wsb-right">
@@ -209,7 +212,7 @@
       <div class="add-payment-form">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Month</label>
+            <label class="form-label"><span class="en">Month</span><span class="am">ወር</span></label>
             <select class="form-select" id="pay-month">
               <option value="January 2025">January 2025</option>
               <option value="February 2025">February 2025</option>
@@ -398,7 +401,7 @@
                 <div class="pay-date">Paid on: ${p.date || '—'} · Worker: ${p.workerName || '—'}</div>
               </div>
               <div class="pay-amount">${amount.toLocaleString()} ETB</div>
-              <span class="pay-status s-paid">✓ Paid</span>
+              <span class="pay-status s-paid"><span class="en">✓ Paid</span><span class="am">✓ ተከፍሏል</span></span>
             </div>`;
         });
 

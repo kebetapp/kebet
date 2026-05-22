@@ -1,0 +1,33 @@
+/* Kebet Language Toggle CSS — works on all pages */
+
+body.am-mode .en { display: none !important; }
+body.am-mode .am { display: inline !important; }
+body:not(.am-mode) .am { display: none !important; }
+body:not(.am-mode) .en { display: inline !important; }
+.am { display: none; }
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 3px;
+  margin-left: 12px;
+}
+.lang-btn {
+  padding: 5px 13px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 800;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.lang-btn.active {
+  background: #1a6b3c;
+  color: #fff;
+}

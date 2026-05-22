@@ -40,6 +40,8 @@
     .success-msg { background: #e8f5ee; border: 1px solid #b2dfc6; color: #1a6b3c; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
     @media (max-width: 768px) { body { flex-direction: column; } .left { width: 100%; height: auto; padding: 40px 20px; position: relative; } .right { padding: 40px 20px; } }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -48,31 +50,31 @@
     <div class="logo-icon">🏠</div>
     <div><div class="logo-text">KEBET</div><div class="logo-am">ከቤት</div></div>
   </div>
-  <div class="left-title">Welcome back! 👋</div>
-  <div class="left-sub">Sign in to find trusted house workers near you in Addis Ababa</div>
+  <div class="left-title"><span class="en">Welcome back! 👋</span><span class="am">እንኳን ደህና መጡ! 👋</span></div>
+  <div class="left-sub"><span class="en">Sign in to find trusted house workers near you in Addis Ababa</span><span class="am">አዲስ አበባ ውስጥ ታማኝ የቤት ሰራተኞችን ለማግኘት ይግቡ</span></div>
   <div class="stat-box">
-    <div class="stat"><div class="stat-num">500+</div><div class="stat-lab">Workers</div></div>
-    <div class="stat"><div class="stat-num">1,200+</div><div class="stat-lab">Happy homes</div></div>
-    <div class="stat"><div class="stat-num">4.9★</div><div class="stat-lab">Avg rating</div></div>
+    <div class="stat"><div class="stat-num">500+</div><div class="stat-lab"><span class="en">Workers</span><span class="am">ሰራተኞች</span></div></div>
+    <div class="stat"><div class="stat-num">1,200+</div><div class="stat-lab"><span class="en">Happy homes</span><span class="am">ደስተኛ ቤቶች</span></div></div>
+    <div class="stat"><div class="stat-num">4.9★</div><div class="stat-lab"><span class="en">Avg rating</span><span class="am">አማካይ ደረጃ</span></div></div>
   </div>
 </div>
 
-<div class="right">
+<div class="right"><div style="text-align:right;padding:16px 40px 0;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
   <div class="form-box">
-    <div class="form-title">Sign in to Kebet</div>
-    <div class="form-sub">Enter your email and password to continue</div>
+    <div class="form-title"><span class="en">Sign in to Kebet</span><span class="am">ወደ ከቤት ይግቡ</span></div>
+    <div class="form-sub"><span class="en">Enter your email and password to continue</span><span class="am">ለመቀጠል ኢሜልዎን እና የይለፍ ቃልዎን ያስገቡ</span></div>
 
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
 
-    <div class="form-group"><label>Email address</label><input type="email" id="email" placeholder="abebe@email.com" /></div>
-    <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Your password" /></div>
-    <div class="forgot"><a href="#">Forgot password?</a></div>
+    <div class="form-group"><label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label><input type="email" id="email" placeholder="abebe@email.com" /></div>
+    <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="የይለፍ ቃልዎ" /></div>
+    <div class="forgot"><a href="#"><span class="en">Forgot password?</span><span class="am">የይለፍ ቃል ረሱ?</span></a></div>
 
-    <button class="submit-btn" id="signin-btn" onclick="handleSignIn()">Sign In →</button>
+    <button class="submit-btn" id="signin-btn" onclick="handleSignIn()"><span class="en">Sign In →</span><span class="am">ግባ →</span></button>
 
-    <div class="divider"><div class="divider-line"></div><span>don't have an account?</span><div class="divider-line"></div></div>
-    <div class="signup-link">New to Kebet? <a href="signup.html">Create account here</a></div>
+    <div class="divider"><div class="divider-line"></div><span><span class="en">don't have an account?</span><span class="am">መለያ የለዎትም?</span></span><div class="divider-line"></div></div>
+    <div class="signup-link"><span class="en">New to Kebet?</span><span class="am">አዲስ ተጠቃሚ ናቸው?</span> <a href="signup.html"><span class="en">Create account here</span><span class="am">እዚህ መለያ ይፍጠሩ</span></a></div>
   </div>
 </div>
 

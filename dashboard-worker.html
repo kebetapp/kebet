@@ -101,6 +101,8 @@
       .job-offer-top { flex-wrap: wrap; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -109,21 +111,22 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="scrollToJobs()"><span class="sidebar-item-icon">🏠</span> My Jobs <span class="sidebar-badge" id="jobs-badge" style="display:none;">0</span></div>
   <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
   <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
   <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
   <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item" onclick="window.location.href='edit-profile.html'"><span class="sidebar-item-icon">👤</span> My Profile</div>
   <div class="sidebar-item" onclick="window.location.href='help.html'"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
-      <div class="sidebar-user-role">House Worker</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+      <div class="sidebar-user-role"><span class="en">House Worker</span><span class="am">የቤት ሰራተኛ</span></div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
@@ -136,16 +139,16 @@
     <div class="topbar">
       <div class="topbar-title">
         <h1 id="greeting">Good morning! 👋</h1>
-        <p>Here is your Kebet worker dashboard</p>
+        <p><span class="en">Here is your Kebet worker dashboard</span><span class="am">ይህ ከቤት ሰራተኛ ዳሽቦርዱ ነው</span></p>
       </div>
-      <button class="edit-btn" onclick="window.location.href='edit-profile.html'">✏️ Edit My Profile</button>
+      <button class="edit-btn" onclick="window.location.href='edit-profile.html'"><span class="en">✏️ Edit My Profile</span><span class="am">✏️ መገለጫዬን አርትዕ</span></button>
     </div>
 
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label">Your name</div></div>
-      <div class="stat-card"><div class="stat-icon icon-gold">🏠</div><div class="stat-num" id="stat-jobs">0</div><div class="stat-label">Job offers</div></div>
-      <div class="stat-card"><div class="stat-icon icon-blue">✅</div><div class="stat-num" id="stat-active">0</div><div class="stat-label">Active jobs</div></div>
-      <div class="stat-card"><div class="stat-icon icon-pink">🧹</div><div class="stat-num" id="stat-skill">—</div><div class="stat-label">Your skill</div></div>
+      <div class="stat-card"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label"><span class="en">Your name</span><span class="am">ስምዎ</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-gold">🏠</div><div class="stat-num" id="stat-jobs">0</div><div class="stat-label"><span class="en">Job offers</span><span class="am">የስራ ቅናሾች</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-blue">✅</div><div class="stat-num" id="stat-active">0</div><div class="stat-label"><span class="en">Active jobs</span><span class="am">ንቁ ስራዎች</span></div></div>
+      <div class="stat-card"><div class="stat-icon icon-pink">🧹</div><div class="stat-num" id="stat-skill">—</div><div class="stat-label"><span class="en">Your skill</span><span class="am">ችሎታዎ</span></div></div>
     </div>
 
     <div class="rights-card">
@@ -183,9 +186,9 @@
     <div class="two-col">
       <div class="card">
         <div class="section-title">💡 Tips to get hired faster</div>
-        <div class="tip-item"><div class="tip-icon icon-green">📸</div><div><div class="tip-title">Complete your profile</div><div class="tip-text">Workers with full profiles get hired 3x faster.</div></div></div>
-        <div class="tip-item"><div class="tip-icon icon-gold">⭐</div><div><div class="tip-title">Ask for references</div><div class="tip-text">References from past employers build trust.</div></div></div>
-        <div class="tip-item"><div class="tip-icon icon-blue">📍</div><div><div class="tip-title">Set your location</div><div class="tip-text">Owners search by location — keep yours updated.</div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-green">📸</div><div><div class="tip-title"><span class="en">Complete your profile</span><span class="am">መገለጫዎን ያሟሉ</span></div><div class="tip-text"><span class="en">Workers with full profiles get hired 3x faster.</span><span class="am">ሙሉ መገለጫ ያላቸው ሰራተኞች 3 እጥፍ ፈጠን ይቀጠራሉ።</span></div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-gold">⭐</div><div><div class="tip-title"><span class="en">Ask for references</span><span class="am">ምስክርነት ይጠይቁ</span></div><div class="tip-text"><span class="en">References from past employers build trust.</span><span class="am">ከቀደሙ ቀጣሪዎች ምስክርነት እምነት ይገነባል።</span></div></div></div>
+        <div class="tip-item"><div class="tip-icon icon-blue">📍</div><div><div class="tip-title"><span class="en">Set your location</span><span class="am">አካባቢዎን ያስቀምጡ</span></div><div class="tip-text"><span class="en">Owners search by location — keep yours updated.</span><span class="am">ባለቤቶች በአካባቢ ይፈልጋሉ — የዎን ወቅታዊ ያድርጉ።</span></div></div></div>
       </div>
       <div class="card">
         <div class="section-title">👤 Profile Completion</div>
@@ -252,7 +255,7 @@
   function renderJobs(bookings) {
     const list = document.getElementById('jobs-list');
     if (bookings.length === 0) {
-      list.innerHTML = `<div class="card"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title">No job offers yet</div><div class="no-jobs-sub">Your profile is live! House owners can find and book you on Kebet.</div></div></div>`;
+      list.innerHTML = `<div class="card"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title"><span class="en">No job offers yet</span><span class="am">እስካሁን የስራ ቅናሽ የለም</span></div><div class="no-jobs-sub"><span class="en">Your profile is live! House owners can find and book you on Kebet.</span><span class="am">መገለጫዎ ንቁ ነው! የቤት ባለቤቶች በከቤት ላይ ሊያገኙዎ እና ሊይዙዎ ይችላሉ።</span></div></div></div>`;
       return;
     }
     let active = 0;
@@ -304,7 +307,7 @@
           <div class="job-meta">
             <span class="job-meta-item">📅 Start: ${startDate}</span>
             <span class="job-meta-item">⏱ ${data.contractMonths} month${data.contractMonths > 1 ? 's' : ''}</span>
-            <span class="job-meta-item green">🛏️ Live-in</span>
+            <span class="job-meta-item green"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span>
             <span class="job-meta-item">💰 Total: ${(data.totalAmount || 0).toLocaleString()} ETB</span>
           </div>
           <div class="services-tags">${services}</div>

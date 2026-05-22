@@ -59,6 +59,8 @@
       .main { margin-left: 0; padding: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -67,20 +69,20 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
   <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item"><span class="sidebar-item-icon">👤</span> My Profile</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
-      <div class="sidebar-user-role">House Worker</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+      <div class="sidebar-user-role"><span class="en">House Worker</span><span class="am">የቤት ሰራተኛ</span></div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
@@ -89,8 +91,11 @@
 <div class="main">
   <div id="loading" class="loading">⏳ Loading your reviews...</div>
   <div id="page-content" style="display:none;">
-    <div class="page-title">⭐ My Reviews</div>
-    <div class="page-sub">See what house owners say about you</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title"><span class="en">⭐ My Reviews</span><span class="am">⭐ ግምገማዎቼ</span></div><div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div></div></div>
+    <div class="page-sub"><span class="en">See what house owners say about you</span><span class="am">የቤት ባለቤቶች ስለእርስዎ ምን እንደሚሉ ይመልከቱ</span></div>
 
     <div class="card">
       <div class="section-title">📊 Your Rating</div>
@@ -109,8 +114,8 @@
       <div id="reviews-list">
         <div class="no-reviews">
           <div class="no-reviews-icon">⭐</div>
-          <div class="no-reviews-title">No reviews yet</div>
-          <div class="no-reviews-sub">Once an owner rates you, it will appear here.</div>
+          <div class="no-reviews-title"><span class="en">No reviews yet</span><span class="am">እስካሁን ምንም ግምገማ የለም</span></div>
+          <div class="no-reviews-sub"><span class="en">Once an owner rates you, it will appear here.</span><span class="am">ባለቤት ደረጃ ሲሰጡዎ፣ እዚህ ይታያል።</span></div>
         </div>
       </div>
     </div>
@@ -190,8 +195,8 @@
       listEl.innerHTML = `
         <div class="no-reviews">
           <div class="no-reviews-icon">⭐</div>
-          <div class="no-reviews-title">No reviews yet</div>
-          <div class="no-reviews-sub">Once an owner rates you, it will appear here.</div>
+          <div class="no-reviews-title"><span class="en">No reviews yet</span><span class="am">እስካሁን ምንም ግምገማ የለም</span></div>
+          <div class="no-reviews-sub"><span class="en">Once an owner rates you, it will appear here.</span><span class="am">ባለቤት ደረጃ ሲሰጡዎ፣ እዚህ ይታያል።</span></div>
         </div>`;
     } else {
       let html = '';

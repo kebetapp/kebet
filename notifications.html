@@ -63,6 +63,8 @@
       .main { margin-left: 0; padding: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -71,14 +73,15 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div id="sidebar-links"></div>
-  <div class="sidebar-section">ACCOUNT</div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> <span id="settings-label">Settings</span></div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> <span id="settings-label"><span class="en">Settings</span><span class="am">ቅንብሮች</span></span></div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
       <div class="sidebar-user-role" id="sidebar-role">—</div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
@@ -88,19 +91,19 @@
 <div class="main">
   <div id="loading" class="loading">⏳ Loading notifications...</div>
   <div id="page-content" style="display:none;">
-    <div class="page-title">🔔 Notifications</div>
-    <div class="page-sub" id="page-sub">Your latest alerts</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">🔔 Notifications</div>
+    <div class="page-sub" id="page-sub"><span class="en">Your latest alerts</span><span class="am">የቅርብ ጊዜ ማሳወቂያዎችዎ</span></div>
 
     <div class="card">
       <div class="section-title">
         <span>All Notifications <span id="unread-count" style="font-size:13px; color:#888; font-weight:400;"></span></span>
-        <button class="mark-all-btn" onclick="markAllRead()">✓ Mark all as read</button>
+        <button class="mark-all-btn" onclick="markAllRead()"><span class="en">✓ Mark all as read</span><span class="am">✓ ሁሉንም እንደተነበበ ምልክት አድርግ</span></button>
       </div>
       <div id="notif-list">
         <div class="empty-state">
           <div class="empty-icon">🔔</div>
-          <div class="empty-title">No notifications yet</div>
-          <div class="empty-sub">We'll alert you when something happens.</div>
+          <div class="empty-title"><span class="en">No notifications yet</span><span class="am">እስካሁን ምንም ማሳወቂያ የለም</span></div>
+          <div class="empty-sub"><span class="en">We'll alert you when something happens.</span><span class="am">ነገር ሲፈጠር እናሳውቀዎታለን።</span></div>
         </div>
       </div>
     </div>
@@ -185,7 +188,7 @@
       list.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">🔔</div>
-          <div class="empty-title">No notifications yet</div>
+          <div class="empty-title"><span class="en">No notifications yet</span><span class="am">እስካሁን ምንም ማሳወቂያ የለም</span></div>
           <div class="empty-sub">We'll alert you here when something happens.</div>
         </div>`;
       return;

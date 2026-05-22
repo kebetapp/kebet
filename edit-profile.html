@@ -55,6 +55,8 @@
       .row2 { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -63,21 +65,21 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sidebar-section">MENU</div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item" id="nav-dashboard"><span class="sidebar-item-icon">📊</span> Dashboard</div>
-  <div class="sidebar-item" id="nav-main"><span class="sidebar-item-icon" id="nav-main-icon">🏠</span> <span id="nav-main-label">My Jobs</span></div>
-  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> <span id="nav-payments-label">My Salary</span></div>
+  <div class="sidebar-item" id="nav-main"><span class="sidebar-item-icon" id="nav-main-icon">🏠</span> <span id="nav-main-label"><span class="en">My Jobs</span><span class="am">ስራዎቼ</span></span></div>
+  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> <span id="nav-payments-label"><span class="en">My Salary</span><span class="am">ደሞዜ</span></span></div>
   <div class="sidebar-item" id="nav-reviews"><span class="sidebar-item-icon">⭐</span> Reviews</div>
   <div class="sidebar-item" id="nav-notifs"><span class="sidebar-item-icon">🔔</span> Notifications</div>
   <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
-  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">👤</span> Edit Profile</div>
   <div class="sidebar-item" id="nav-help" style="display:none;"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
   <div class="sidebar-item" id="nav-settings" style="display:none;"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
       <div class="sidebar-user-role" id="sidebar-role">—</div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
@@ -87,7 +89,10 @@
 <div class="main">
   <div id="loading" class="loading">⏳ Loading your profile...</div>
   <div id="page-content" style="display:none;">
-    <div class="page-title">✏️ Edit Profile</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">✏️ Edit Profile</div><div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div></div></div>
     <div class="page-sub">Keep your information up to date</div>
 
     <div class="form-card">

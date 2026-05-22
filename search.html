@@ -259,6 +259,8 @@
       .search-bar { flex-wrap: wrap; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -271,18 +273,22 @@
     </div>
   </div>
   <div class="nav-btns">
-    <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
-    <button class="btn-green-nav" onclick="window.location.href='signup.html'">Get Started</button>
+        <div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div>
+    <button class="btn-outline-nav" onclick="window.location.href='signin.html'"><span class="en">Sign in</span><span class="am">ግባ</span></button>
+    <button class="btn-green-nav" onclick="window.location.href='signup.html'"><span class="en">Get Started</span><span class="am">ጀምር</span></button>
   </div>
 </nav>
 
 <div class="hero">
-  <h1>Find Your Perfect Home Worker</h1>
-  <p>Trusted, verified domestic workers across Addis Ababa</p>
+  <h1><span class="en">Find Your Perfect Home Worker</span><span class="am">ፍጹሙን የቤት ሰራተኛ ያግኙ</span></h1>
+  <p><span class="en">Trusted, verified domestic workers across Addis Ababa</span><span class="am">በአዲስ አበባ ሁሉ ታማኝ እና የተረጋገጡ የቤት ሰራተኞች</span></p>
   <div class="search-bar">
     <input type="text" id="search-input" placeholder="Search by name, skill..." oninput="filterWorkers()" />
     <select id="location-filter" onchange="filterWorkers()">
-      <option value="">All Locations</option>
+      <option value=""><span class="en">All Locations</span><span class="am">ሁሉም አካባቢዎች</span></option>
       <option value="Bole">Bole</option>
       <option value="Kirkos">Kirkos</option>
       <option value="Yeka">Yeka</option>
@@ -293,12 +299,12 @@
       <option value="Gulele">Gulele</option>
       <option value="Nifas Silk">Nifas Silk</option>
     </select>
-    <button onclick="filterWorkers()">🔍 Search</button>
+    <button onclick="filterWorkers()"><span class="en">🔍 Search</span><span class="am">🔍 ፈልግ</span></button>
   </div>
 </div>
 
 <div class="filters-bar">
-  <button class="filter-chip active" onclick="setSkillFilter('', this)">All Workers</button>
+  <button class="filter-chip active" onclick="setSkillFilter('', this)"><span class="en">All Workers</span><span class="am">ሁሉም ሰራተኞች</span></button>
   <button class="filter-chip" onclick="setSkillFilter('Cleaning', this)">🧹 Cleaning</button>
   <button class="filter-chip" onclick="setSkillFilter('Cooking', this)">🍳 Cooking</button>
   <button class="filter-chip" onclick="setSkillFilter('Nanny', this)">👶 Nanny</button>
@@ -324,14 +330,14 @@
 <!-- Book Modal -->
 <div class="modal-overlay" id="book-modal">
   <div class="modal-box">
-    <div class="modal-title">📋 Book Worker</div>
+    <div class="modal-title"><span class="en">📋 Book Worker</span><span class="am">📋 ሰራተኛ ያዝ</span></div>
     <div class="modal-sub" id="modal-sub">—</div>
     <div class="form-group">
-      <label class="form-label">Start Date</label>
+      <label class="form-label"><span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
       <input type="date" id="book-start-date" class="form-input" />
     </div>
     <div class="form-group">
-      <label class="form-label">Contract Length (months)</label>
+      <label class="form-label"><span class="en">Contract Length (months)</span><span class="am">የውል ርዝማኔ (ወራት)</span></label>
       <select id="book-months" class="form-input">
         <option value="1">1 month</option>
         <option value="3" selected>3 months</option>
@@ -340,11 +346,11 @@
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Monthly Salary (ETB)</label>
+      <label class="form-label"><span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></label>
       <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" />
     </div>
     <div class="form-group">
-      <label class="form-label">Services needed</label>
+      <label class="form-label"><span class="en">Services needed</span><span class="am">የሚፈለጉ አገልግሎቶች</span></label>
       <div class="svc-wrap">
         <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
         <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
@@ -356,8 +362,8 @@
     <div class="total-box" id="total-box"></div>
     <div class="error-box" id="error-box"></div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeBookModal()">Cancel</button>
-      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()">Confirm Booking ✓</button>
+      <button class="btn-cancel" onclick="closeBookModal()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()"><span class="en">Confirm Booking ✓</span><span class="am">ቦታ ማስያዣ ያረጋግጡ ✓</span></button>
     </div>
   </div>
 </div>
@@ -447,7 +453,7 @@
       grid.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">🔍</div>
-          <div class="empty-title">No workers found</div>
+          <div class="empty-title"><span class="en">No workers found</span><span class="am">ሰራተኛ አልተገኘም</span></div>
           <div class="empty-sub">Try adjusting your filters or search terms.</div>
         </div>`;
       return;
@@ -478,7 +484,7 @@
               <div class="worker-name">${fullName}</div>
               <div class="worker-role">${skill}</div>
               <div class="worker-loc">📍 ${location}, Addis Ababa</div>
-              <span class="live-in-tag">🛏️ Live-in</span>
+              <span class="live-in-tag"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span>
             </div>
             ${isVerified ? '<div class="verified">✓ Verified</div>' : ''}
           </div>

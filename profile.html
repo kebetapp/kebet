@@ -94,6 +94,8 @@
       .two-col { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
@@ -106,22 +108,26 @@
     </div>
   </div>
   <div class="nav-btns">
-    <button class="btn-outline-nav" onclick="window.location.href='signin.html'">Sign in</button>
-    <button class="btn-green-nav" onclick="window.location.href='signup.html'">Get Started</button>
+        <div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div>
+    <button class="btn-outline-nav" onclick="window.location.href='signin.html'"><span class="en">Sign in</span><span class="am">ግባ</span></button>
+    <button class="btn-green-nav" onclick="window.location.href='signup.html'"><span class="en">Get Started</span><span class="am">ጀምር</span></button>
   </div>
 </nav>
 
 <div class="back-bar">
-  <button class="back-btn" onclick="window.history.back()">← Back to search</button>
+  <button class="back-btn" onclick="window.history.back()"><span class="en">← Back to search</span><span class="am">← ወደ ፍለጋ ተመለስ</span></button>
 </div>
 
 <div class="page">
-  <div id="loading" class="loading">⏳ Loading worker profile...</div>
+  <div id="loading" class="loading"><span class="en">⏳ Loading worker profile...</span><span class="am">⏳ የሰራተኛ መገለጫ እየጫነ...</span></div>
   <div id="not-found" class="not-found" style="display:none;">
     <div class="not-found-icon">😔</div>
-    <div class="not-found-title">Worker not found</div>
-    <div class="not-found-sub">This profile does not exist or was removed.</div>
-    <button onclick="window.location.href='search.html'" style="background:#1a6b3c; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;">← Back to Search</button>
+    <div class="not-found-title"><span class="en">Worker not found</span><span class="am">ሰራተኛ አልተገኘም</span></div>
+    <div class="not-found-sub"><span class="en">This profile does not exist or was removed.</span><span class="am">ይህ መገለጫ የለም ወይም ተወግዷል።</span></div>
+    <button onclick="window.location.href='search.html'" style="background:#1a6b3c; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;"><span class="en">← Back to Search</span><span class="am">← ወደ ፍለጋ ተመለስ</span></button>
   </div>
   <div id="profile-content" style="display:none;">
 
@@ -136,18 +142,18 @@
             <div class="profile-tags" id="p-tags"></div>
           </div>
         </div>
-        <button class="hire-big-btn" onclick="openBookModal()">🏠 Hire Now — Book This Worker</button>
+        <button class="hire-big-btn" onclick="openBookModal()"><span class="en">🏠 Hire Now — Book This Worker</span><span class="am">🏠 አሁን ቅጠር — ይህን ሰራተኛ ይያዙ</span></button>
       </div>
       <div class="profile-right">
         <div class="salary-box">
-          <div class="salary-box-label">SALARY</div>
-          <div class="salary-box-val" id="p-salary">Negotiable</div>
-          <div class="salary-box-sub">/month ETB</div>
+          <div class="salary-box-label"><span class="en">SALARY</span><span class="am">ደሞዝ</span></div>
+          <div class="salary-box-val" id="p-salary"><span class="en">Negotiable</span><span class="am">በድርድር</span></div>
+          <div class="salary-box-sub"><span class="en">/month ETB</span><span class="am">/ ወር ብር</span></div>
         </div>
         <div class="rating-box">
           <div class="rating-box-val" id="p-rating-num">New</div>
           <div class="rating-box-stars" id="p-stars">☆☆☆☆☆</div>
-          <div class="rating-box-sub" id="p-review-count">No reviews yet</div>
+          <div class="rating-box-sub" id="p-review-count"><span class="en">No reviews yet</span><span class="am">እስካሁን ምንም ግምገማ የለም</span></div>
         </div>
       </div>
     </div>
@@ -156,12 +162,12 @@
       <div>
         <div class="section-card">
           <div class="section-title">👤 Personal Info</div>
-          <div class="info-row"><span class="info-label">Full name</span><span class="info-val" id="d-name">—</span></div>
-          <div class="info-row"><span class="info-label">Location</span><span class="info-val" id="d-loc">—</span></div>
-          <div class="info-row"><span class="info-label">Main skill</span><span class="info-val" id="d-skill">—</span></div>
-          <div class="info-row"><span class="info-label">Work type</span><span class="info-val">🛏️ Live-in</span></div>
-          <div class="info-row"><span class="info-label">Phone</span><span class="info-val" id="d-phone">—</span></div>
-          <div class="info-row"><span class="info-label">Member since</span><span class="info-val" id="d-joined">—</span></div>
+          <div class="info-row"><span class="info-label"><span class="en">Full name</span><span class="am">ሙሉ ስም</span></span><span class="info-val" id="d-name">—</span></div>
+          <div class="info-row"><span class="info-label"><span class="en">Location</span><span class="am">አካባቢ</span></span><span class="info-val" id="d-loc">—</span></div>
+          <div class="info-row"><span class="info-label"><span class="en">Main skill</span><span class="am">ዋና ችሎታ</span></span><span class="info-val" id="d-skill">—</span></div>
+          <div class="info-row"><span class="info-label"><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span class="info-val"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
+          <div class="info-row"><span class="info-label"><span class="en">Phone</span><span class="am">ስልክ</span></span><span class="info-val" id="d-phone">—</span></div>
+          <div class="info-row"><span class="info-label"><span class="en">Member since</span><span class="am">አባልነት ጀምሮ</span></span><span class="info-val" id="d-joined">—</span></div>
         </div>
         <div class="section-card">
           <div class="section-title">🧹 Skills & Services</div>
@@ -196,9 +202,9 @@
     <div style="background:#fff; border-radius:16px; padding:20px 24px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
       <div>
         <div style="font-size:16px; font-weight:700; color:#111;" id="bottom-name">Ready to hire?</div>
-        <div style="font-size:13px; color:#888; margin-top:2px;">Send a booking request — it only takes 1 minute</div>
+        <div style="font-size:13px; color:#888; margin-top:2px;"><span class="en">Send a booking request — it only takes 1 minute</span><span class="am">የቦታ ማስያዣ ጥያቄ ይላኩ — 1 ደቂቃ ብቻ ይወስዳል</span></div>
       </div>
-      <button onclick="openBookModal()" style="background:#1a6b3c; color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;">🏠 Hire Now</button>
+      <button onclick="openBookModal()" style="background:#1a6b3c; color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;"><span class="en">🏠 Hire Now</span><span class="am">🏠 አሁን ቅጠር</span></button>
     </div>
 
   </div>
@@ -207,14 +213,14 @@
 <!-- Book Modal -->
 <div class="modal-overlay" id="book-modal">
   <div class="modal-box">
-    <div class="modal-title">📋 Book Worker</div>
+    <div class="modal-title"><span class="en">📋 Book Worker</span><span class="am">📋 ሰራተኛ ያዝ</span></div>
     <div class="modal-sub" id="modal-sub">—</div>
     <div class="form-group">
-      <label class="form-label">Start Date</label>
+      <label class="form-label"><span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
       <input type="date" id="book-start-date" class="form-input" />
     </div>
     <div class="form-group">
-      <label class="form-label">Contract Length (months)</label>
+      <label class="form-label"><span class="en">Contract Length (months)</span><span class="am">የውል ርዝማኔ (ወራት)</span></label>
       <select id="book-months" class="form-input">
         <option value="1">1 month</option>
         <option value="3" selected>3 months</option>
@@ -223,11 +229,11 @@
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Monthly Salary (ETB)</label>
+      <label class="form-label"><span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></label>
       <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" />
     </div>
     <div class="form-group">
-      <label class="form-label">Services needed</label>
+      <label class="form-label"><span class="en">Services needed</span><span class="am">የሚፈለጉ አገልግሎቶች</span></label>
       <div class="svc-wrap">
         <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
         <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
@@ -239,8 +245,8 @@
     <div class="total-box" id="total-box"></div>
     <div class="error-box" id="error-box"></div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeBookModal()">Cancel</button>
-      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()">Confirm Booking ✓</button>
+      <button class="btn-cancel" onclick="closeBookModal()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()"><span class="en">Confirm Booking ✓</span><span class="am">ቦታ ማስያዣ ያረጋግጡ ✓</span></button>
     </div>
   </div>
 </div>
@@ -332,7 +338,7 @@
 
       // Tags
       const tagsEl = document.getElementById('p-tags');
-      let tagsHtml = '<span class="tag tag-gold">🛏️ Live-in</span>';
+      let tagsHtml = '<span class="tag tag-gold"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span>';
       if (isVerified) tagsHtml += '<span class="tag tag-green">✓ Verified</span>';
       if (rating > 0) tagsHtml += '<span class="tag tag-gold">★ ' + rating.toFixed(1) + ' rating</span>';
       tagsHtml += '<span class="tag tag-blue">📍 ' + location + '</span>';
