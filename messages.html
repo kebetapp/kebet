@@ -332,10 +332,11 @@
         📌 Send the exact amount below to the worker's <strong id="method-name-label">Telebirr</strong> number. Then come back and upload your payment screenshot.
       </div>
 
-      <div style="font-size:12px; font-weight:700; color:#888; margin-bottom:8px;">SEND TO THIS NUMBER</div>
-      <div class="pay-number-box">
-        <div class="pay-number" id="pay-number-display">—</div>
-        <button class="copy-btn" onclick="copyNumber()">📋 Copy</button>
+      <div style="font-size:12px; font-weight:700; color:#888; margin-bottom:8px;">WORKER'S PAYMENT NUMBER</div>
+      <div style="display:flex; gap:8px; margin-bottom:16px; align-items:center;">
+        <input id="pay-number-input" type="tel" placeholder="e.g. 0911234567" 
+          style="flex:1; border:2px solid #1a6b3c; border-radius:10px; padding:12px 16px; font-size:18px; font-weight:700; color:#1a6b3c; outline:none; letter-spacing:1px;" />
+        <button class="copy-btn" onclick="copyNumber()" style="height:48px; padding:0 14px;">📋 Copy</button>
       </div>
 
       <div class="pay-details">
@@ -697,20 +698,20 @@
     const amt = parseInt(document.getElementById('pay-amount').value) || 0;
     if (!amt || amt < 100) { alert('Please enter a valid amount (minimum 100 ETB)'); return; }
 
-    // Get worker payment number from their profile
-    const telebirr = activeOtherData?.telebirr || '—  (worker has not added Telebirr number)';
-    const cbe = activeOtherData?.cbe || '—  (worker has not added CBE number)';
-    const number = selectedMethod === 'telebirr' ? telebirr : cbe;
     const methodLabel = selectedMethod === 'telebirr' ? 'Telebirr' : 'CBE Birr';
-
-    document.getElementById('pay-number-display').textContent = number;
+    document.getElementById('pay-number-input').value = '';
+    document.getElementById('pay-number-input').placeholder = selectedMethod === 'telebirr' ? 'Enter worker Telebirr number' : 'Enter worker CBE account number';
     document.getElementById('method-name-label').textContent = methodLabel;
     document.getElementById('step2-method').textContent = methodLabel;
     document.getElementById('step3-method').textContent = methodLabel;
     goStep(2);
   }
 
-  window.goStep3 = function() { goStep(3); }
+  window.goStep3 = function() {
+    const num = document.getElementById('pay-number-input').value.trim();
+    if (!num) { alert('Please enter the worker\'s payment number!'); return; }
+    goStep(3);
+  }
 
   window.goStep = function(n) {
     [1,2,3].forEach(i => {
@@ -729,7 +730,8 @@
   }
 
   window.copyNumber = function() {
-    const num = document.getElementById('pay-number-display').textContent;
+    const num = document.getElementById('pay-number-input').value || '';
+    if (!num) { alert('Please enter the payment number first!'); return; }
     navigator.clipboard.writeText(num).then(() => {
       const btn = document.querySelector('.copy-btn');
       btn.textContent = '✅ Copied!';
