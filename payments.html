@@ -117,6 +117,7 @@
   <script src="kebet-lang.js"></script>
   <link rel="stylesheet" href="kebet-smooth.css"/>
   <script src="kebet-smooth.js"></script>
+  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -127,8 +128,8 @@
   </div>
   <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
   <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
-  <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
-  <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Jobs</div>
+  <div class="sidebar-item" data-page="dashboard-worker.html" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" data-page="search.html" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Jobs</div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> My Salary</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
   <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>

@@ -6,7 +6,7 @@
   <title>Kebet — Book Worker</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
     nav { background: #fff; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
     .nav-logo { display: flex; align-items: center; gap: 10px; }
     .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
@@ -93,8 +93,12 @@
     .modal-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
     @media (max-width: 768px) { .main { flex-direction: column; padding: 0 20px 40px; } .right-col { width: 100%; } nav { padding: 16px 20px; } .back-bar { padding: 12px 20px; } .live-in-banner { padding: 0 20px 20px; } .salary-grid { grid-template-columns: repeat(3, 1fr); } .duration-grid { grid-template-columns: repeat(4, 1fr); } }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
+  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -128,7 +132,7 @@
 <div class="main">
   <div class="left-col">
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">👤 Worker</div>
       <div class="worker-mini">
         <div class="w-av" id="worker-av">SA</div>
@@ -140,7 +144,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">💰 Monthly Salary</div>
       <div class="salary-grid">
         <div class="salary-btn" onclick="setSalary(2500, this)"><div class="salary-amount">2,500</div><div class="salary-label">ETB/month</div></div>
@@ -154,7 +158,7 @@
       <div style="margin-top:10px; font-size:12px; color:#888;">💡 Average salary in Addis Ababa is 2,500 – 4,500 ETB/month</div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">📅 Contract Duration</div>
       <div class="duration-grid">
         <div class="dur-btn active" onclick="setDuration(1, this)">1 Month<small>Trial</small></div>
@@ -168,7 +172,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">🧹 Duties & Services</div>
       <div class="service-option"><input type="checkbox" id="s1" checked><span class="service-icon">🧹</span><label for="s1">House Cleaning (daily)</label></div>
       <div class="service-option"><input type="checkbox" id="s2" checked><span class="service-icon">🍳</span><label for="s2">Cooking (Ethiopian & other food)</label></div>
@@ -178,7 +182,7 @@
       <div class="service-option"><input type="checkbox" id="s6"><span class="service-icon">🍼</span><label for="s6">Baby / Infant care</label></div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">🏠 What You Provide</div>
       <div class="provides-grid">
         <div class="provides-item"><span class="provides-icon">🛏️</span><div><div class="provides-text">Private room</div><div class="provides-sub">A room to sleep safely</div></div></div>
@@ -190,7 +194,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">🙏 Worker Rights</div>
       <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Worker can leave anytime if she feels unsafe or mistreated</div></div>
       <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Salary must be paid on time every month — no delays</div></div>
@@ -199,7 +203,7 @@
       <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Kebet can be contacted by the worker anytime</div></div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">📍 Your Home Address</div>
       <div class="form-group">
         <div class="form-label">Sub-city</div>
@@ -227,7 +231,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card ks-reveal">
       <div class="card-title">📋 Agreement</div>
       <div class="rule-item"><span class="rule-icon">📌</span>1 month notice required from both sides before ending contract</div>
       <div class="rule-item"><span class="rule-icon">📌</span>Salary paid at end of each month</div>

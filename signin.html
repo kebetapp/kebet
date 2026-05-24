@@ -45,6 +45,7 @@
   <script src="kebet-lang.js"></script>
   <link rel="stylesheet" href="kebet-smooth.css"/>
   <script src="kebet-smooth.js"></script>
+  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -115,8 +116,7 @@
       return;
     }
 
-    btn.textContent = 'Signing in...';
-    btn.disabled = true;
+    const restoreSignin = KebetFast.btnLoad(btn, 'Signing in...');
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -137,8 +137,7 @@
       }, 1500);
 
     } catch (error) {
-      btn.textContent = 'Sign In →';
-      btn.disabled = false;
+      restoreSignin();
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
         errorMsg.textContent = '❌ Wrong email or password. Please try again.';
       } else {

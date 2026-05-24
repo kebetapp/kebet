@@ -106,6 +106,7 @@
   <script src="kebet-lang.js"></script>
   <link rel="stylesheet" href="kebet-smooth.css"/>
   <script src="kebet-smooth.js"></script>
+  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -118,13 +119,13 @@
   <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
   <div class="sidebar-item active"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="scrollToJobs()"><span class="sidebar-item-icon">🏠</span> My Jobs <span class="sidebar-badge" id="jobs-badge" style="display:none;">0</span></div>
-  <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
-  <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
-  <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
-  <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
+  <div class="sidebar-item" data-page="payments.html" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
+  <div class="sidebar-item" data-page="my-reviews.html" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+  <div class="sidebar-item" data-page="notifications.html" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications <span class="sidebar-badge" id="notif-badge" style="display:none;">0</span></div>
+  <div class="sidebar-item" data-page="messages.html" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages <span class="sidebar-badge" id="msg-badge" style="display:none;">0</span></div>
   <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
-  <div class="sidebar-item" onclick="window.location.href='edit-profile.html'"><span class="sidebar-item-icon">👤</span> My Profile</div>
-  <div class="sidebar-item" onclick="window.location.href='help.html'"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
+  <div class="sidebar-item" data-page="edit-profile.html" onclick="window.location.href='edit-profile.html'"><span class="sidebar-item-icon">👤</span> My Profile</div>
+  <div class="sidebar-item" data-page="help.html" onclick="window.location.href='help.html'"><span class="sidebar-item-icon">❓</span> Help & Rights</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
@@ -251,7 +252,7 @@
     document.getElementById('confirm-decline-btn').onclick = async () => {
       await updateDoc(doc(db, 'bookings', declineBookingId), { status: 'cancelled' });
       closeDeclineModal();
-      location.reload();
+      document.body.style.opacity="0.5"; setTimeout(()=>location.reload(), 200);
     };
   }
 
@@ -326,10 +327,13 @@
 
   window.acceptJob = async function(bookingId, ownerId, ownerName, workerName) {
     try {
+      // Optimistic UI — update badge instantly
+      const acceptBtn = event && event.target ? event.target.closest('button') : null;
+      const restoreAccept = acceptBtn ? KebetFast.btnLoad(acceptBtn, 'Accepting...') : null;
       await updateDoc(doc(db, 'bookings', bookingId), { status: 'active' });
       await sendNotification(ownerId, 'accepted', '✅ ' + workerName + ' accepted your booking!', workerName + ' accepted your job offer and is ready to start.');
       alert('✅ You accepted the job! The owner will be notified.');
-      location.reload();
+      document.body.style.opacity="0.5"; setTimeout(()=>location.reload(), 200);
     } catch (err) { alert('Error: ' + err.message); }
   }
 
