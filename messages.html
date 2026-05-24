@@ -97,8 +97,8 @@
     .loading-full { display: flex; align-items: center; justify-content: center; flex: 1; color: #888; font-size: 15px; }
 
     /* ── PAY NOW POPUP ── */
-    .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: none; align-items: center; justify-content: center; }
-    .popup-overlay.open { display: flex; }
+    .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: none !important; align-items: center; justify-content: center; }
+    .popup-overlay.open { display: flex !important; }
     .popup { background: #fff; border-radius: 20px; padding: 28px; width: 100%; max-width: 460px; margin: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
     .popup-close { position: absolute; top: 16px; right: 16px; background: #f5f5f0; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; }
     .popup h3 { font-size: 19px; font-weight: 700; color: #111; margin-bottom: 4px; }
@@ -171,8 +171,8 @@
     .popup-btn.secondary:hover { background: #eee; }
 
     /* Success */
-    .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
-    .success-overlay.open { display: flex; }
+    .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none !important; align-items: center; justify-content: center; }
+    .success-overlay.open { display: flex !important; }
     .success-box { background: #fff; border-radius: 20px; padding: 40px 32px; width: 100%; max-width: 380px; margin: 20px; text-align: center; }
     .success-icon { font-size: 56px; margin-bottom: 16px; }
     .success-box h3 { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 8px; }
@@ -492,11 +492,16 @@
   }
 
   async function loadConversations() {
-    const q = query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid));
-    const snap = await getDocs(q);
-    allConvos = [];
-    snap.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
-    allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
+    try {
+      const q = query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid));
+      const snap = await getDocs(q);
+      allConvos = [];
+      snap.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
+      allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
+    } catch(e) {
+      console.warn('loadConversations error:', e.message);
+      allConvos = [];
+    }
     renderConvoList();
   }
 
@@ -864,20 +869,25 @@
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'signin.html'; return; }
     currentUser = user;
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (!snap.exists()) { window.location.href = 'signin.html'; return; }
-    currentUserData = snap.data();
-    const firstName = currentUserData.firstName || '';
-    const lastName = currentUserData.lastName || '';
-    document.getElementById('sidebar-av').textContent = (firstName[0]||'') + (lastName[0]||'');
-    document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
-    document.getElementById('topbar-sub').textContent = currentUserData.userType === 'owner'
-      ? 'Chat with your workers in real-time' : 'Chat with house owners in real-time';
-    setupSidebar(currentUserData.userType);
-    await loadConversations();
-    await checkAutoOpen();
-    document.getElementById('loading-full').style.display = 'none';
-    document.getElementById('chat-layout').style.display = 'flex';
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (!snap.exists()) { window.location.href = 'signin.html'; return; }
+      currentUserData = snap.data();
+      const firstName = currentUserData.firstName || '';
+      const lastName = currentUserData.lastName || '';
+      document.getElementById('sidebar-av').textContent = (firstName[0]||'') + (lastName[0]||'');
+      document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
+      document.getElementById('topbar-sub').textContent = currentUserData.userType === 'owner'
+        ? 'Chat with your workers in real-time' : 'Chat with house owners in real-time';
+      setupSidebar(currentUserData.userType);
+      await loadConversations();
+      await checkAutoOpen();
+    } catch(e) {
+      console.error('Messages init error:', e.message);
+    } finally {
+      document.getElementById('loading-full').style.display = 'none';
+      document.getElementById('chat-layout').style.display = 'flex';
+    }
   });
 </script>
 
