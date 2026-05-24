@@ -83,26 +83,7 @@
     .modal-btns { display: flex; gap: 10px; }
     .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    /* Fee section */
-    .fee-divider { height: 1px; background: #eee; margin: 16px 0; }
-    .fee-banner-modal { background: linear-gradient(135deg, #fff8e8, #fff3d0); border: 2px solid #f0a500; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
-    .fee-banner-modal-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .fee-amount-badge { font-size: 20px; font-weight: 900; color: #c87800; }
-    .fee-banner-modal-title { font-size: 13px; font-weight: 700; color: #c87800; }
-    .fee-banner-modal-sub { font-size: 11px; color: #888; line-height: 1.5; }
-    .pay-method-row { display: flex; gap: 8px; margin-bottom: 10px; }
-    .pay-method-btn { flex: 1; border: 2px solid #eee; border-radius: 10px; padding: 10px 8px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s; font-size: 12px; font-weight: 600; color: #555; }
-    .pay-method-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
-    .pay-detail-box { background: #f5f5f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
-    .pay-number { font-size: 18px; font-weight: 800; color: #1a6b3c; letter-spacing: 2px; margin: 4px 0; }
-    .copy-btn-sm { background: #fff; border: 1px solid #ddd; border-radius: 7px; padding: 5px 10px; font-size: 11px; font-weight: 600; color: #555; cursor: pointer; margin-top: 4px; }
-    .upload-sm { border: 2px dashed #ddd; border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; margin-bottom: 10px; transition: border 0.2s; }
-    .upload-sm:hover { border-color: #1a6b3c; }
-    .upload-sm input { display: none; }
-    .upload-preview-sm { max-width: 100%; max-height: 100px; border-radius: 8px; margin-top: 8px; display: none; }
-    .fee-confirm-row { display: flex; align-items: center; gap: 8px; background: #e8f5ee; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
-    .fee-confirm-row input { accent-color: #1a6b3c; width: 15px; height: 15px; flex-shrink: 0; }
-    .fee-confirm-row label { font-size: 12px; color: #1a6b3c; font-weight: 600; cursor: pointer; }
+
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -269,51 +250,33 @@
     </div>
     <div class="total-box" id="total-box"></div>
 
-    <!-- ===== KEBET SERVICE FEE ===== -->
-    <div class="fee-divider"></div>
-    <div class="fee-banner-modal">
-      <div class="fee-banner-modal-top">
-        <span style="font-size:22px;">💳</span>
-        <div>
-          <div class="fee-banner-modal-title">Kebet Service Fee &nbsp;<span class="fee-amount-badge">200 ETB</span></div>
-          <div class="fee-banner-modal-sub">One-time fee per booking. Covers worker verification &amp; Kebet support.</div>
-        </div>
-      </div>
+    <!-- Service fee row -->
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#fff8e8;border:1.5px solid #f0a500;border-radius:10px;padding:10px 14px;margin-bottom:10px;">
+      <span style="font-size:13px;color:#555;">💳 Kebet service fee</span>
+      <span style="font-size:15px;font-weight:800;color:#c87800;">200 ETB</span>
     </div>
 
-    <!-- Payment method picker -->
-    <div style="font-size:12px; font-weight:600; color:#555; margin-bottom:6px;">Pay via:</div>
-    <div class="pay-method-row">
-      <div class="pay-method-btn active" id="pm-telebirr" onclick="selectFeeMethod('telebirr')">📱 Telebirr</div>
-      <div class="pay-method-btn" id="pm-cbe" onclick="selectFeeMethod('cbe')">🏦 CBE Bank</div>
+    <!-- Payment options -->
+    <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px;">Pay fee via:</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <div id="pm-telebirr" onclick="selectFeeMethod('telebirr')" style="flex:1;border:2px solid #1a6b3c;background:#e8f5ee;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#1a6b3c;">📱 Telebirr</div>
+      <div id="pm-cbe" onclick="selectFeeMethod('cbe')" style="flex:1;border:2px solid #eee;background:#fff;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#888;">🏦 CBE Bank</div>
+    </div>
+    <div id="detail-telebirr" style="background:#f5f5f0;border-radius:10px;padding:10px 14px;margin-bottom:10px;">
+      <div style="font-size:11px;color:#888;margin-bottom:2px;">Send 200 ETB to Telebirr:</div>
+      <div style="font-size:20px;font-weight:900;color:#1a6b3c;letter-spacing:2px;">0979 559 549</div>
+      <button onclick="copyFeeNum('0979559549',this)" style="margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:#555;cursor:pointer;">📋 Copy</button>
+    </div>
+    <div id="detail-cbe" style="background:#f5f5f0;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:none;">
+      <div style="font-size:11px;color:#888;margin-bottom:2px;">Transfer 200 ETB to CBE:</div>
+      <div style="font-size:17px;font-weight:900;color:#1a6b3c;letter-spacing:2px;">1000481802214</div>
+      <button onclick="copyFeeNum('1000481802214',this)" style="margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:#555;cursor:pointer;">📋 Copy</button>
     </div>
 
-    <!-- Telebirr detail -->
-    <div class="pay-detail-box" id="detail-telebirr">
-      <div style="font-size:11px; color:#888;">Send <strong>200 ETB</strong> to Telebirr:</div>
-      <div class="pay-number">0979 559 549</div>
-      <button class="copy-btn-sm" onclick="copyFeeNum('0979559549', this)">📋 Copy</button>
+    <div style="display:flex;align-items:center;gap:8px;background:#e8f5ee;border-radius:10px;padding:10px 12px;margin-bottom:12px;">
+      <input type="checkbox" id="fee-paid-check" style="accent-color:#1a6b3c;width:15px;height:15px;flex-shrink:0;" />
+      <label for="fee-paid-check" style="font-size:12px;color:#1a6b3c;font-weight:600;cursor:pointer;">I have paid the 200 ETB service fee</label>
     </div>
-    <!-- CBE detail -->
-    <div class="pay-detail-box" id="detail-cbe" style="display:none;">
-      <div style="font-size:11px; color:#888;">Transfer <strong>200 ETB</strong> to CBE account:</div>
-      <div class="pay-number" style="font-size:15px;">1000481802214</div>
-      <button class="copy-btn-sm" onclick="copyFeeNum('1000481802214', this)">📋 Copy</button>
-    </div>
-
-    <!-- Receipt upload -->
-    <div class="upload-sm" onclick="document.getElementById('fee-receipt').click()">
-      <div id="upload-sm-label" style="font-size:12px; color:#888;">🖼️ Upload payment screenshot (optional)<br/><span style="font-size:10px;">PNG or JPG</span></div>
-      <input type="file" id="fee-receipt" accept="image/*" onchange="previewFeeReceipt(this)" />
-      <img id="upload-preview-sm" class="upload-preview-sm" />
-    </div>
-
-    <!-- Fee confirmation checkbox -->
-    <div class="fee-confirm-row">
-      <input type="checkbox" id="fee-paid-check" />
-      <label for="fee-paid-check">I have paid the 200 ETB Kebet service fee</label>
-    </div>
-    <!-- ===== END FEE SECTION ===== -->
 
     <div class="error-box" id="error-box"></div>
     <div class="modal-btns">
@@ -485,7 +448,11 @@
     document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
     document.getElementById('total-box').style.display = 'none';
     document.getElementById('error-box').style.display = 'none';
-    document.getElementById('modal-sub').textContent = 'Booking: ' + (workerData?.firstName || '') + ' ' + (workerData?.lastName || '') + ' · ' + (workerData?.skill || '');
+    document.getElementById('fee-paid-check').checked = false;
+    window.selectFeeMethod('telebirr');
+    const workerName = ((workerData?.firstName || '') + ' ' + (workerData?.lastName || '')).trim();
+    const workerSkill = workerData?.skill || '';
+    document.getElementById('modal-sub').textContent = workerName + (workerSkill ? ' · ' + workerSkill : '');
     document.getElementById('book-modal').classList.add('show');
     document.getElementById('book-salary').oninput = updateTotal;
     document.getElementById('book-months').onchange = updateTotal;
@@ -525,19 +492,6 @@
     });
   }
 
-  window.previewFeeReceipt = function(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.getElementById('upload-preview-sm');
-      img.src = e.target.result;
-      img.style.display = 'block';
-      document.getElementById('upload-sm-label').innerHTML = '✅ ' + file.name;
-    };
-    reader.readAsDataURL(file);
-  }
-
   window.confirmBooking = async function() {
     const startDate = document.getElementById('book-start-date').value;
     const months = parseInt(document.getElementById('book-months').value);
@@ -560,17 +514,6 @@
     btn.textContent = 'Booking...';
     btn.disabled = true;
 
-    // Get receipt as base64 if uploaded
-    let receiptBase64 = null;
-    const fileInput = document.getElementById('fee-receipt');
-    if (fileInput.files && fileInput.files[0]) {
-      receiptBase64 = await new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.readAsDataURL(fileInput.files[0]);
-      });
-    }
-
     try {
       const ownerName = ((currentOwnerData?.firstName || '') + ' ' + (currentOwnerData?.lastName || '')).trim();
       const workerFullName = ((workerData?.firstName || '') + ' ' + (workerData?.lastName || '')).trim();
@@ -591,7 +534,6 @@
         serviceFee: 200,
         feePaymentMethod: selectedFeeMethod,
         feeStatus: 'pending_verification',
-        feeReceiptImage: receiptBase64 || null,
         createdAt: new Date().toISOString()
       });
 
