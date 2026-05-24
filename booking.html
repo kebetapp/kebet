@@ -1,457 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kebet — Book Worker</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green: #1a6b3c; --green-dark: #124d2b; --green-light: #e6f5ed;
+      --gold: #f0a500; --gold-light: #fff8e6;
+      --bg: #f3f4f0; --card: #fff; --border: #ebebeb;
+      --text: #111; --muted: #6b7280; --red: #dc2626;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      background: #f5f5f0;
-      color: #111;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
+      font-family:'DM Sans','Segoe UI',sans-serif;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; display:flex;
+      align-items:flex-start; justify-content:center;
+      padding:32px 16px;
     }
 
-    /* Modal card */
-    .booking-modal {
-      background: #fff;
-      border-radius: 20px;
-      border: 1px solid #e8e8e8;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-      overflow: hidden;
+    .page-wrap { width:100%; max-width:520px; }
+
+    /* Back link */
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:13px; font-weight:600; color:var(--muted);
+      text-decoration:none; margin-bottom:20px;
+      transition:color .15s;
+    }
+    .back-link:hover { color:var(--green); }
+
+    /* Card */
+    .card {
+      background:var(--card); border-radius:22px;
+      border:1px solid var(--border);
+      box-shadow:0 8px 40px rgba(0,0,0,.09);
+      overflow:hidden;
     }
 
     /* Header */
-    .modal-header {
-      background: #1a6b3c;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .card-header {
+      background:linear-gradient(135deg, var(--green), var(--green-dark));
+      padding:20px 24px;
+      display:flex; align-items:center; justify-content:space-between;
     }
-    .modal-header-left { display: flex; align-items: center; gap: 10px; }
-    .modal-header-icon { font-size: 20px; }
-    .modal-header-title { font-size: 15px; font-weight: 700; color: #fff; }
-    .modal-header-sub { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 1px; }
+    .header-left { display:flex; align-items:center; gap:10px; }
+    .header-icon { font-size:22px; }
+    .header-title { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:#fff; }
+    .header-sub { font-size:11px; color:rgba(255,255,255,.65); margin-top:2px; }
+    .lang-toggle { display:flex; background:rgba(255,255,255,.12); border-radius:8px; padding:2px; }
+    .lang-btn {
+      border:none; background:transparent; padding:4px 10px; font-size:12px;
+      font-weight:600; color:rgba(255,255,255,.7); cursor:pointer; border-radius:6px;
+      font-family:inherit;
+    }
+    .lang-btn.active { background:rgba(255,255,255,.2); color:#fff; }
 
-    /* Worker info bar */
+    /* Worker bar */
     .worker-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 24px;
-      background: #f5f5f0;
-      border-bottom: 1px solid #eee;
+      display:flex; align-items:center; gap:12px;
+      padding:16px 24px; background:#f9faf8;
+      border-bottom:1px solid var(--border);
     }
     .w-av {
-      width: 44px; height: 44px;
-      border-radius: 12px;
-      background: #fde8c8;
-      color: #c87800;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 700;
-      flex-shrink: 0;
+      width:48px; height:48px; border-radius:13px;
+      background:#fde8c8; color:#c87800;
+      display:flex; align-items:center; justify-content:center;
+      font-size:17px; font-weight:700; flex-shrink:0;
     }
-    .w-name { font-size: 14px; font-weight: 700; color: #111; }
-    .w-meta { font-size: 12px; color: #888; margin-top: 1px; }
-    .w-badge {
-      margin-left: auto;
-      background: #e8f5ee;
-      color: #1a6b3c;
-      font-size: 11px; font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 20px;
+    .w-name { font-size:15px; font-weight:700; }
+    .w-meta { font-size:12px; color:var(--muted); margin-top:2px; }
+    .w-rating {
+      margin-left:auto; background:var(--gold-light); color:#92400e;
+      font-size:12px; font-weight:700; padding:5px 10px;
+      border-radius:10px;
     }
 
     /* Body */
-    .modal-body { padding: 20px 24px; }
+    .card-body { padding:20px 24px; }
 
-    /* Field label */
+    /* Field */
     .field-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #888;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      margin-top: 16px;
+      font-size:11px; font-weight:700; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.5px;
+      margin-bottom:8px; margin-top:18px;
     }
-    .field-label:first-child { margin-top: 0; }
+    .field-label:first-of-type { margin-top:0; }
 
-    /* Date input */
-    .date-input {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid #eee;
-      border-radius: 10px;
-      font-size: 14px;
-      color: #111;
-      background: #fff;
-      outline: none;
-      transition: border 0.15s;
-      font-family: inherit;
+    input[type=date], input[type=number] {
+      width:100%; padding:12px 14px;
+      border:1.5px solid var(--border); border-radius:11px;
+      font-size:14px; color:var(--text); background:#fff;
+      outline:none; font-family:inherit; transition:border .15s;
     }
-    .date-input:focus { border-color: #1a6b3c; }
+    input:focus { border-color:var(--green); }
 
-    /* Contract buttons */
-    .contract-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+    /* Month picker */
+    .months-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .month-btn {
+      border:2px solid var(--border); border-radius:11px;
+      padding:10px 4px; cursor:pointer; background:#fff;
+      text-align:center; transition:all .15s; font-family:inherit;
     }
-    .contract-btn {
-      border: 2px solid #eee;
-      border-radius: 10px;
-      padding: 10px 4px;
-      cursor: pointer;
-      background: #fff;
-      text-align: center;
-      transition: all 0.15s;
-    }
-    .contract-btn:hover { border-color: #1a6b3c; background: #f0faf5; }
-    .contract-btn.active { border-color: #1a6b3c; background: #e8f5ee; }
-    .contract-btn-main { font-size: 13px; font-weight: 700; color: #333; }
-    .contract-btn.active .contract-btn-main { color: #1a6b3c; }
-    .contract-btn-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
-    .contract-btn.active .contract-btn-sub { color: #1a6b3c; }
+    .month-btn:hover { border-color:var(--green); background:var(--green-light); }
+    .month-btn.active { border-color:var(--green); background:var(--green-light); }
+    .mb-num { font-size:14px; font-weight:800; color:#333; }
+    .month-btn.active .mb-num { color:var(--green); }
+    .mb-label { font-size:10px; color:var(--muted); margin-top:2px; }
+    .month-btn.active .mb-label { color:var(--green); }
 
-    /* Salary input */
+    /* Salary */
     .salary-wrap {
-      display: flex;
-      align-items: center;
-      border: 1.5px solid #eee;
-      border-radius: 10px;
-      overflow: hidden;
-      transition: border 0.15s;
+      display:flex; border:1.5px solid var(--border); border-radius:11px;
+      overflow:hidden; transition:border .15s;
     }
-    .salary-wrap:focus-within { border-color: #1a6b3c; }
-    .salary-input {
-      flex: 1;
-      padding: 11px 14px;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      font-weight: 700;
-      color: #111;
-      font-family: inherit;
+    .salary-wrap:focus-within { border-color:var(--green); }
+    .salary-wrap input {
+      flex:1; padding:12px 14px; border:none; outline:none;
+      font-size:16px; font-weight:700; font-family:inherit; background:#fff;
     }
     .salary-unit {
-      padding: 0 14px;
-      font-size: 13px;
-      color: #888;
-      background: #f9f9f9;
-      border-left: 1px solid #eee;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
+      padding:0 14px; background:#f9f9f9; border-left:1px solid var(--border);
+      display:flex; align-items:center; font-size:13px; color:var(--muted);
+      white-space:nowrap;
     }
+
+    /* Worker salary note */
+    .salary-note {
+      background:#f0faf5; border:1px solid #b2dfc6; border-radius:10px;
+      padding:12px 14px; margin-top:10px;
+      font-size:12px; color:var(--green-dark); line-height:1.6;
+    }
+    .salary-note strong { font-weight:700; }
 
     /* Services */
-    .services-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .services-wrap { display:flex; flex-wrap:wrap; gap:8px; }
+    .svc-chip {
+      display:flex; align-items:center; gap:6px;
+      padding:7px 13px; border:1.5px solid var(--border);
+      border-radius:20px; cursor:pointer; font-size:12px;
+      font-weight:600; color:#555; background:#fff;
+      transition:all .15s; user-select:none;
     }
-    .service-chip {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 12px;
-      border: 1.5px solid #eee;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      color: #555;
-      background: #fff;
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .service-chip:hover { border-color: #1a6b3c; color: #1a6b3c; }
-    .service-chip.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
-    .service-chip-icon { font-size: 14px; }
+    .svc-chip:hover { border-color:var(--green); color:var(--green); }
+    .svc-chip.active { border-color:var(--green); background:var(--green-light); color:var(--green); }
 
-    /* Fee notice */
-    .fee-notice {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #fff8e8;
-      border: 1px solid #f0d888;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-top: 16px;
-      font-size: 12px;
-      color: #a07800;
+    /* ── Fee breakdown ── */
+    .fee-breakdown {
+      background:var(--bg); border-radius:14px;
+      padding:16px; margin-top:18px;
     }
-    .fee-notice strong { font-weight: 700; }
+    .fee-breakdown-title {
+      font-size:12px; font-weight:700; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.5px;
+      margin-bottom:12px;
+    }
+    .fee-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:8px 0;
+    }
+    .fee-row + .fee-row { border-top:1px dashed var(--border); }
+    .fee-label { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+    .fee-value { font-size:14px; font-weight:700; color:var(--text); }
+    .fee-row.highlight .fee-label { color:var(--text); font-weight:600; }
+    .fee-row.highlight .fee-value { color:var(--green); font-size:16px; }
 
-    /* Summary row */
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      color: #888;
-      margin-top: 10px;
+    /* Service fee callout */
+    .service-fee-box {
+      background: linear-gradient(135deg, #fffbeb, #fff8e6);
+      border: 2px solid var(--gold);
+      border-radius: 14px; padding: 16px; margin-top: 14px;
+      display:flex; gap:12px; align-items:flex-start;
     }
-    .summary-row .val { font-weight: 700; color: #111; }
-    .summary-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 15px;
-      font-weight: 700;
-      color: #111;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1.5px solid #eee;
-    }
-    .summary-total .val { color: #1a6b3c; font-size: 18px; }
-    .discount-tag {
-      font-size: 11px;
-      color: #1a6b3c;
-      background: #e8f5ee;
-      padding: 2px 8px;
-      border-radius: 8px;
-      margin-left: 8px;
-      font-weight: 600;
+    .sf-icon { font-size:28px; flex-shrink:0; }
+    .sf-title { font-size:15px; font-weight:800; color:#92400e; margin-bottom:4px; }
+    .sf-desc { font-size:12px; color:#78350f; line-height:1.6; }
+    .sf-badge {
+      display:inline-block; background:var(--gold); color:#fff;
+      font-size:11px; font-weight:700; padding:3px 8px;
+      border-radius:6px; margin-top:6px;
     }
 
-    /* Footer buttons */
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      padding: 16px 24px 20px;
-      border-top: 1px solid #f0f0f0;
+    /* Worker pays note */
+    .worker-pays-note {
+      background:#f0f9ff; border:1px solid #bae6fd;
+      border-radius:11px; padding:12px 14px; margin-top:12px;
+      font-size:12px; color:#0c4a6e; line-height:1.6;
+    }
+
+    /* Error / not-logged-in */
+    .alert {
+      background:#fff0f0; border:1px solid #fcc; color:var(--red);
+      font-size:13px; padding:12px 14px; border-radius:10px;
+      margin-top:14px; display:none;
+    }
+    .alert-info {
+      background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;
+    }
+
+    /* Footer */
+    .card-footer {
+      display:flex; gap:10px; padding:16px 24px 22px;
+      border-top:1px solid var(--border); background:#fafafa;
     }
     .btn-cancel {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1.5px solid #ddd;
-      background: #fff;
-      color: #555;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.15s;
+      flex:1; background:#f3f4f6; color:var(--muted); border:none;
+      padding:13px; border-radius:11px; font-size:14px; font-weight:600;
+      cursor:pointer; font-family:inherit; transition:background .15s;
     }
-    .btn-cancel:hover { background: #f5f5f0; }
+    .btn-cancel:hover { background:#e5e7eb; }
     .btn-confirm {
-      flex: 2;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      background: #1a6b3c;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s;
+      flex:2; background:var(--green); color:#fff; border:none;
+      padding:13px; border-radius:11px; font-size:14px; font-weight:700;
+      cursor:pointer; font-family:inherit; transition:background .15s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
     }
-    .btn-confirm:hover { background: #145530; }
-    .btn-confirm:disabled { background: #aaa; cursor: not-allowed; }
+    .btn-confirm:hover { background:var(--green-dark); }
+    .btn-confirm:disabled { background:#9ca3af; cursor:not-allowed; }
 
-    /* Not logged in */
-    .not-logged-in {
-      background: #fff5e0;
-      border: 1px solid #f0a500;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: #c87800;
-      text-align: center;
-      margin-top: 16px;
-      display: none;
-    }
-    .not-logged-in a { color: #1a6b3c; font-weight: 700; text-decoration: none; }
-
-    /* Error */
-    .error-bar {
-      background: #fff0f0;
-      border: 1px solid #ffcccc;
-      color: #cc2222;
-      font-size: 12px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    /* Success modal */
+    /* Success overlay */
     .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none; align-items: center; justify-content: center;
-      z-index: 999;
+      position:fixed; inset:0; background:rgba(0,0,0,.55);
+      display:none; align-items:center; justify-content:center;
+      z-index:999; backdrop-filter:blur(4px);
     }
-    .overlay.show { display: flex; }
+    .overlay.show { display:flex; }
     .success-modal {
-      background: #fff;
-      border-radius: 20px;
-      padding: 36px 32px;
-      max-width: 360px;
-      width: 90%;
-      text-align: center;
+      background:#fff; border-radius:24px; padding:36px 32px;
+      max-width:400px; width:92%; text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,.2);
     }
-    .success-icon { font-size: 52px; margin-bottom: 12px; }
-    .success-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
-    .success-sub { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 24px; }
+    .success-icon { font-size:56px; margin-bottom:14px; }
+    .success-title { font-family:'Sora',sans-serif; font-size:22px; font-weight:800; margin-bottom:10px; color:var(--green); }
+    .success-sub { font-size:14px; color:var(--muted); line-height:1.7; margin-bottom:24px; }
     .success-btn {
-      background: #1a6b3c; color: #fff; border: none;
-      padding: 13px 32px; border-radius: 10px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-      font-family: inherit;
-    }
-
-    @media (max-width: 520px) {
-      body { padding: 0; align-items: flex-start; }
-      .booking-modal { border-radius: 0; min-height: 100vh; box-shadow: none; }
-      .contract-grid { grid-template-columns: repeat(2, 1fr); }
+      width:100%; background:var(--green); color:#fff; border:none;
+      padding:14px; border-radius:12px; font-size:15px; font-weight:700;
+      cursor:pointer; font-family:inherit;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="kebet-lang.css"/>
-  <script src="kebet-lang.js"></script>
 </head>
 <body>
 
-<div class="booking-modal">
+<div class="page-wrap">
+  <a class="back-link" href="javascript:history.back()">← <span class="en">Back to search</span><span class="am">ወደ ፍለጋ ተመለስ</span></a>
 
-  <!-- Header -->
-  <div class="modal-header">
-    <div class="modal-header-left">
-      <div class="modal-header-icon">📋</div>
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="header-left">
+        <div class="header-icon">📋</div>
+        <div>
+          <div class="header-title"><span class="en">Book a Worker</span><span class="am">ሰራተኛ አስያዝ</span></div>
+          <div class="header-sub">Kebet — ከቤት</div>
+        </div>
+      </div>
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+      </div>
+    </div>
+
+    <!-- Worker bar -->
+    <div class="worker-bar">
+      <div class="w-av" id="worker-av">??</div>
       <div>
-        <div class="modal-header-title">Book Worker</div>
-        <div class="modal-header-sub">Fill in the details to send a booking request</div>
+        <div class="w-name" id="worker-name">Loading...</div>
+        <div class="w-meta" id="worker-meta">—</div>
       </div>
+      <div class="w-rating" id="worker-rating">⭐ —</div>
     </div>
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')" style="color:#fff;border-color:rgba(255,255,255,0.4);">EN</button>
-      <button class="lang-btn" id="btn-am" onclick="setLang('am')" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.3);">አማ</button>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <!-- Start date -->
+      <div class="field-label">📅 <span class="en">Start Date</span><span class="am">የጀምር ቀን</span></div>
+      <input type="date" id="start-date" />
+
+      <!-- Contract duration -->
+      <div class="field-label">⏱ <span class="en">Contract Duration</span><span class="am">የስምምነት ጊዜ</span></div>
+      <div class="months-grid">
+        <button class="month-btn active" onclick="setMonths(1,this)"><div class="mb-num">1</div><div class="mb-label"><span class="en">month</span><span class="am">ወር</span></div></button>
+        <button class="month-btn" onclick="setMonths(3,this)"><div class="mb-num">3</div><div class="mb-label"><span class="en">months</span><span class="am">ወራት</span></div></button>
+        <button class="month-btn" onclick="setMonths(6,this)"><div class="mb-num">6</div><div class="mb-label"><span class="en">months</span><span class="am">ወራት</span></div></button>
+        <button class="month-btn" onclick="setMonths(12,this)"><div class="mb-num">12</div><div class="mb-label"><span class="en">months</span><span class="am">ወራት</span></div></button>
+      </div>
+
+      <!-- Monthly salary -->
+      <div class="field-label">💰 <span class="en">Monthly Salary You'll Pay</span><span class="am">የሚከፍሉት ወርሃዊ ደሞዝ</span></div>
+      <div class="salary-wrap">
+        <input type="number" id="salary-input" value="3500" min="500" oninput="recalc()"/>
+        <div class="salary-unit">ETB / <span class="en">month</span><span class="am">ወር</span></div>
+      </div>
+      <div class="salary-note">
+        <strong><span class="en">ℹ️ About salary:</span><span class="am">ℹ️ ስለ ደሞዝ:</span></strong><br/>
+        <span class="en">This is what you agree to pay the worker directly each month — in cash or via Telebirr/CBE Birr. Kebet does NOT collect or transfer this salary.</span>
+        <span class="am">ይህ ለሰራተኛው በቀጥታ በየወሩ የሚከፍሉት ነው — በጥሬ ገንዘብ ወይም በቴሌብር/CBE ብር። ከቤት ይህን ደሞዝ አያሰበስብም ወይም አያስተላልፍም።</span>
+      </div>
+
+      <!-- Services -->
+      <div class="field-label">🧹 <span class="en">Services Needed</span><span class="am">የሚፈልጉ አገልግሎቶች</span></div>
+      <div class="services-wrap">
+        <div class="svc-chip active" onclick="toggleSvc(this)">🧹 <span class="en">Cleaning</span><span class="am">ጽዳት</span></div>
+        <div class="svc-chip active" onclick="toggleSvc(this)">🍳 <span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></div>
+        <div class="svc-chip active" onclick="toggleSvc(this)">👕 <span class="en">Laundry</span><span class="am">ልብስ ማጠብ</span></div>
+        <div class="svc-chip" onclick="toggleSvc(this)">👶 <span class="en">Nanny</span><span class="am">አሳዳጊ</span></div>
+        <div class="svc-chip" onclick="toggleSvc(this)">🌿 <span class="en">Gardening</span><span class="am">አትክልት</span></div>
+        <div class="svc-chip" onclick="toggleSvc(this)">🛒 <span class="en">Shopping</span><span class="am">ግዢ</span></div>
+      </div>
+
+      <!-- 200 ETB service fee highlight -->
+      <div class="service-fee-box">
+        <div class="sf-icon">🏢</div>
+        <div>
+          <div class="sf-title"><span class="en">200 ETB Kebet Service Fee</span><span class="am">200 ብር የከቤት አገልግሎት ክፍያ</span></div>
+          <div class="sf-desc">
+            <span class="en">This one-time fee covers worker vetting, background checks, and platform support. It is the <strong>only</strong> amount Kebet collects from you.</span>
+            <span class="am">ይህ አንድ ጊዜ ክፍያ የሰራተኛ ምርመራ እና የፕላትፎርም ድጋፍን ይሸፍናል። ይህ ከቤት ከእርስዎ የሚሰበስበው <strong>ብቸኛ</strong> ክፍያ ነው።</span>
+          </div>
+          <div class="sf-badge"><span class="en">Paid once via Telebirr / CBE Birr</span><span class="am">አንድ ጊዜ ይከፈላል</span></div>
+        </div>
+      </div>
+
+      <!-- Fee breakdown -->
+      <div class="fee-breakdown">
+        <div class="fee-breakdown-title">📊 <span class="en">Cost Summary</span><span class="am">የወጪ ማጠቃለያ</span></div>
+
+        <div class="fee-row">
+          <span class="fee-label">🧹 <span class="en">Worker's monthly salary</span><span class="am">የሰራተኛ ወርሃዊ ደሞዝ</span></span>
+          <span class="fee-value" id="sum-monthly">3,500 ETB</span>
+        </div>
+        <div class="fee-row">
+          <span class="fee-label">📅 <span class="en">Contract duration</span><span class="am">ጊዜ</span></span>
+          <span class="fee-value" id="sum-duration">1 month</span>
+        </div>
+        <div class="fee-row">
+          <span class="fee-label" style="font-size:11px; color:#9ca3af;">
+            <span class="en">👆 You pay worker directly — not via Kebet</span>
+            <span class="am">👆 ለሰራተኛ በቀጥታ ይከፍላሉ — ከቤት አይደለም</span>
+          </span>
+          <span class="fee-value" id="sum-total-worker" style="color:var(--muted); font-size:13px;">3,500 ETB total</span>
+        </div>
+
+        <div class="fee-row highlight" style="margin-top:6px;">
+          <span class="fee-label">🏢 <strong><span class="en">Kebet service fee (pay now)</span><span class="am">የከቤት ክፍያ (አሁን ይክፈሉ)</span></strong></span>
+          <span class="fee-value" style="color:var(--gold); font-size:18px; font-family:'Sora',sans-serif;">200 ETB</span>
+        </div>
+      </div>
+
+      <!-- How to pay the service fee -->
+      <div class="worker-pays-note">
+        <strong><span class="en">💳 How to pay the 200 ETB service fee:</span><span class="am">💳 200 ብር እንዴት ይከፈላል:</span></strong><br/>
+        <span class="en">You will receive a payment request on <strong>Telebirr</strong> or <strong>CBE Birr</strong> after confirming your booking. The fee must be paid within 24 hours to activate your booking.</span>
+        <span class="am">ቦታ ካስያዙ በኋላ <strong>ቴሌብር</strong> ወይም <strong>CBE ብር</strong> ላይ ጥያቄ ይደርስዎታል። ቦታ ማስያዣዎን ለማግበር ክፍያ በ24 ሰዓት ውስጥ መፈጸም አለበት።</span>
+      </div>
+
+      <div class="alert" id="error-bar"></div>
+      <div class="alert alert-info" id="not-logged-in" style="display:none;">
+        <span class="en">Please <a href="signin.html" style="color:var(--green);font-weight:600;">sign in</a> to book a worker.</span>
+        <span class="am">ሰራተኛ ለማስያዝ <a href="signin.html" style="color:var(--green);font-weight:600;">ይግቡ</a>።</span>
+      </div>
+
+    </div><!-- /card-body -->
+
+    <!-- Footer -->
+    <div class="card-footer">
+      <button class="btn-cancel" onclick="history.back()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()" disabled>
+        ✓ <span class="en">Confirm Booking</span><span class="am">ቦታ አስያዝ</span>
+        <span style="font-size:12px;opacity:.8;">(200 ETB fee)</span>
+      </button>
     </div>
   </div>
-
-  <!-- Worker info -->
-  <div class="worker-bar">
-    <div class="w-av" id="worker-av">EJ</div>
-    <div>
-      <div class="w-name" id="worker-name">Etenesh Jenbere</div>
-      <div class="w-meta" id="worker-meta">Cooking · Lideta</div>
-    </div>
-    <div class="w-badge">✓ Verified</div>
-  </div>
-
-  <!-- Body -->
-  <div class="modal-body">
-
-    <!-- Start date -->
-    <div class="field-label">📅 <span class="en">Start Date</span><span class="am">የጀምር ቀን</span></div>
-    <input type="date" class="date-input" id="start-date" onchange="calcTotal()" />
-
-    <!-- Contract length -->
-    <div class="field-label">⏱ <span class="en">Contract Length</span><span class="am">የኮንትራት ርዝማኔ</span></div>
-    <div class="contract-grid">
-      <div class="contract-btn active" onclick="setDuration(1, this)">
-        <div class="contract-btn-main"><span class="en">1 month</span><span class="am">1 ወር</span></div>
-        <div class="contract-btn-sub"><span class="en">Trial</span><span class="am">ሙከራ</span></div>
-      </div>
-      <div class="contract-btn" onclick="setDuration(3, this)">
-        <div class="contract-btn-main"><span class="en">3 months</span><span class="am">3 ወር</span></div>
-        <div class="contract-btn-sub"><span class="en">Popular</span><span class="am">ታዋቂ</span></div>
-      </div>
-      <div class="contract-btn" onclick="setDuration(6, this)">
-        <div class="contract-btn-main"><span class="en">6 months</span><span class="am">6 ወር</span></div>
-        <div class="contract-btn-sub">Save 5%</div>
-      </div>
-      <div class="contract-btn" onclick="setDuration(12, this)">
-        <div class="contract-btn-main"><span class="en">12 months</span><span class="am">12 ወር</span></div>
-        <div class="contract-btn-sub">Save 10%</div>
-      </div>
-    </div>
-
-    <!-- Monthly salary -->
-    <div class="field-label">💰 <span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></div>
-    <div class="salary-wrap">
-      <input type="number" class="salary-input" id="salary-input" value="3500" min="500" oninput="setSalaryCustom(this.value)" />
-      <div class="salary-unit">ETB / <span class="en">month</span><span class="am">ወር</span></div>
-    </div>
-    <div style="font-size:11px; color:#aaa; margin-top:6px;">💡 <span class="en">Typical range in Addis Ababa: 2,500 – 4,500 ETB/month</span><span class="am">አዲስ አበባ ውስጥ ተለምዷዊ ክልል: 2,500 – 4,500 ብር/ወር</span></div>
-
-    <!-- Services needed -->
-    <div class="field-label">🧹 <span class="en">Services Needed</span><span class="am">የሚፈልጉት አገልግሎቶች</span></div>
-    <div class="services-grid">
-      <div class="service-chip active" onclick="toggleService(this)"><span class="service-chip-icon">🧹</span><span class="en">Cleaning</span><span class="am">ጽዳት</span></div>
-      <div class="service-chip active" onclick="toggleService(this)"><span class="service-chip-icon">🍳</span><span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></div>
-      <div class="service-chip active" onclick="toggleService(this)"><span class="service-chip-icon">👕</span><span class="en">Laundry</span><span class="am">ልብስ ማጠብ</span></div>
-      <div class="service-chip" onclick="toggleService(this)"><span class="service-chip-icon">👶</span><span class="en">Nanny</span><span class="am">አሳዳጊ</span></div>
-      <div class="service-chip" onclick="toggleService(this)"><span class="service-chip-icon">🌿</span><span class="en">Gardening</span><span class="am">የአትክልት እንክብካቤ</span></div>
-      <div class="service-chip" onclick="toggleService(this)"><span class="service-chip-icon">🛒</span><span class="en">Shopping</span><span class="am">ግዢ</span></div>
-    </div>
-
-    <!-- 200 ETB fee notice -->
-    <div class="fee-notice">
-      <span style="font-size:18px;">🏢</span>
-      <div><strong>200 ETB Kebet service fee</strong> <span class="en">included — one-time per booking</span><span class="am">ተካትቷል — በጥያቄ አንድ ጊዜ</span></div>
-    </div>
-
-    <!-- Booking summary -->
-    <div class="summary-row">
-      <span><span class="en">Salary</span><span class="am">ደሞዝ</span></span>
-      <span class="val" id="sum-salary">3,500 ETB × 1 month</span>
-    </div>
-    <div class="summary-row">
-      <span><span class="en">Kebet fee</span><span class="am">የከቤት ክፍያ</span></span>
-      <span class="val" style="color:#c87800;">200 ETB</span>
-    </div>
-    <div class="summary-total">
-      <span><span class="en">Total due</span><span class="am">ጠቅላላ ክፍያ</span> <span class="discount-tag" id="discount-tag" style="display:none;"></span></span>
-      <span class="val" id="sum-total">3,700 ETB</span>
-    </div>
-
-    <!-- Not logged in -->
-    <div class="not-logged-in" id="not-logged-in">
-      <span class="en">You must <a href="signin.html">sign in</a> to book a worker.</span>
-      <span class="am"><a href="signin.html">ይግቡ</a> ሰራተኛ ለማስያዝ።</span>
-    </div>
-
-    <!-- Error -->
-    <div class="error-bar" id="error-bar"></div>
-
-  </div>
-
-  <!-- Footer actions -->
-  <div class="modal-footer">
-    <button class="btn-cancel" onclick="window.history.back()">
-      <span class="en">Cancel</span><span class="am">ሰርዝ</span>
-    </button>
-    <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()" disabled>
-      <span class="en">Confirm Booking ✓</span><span class="am">ቦታ አስያዝ ✓</span>
-    </button>
-  </div>
-
 </div>
 
 <!-- Success overlay -->
 <div class="overlay" id="success-overlay">
   <div class="success-modal">
     <div class="success-icon">🎉</div>
-    <div class="success-title"><span class="en">Booking Sent!</span><span class="am">ቦታ ተያዘ!</span></div>
-    <div class="success-sub" id="success-sub">Your request has been sent. The worker will contact you within 24 hours.<br/><br/>ወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹</div>
+    <div class="success-title"><span class="en">Booking Confirmed!</span><span class="am">ቦታ ተያዘ!</span></div>
+    <div class="success-sub" id="success-sub">
+      <span class="en">Your booking has been sent! Check your <strong>Telebirr</strong> or <strong>CBE Birr</strong> for the 200 ETB service fee payment request.</span>
+      <span class="am">ቦታዎ ተልኳል! ለ200 ብር ክፍያ <strong>ቴሌብር</strong> ወይም <strong>CBE ብር</strong> ያረጋግጡ።</span>
+    </div>
     <button class="success-btn" onclick="window.location.href='dashboard-owner.html'">
-      <span class="en">Go to Dashboard</span><span class="am">ወደ ዳሽቦርድ</span>
+      <span class="en">Go to Dashboard →</span><span class="am">ወደ ዳሽቦርድ →</span>
     </button>
   </div>
 </div>
@@ -480,27 +416,32 @@
   let currentUser = null;
   let currentUserData = null;
 
-  // Read worker info from URL params
+  // URL params
   const params = new URLSearchParams(window.location.search);
-  const workerName = params.get('name') || 'Etenesh Jenbere';
-  const workerRole = params.get('role') || 'Cooking';
-  const workerLocation = params.get('location') || 'Lideta';
+  const workerName = params.get('name') || 'House Worker';
+  const workerRole = params.get('role') || 'General Helper';
+  const workerLocation = params.get('location') || 'Addis Ababa';
   const workerId = params.get('id') || '';
-  const workerInitials = workerName.split(' ').map(n => n[0]).join('').toUpperCase();
+  const workerRating = params.get('rating') || '—';
 
-  document.getElementById('worker-av').textContent = workerInitials;
+  document.getElementById('worker-av').textContent = workerName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('worker-name').textContent = workerName;
-  document.getElementById('worker-meta').textContent = workerRole + ' · ' + workerLocation;
+  document.getElementById('worker-meta').textContent = workerRole + ' · 📍 ' + workerLocation;
+  document.getElementById('worker-rating').textContent = '⭐ ' + workerRating;
 
-  // Auth check
+  // Set min start date to tomorrow
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  document.getElementById('start-date').min = tomorrow.toISOString().split('T')[0];
+  document.getElementById('start-date').value = tomorrow.toISOString().split('T')[0];
+
+  // Auth
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        currentUserData = userDoc.data();
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (snap.exists()) {
+        currentUserData = snap.data();
         if (currentUserData.userType === 'worker') {
-          // Workers can't book
           showError('Workers cannot make bookings. Please sign in as a house owner.');
           return;
         }
@@ -513,68 +454,52 @@
     }
   });
 
-  // Duration picker
-  window.setDuration = function(m, btn) {
+  // Language
+  let lang = 'en';
+  window.setLang = function(l) {
+    lang = l;
+    document.querySelectorAll('.en').forEach(e => e.style.display = l==='en' ? '' : 'none');
+    document.querySelectorAll('.am').forEach(e => e.style.display = l==='am' ? '' : 'none');
+    document.getElementById('btn-en').classList.toggle('active', l==='en');
+    document.getElementById('btn-am').classList.toggle('active', l==='am');
+  };
+
+  window.setMonths = function(m, btn) {
     months = m;
-    document.querySelectorAll('.contract-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    calcTotal();
-  }
+    recalc();
+  };
 
-  // Salary input
-  window.setSalaryCustom = function(val) {
-    const v = parseInt(val);
-    if (v > 0) { salary = v; calcTotal(); }
-  }
+  window.toggleSvc = function(chip) { chip.classList.toggle('active'); };
 
-  // Service chip toggle
-  window.toggleService = function(chip) {
-    chip.classList.toggle('active');
-  }
-
-  // Recalculate total
-  window.calcTotal = function() {
-    const discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    const salaryTotal = Math.round(salary * months * discount);
-    const grandTotal = salaryTotal + SERVICE_FEE;
+  window.recalc = function() {
+    const sal = parseInt(document.getElementById('salary-input').value) || 0;
+    salary = sal;
+    const totalWorker = sal * months;
     const mo = months === 1 ? 'month' : 'months';
-    document.getElementById('sum-salary').textContent =
-      salary.toLocaleString() + ' ETB × ' + months + ' ' + mo +
-      (discount < 1 ? ' (−' + Math.round((1 - discount) * 100) + '%)' : '');
-    document.getElementById('sum-total').textContent = grandTotal.toLocaleString() + ' ETB';
-    const tag = document.getElementById('discount-tag');
-    if (months >= 12) { tag.textContent = '10% off'; tag.style.display = 'inline'; }
-    else if (months >= 6) { tag.textContent = '5% off'; tag.style.display = 'inline'; }
-    else { tag.style.display = 'none'; }
-  }
+    document.getElementById('sum-monthly').textContent = sal.toLocaleString() + ' ETB';
+    document.getElementById('sum-duration').textContent = months + ' ' + mo;
+    document.getElementById('sum-total-worker').textContent = totalWorker.toLocaleString() + ' ETB total';
+  };
 
-  // Confirm booking
   window.confirmBooking = async function() {
-    if (!currentUser) {
-      window.location.href = 'signin.html';
-      return;
-    }
+    if (!currentUser) { window.location.href = 'signin.html'; return; }
     const startDate = document.getElementById('start-date').value;
-    if (!startDate) {
-      showError('Please select a start date.');
-      return;
-    }
+    if (!startDate) { showError('Please select a start date.'); return; }
+    if (salary < 500) { showError('Salary must be at least 500 ETB.'); return; }
 
     const btn = document.getElementById('confirm-btn');
-    btn.textContent = 'Saving...';
     btn.disabled = true;
+    btn.innerHTML = '⏳ <span class="en">Saving...</span><span class="am">እየጫነ...</span>';
 
-    const services = Array.from(document.querySelectorAll('.service-chip.active'))
-      .map(c => c.querySelector('.en')?.textContent || c.textContent.trim());
-
-    const discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    const salaryTotal = Math.round(salary * months * discount);
-    const totalAmount = salaryTotal + SERVICE_FEE;
+    const services = Array.from(document.querySelectorAll('.svc-chip.active'))
+      .map(c => c.querySelector('.en')?.textContent?.trim() || c.textContent.trim());
 
     try {
-      await addDoc(collection(db, 'bookings'), {
+      await addDoc(collection(db,'bookings'), {
         ownerId: currentUser.uid,
-        ownerName: (currentUserData?.firstName || '') + ' ' + (currentUserData?.lastName || ''),
+        ownerName: (currentUserData?.firstName||'') + ' ' + (currentUserData?.lastName||''),
         ownerEmail: currentUser.email,
         ownerPhone: currentUserData?.phone || '',
         ownerLocation: currentUserData?.location || '',
@@ -582,27 +507,24 @@
         workerName: workerName,
         workerRole: workerRole,
         workerLocation: workerLocation,
+        workerRating: workerRating,
         monthlySalary: salary,
         contractMonths: months,
-        serviceFee: SERVICE_FEE,
-        salaryTotal: salaryTotal,
-        totalAmount: totalAmount,
+        serviceFee: SERVICE_FEE,         // 200 ETB — what Kebet charges
+        salaryTotal: salary * months,    // total to pay worker directly
         startDate: startDate,
         services: services,
         status: 'pending',
+        serviceFeeStatus: 'pending',     // tracks if 200 ETB fee is paid
         createdAt: new Date().toISOString()
       });
-
-      document.getElementById('success-sub').innerHTML =
-        'Your booking for <strong>' + workerName + '</strong> has been sent! She will contact you within 24 hours.<br/><br/>ወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹';
       document.getElementById('success-overlay').classList.add('show');
-
-    } catch (err) {
-      btn.innerHTML = '<span class="en">Confirm Booking ✓</span><span class="am">ቦታ አስያዝ ✓</span>';
+    } catch(err) {
       btn.disabled = false;
+      btn.innerHTML = '✓ <span class="en">Confirm Booking</span><span class="am">ቦታ አስያዝ</span> <span style="font-size:12px;opacity:.8;">(200 ETB fee)</span>';
       showError('Error: ' + err.message);
     }
-  }
+  };
 
   function showError(msg) {
     const el = document.getElementById('error-bar');
@@ -610,8 +532,7 @@
     el.style.display = 'block';
   }
 
-  calcTotal();
+  recalc();
 </script>
-
 </body>
 </html>
