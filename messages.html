@@ -493,6 +493,9 @@
 
   async function loadConversations() {
     try {
+      // Auto-create conversations from bookings if they don't exist yet
+      await ensureConvosFromBookings();
+
       const q = query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid));
       const snap = await getDocs(q);
       allConvos = [];
@@ -503,6 +506,43 @@
       allConvos = [];
     }
     renderConvoList();
+  }
+
+  async function ensureConvosFromBookings() {
+    try {
+      const myName = ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim();
+      const userType = currentUserData.userType;
+
+      // Find all bookings involving the current user
+      const field = userType === 'owner' ? 'ownerId' : 'workerId';
+      const bookingsSnap = await getDocs(query(collection(db, 'bookings'), where(field, '==', currentUser.uid)));
+
+      for (const bDoc of bookingsSnap.docs) {
+        const b = bDoc.data();
+        const otherId = userType === 'owner' ? b.workerId : b.ownerId;
+        const otherName = userType === 'owner' ? (b.workerName || '') : (b.ownerName || '');
+        const otherType = userType === 'owner' ? 'worker' : 'owner';
+        if (!otherId) continue;
+
+        const ids = [currentUser.uid, otherId].sort();
+        const convoId = ids[0] + '_' + ids[1];
+        const convoRef = doc(db, 'conversations', convoId);
+        const convoSnap = await getDoc(convoRef);
+
+        if (!convoSnap.exists()) {
+          await setDoc(convoRef, {
+            participants: [currentUser.uid, otherId],
+            participantNames: { [currentUser.uid]: myName, [otherId]: otherName },
+            participantTypes: { [currentUser.uid]: userType, [otherId]: otherType },
+            lastMessage: '',
+            lastMessageAt: b.createdAt || new Date().toISOString(),
+            createdAt: b.createdAt || new Date().toISOString()
+          });
+        }
+      }
+    } catch(e) {
+      console.warn('ensureConvosFromBookings error:', e.message);
+    }
   }
 
   function renderConvoList() {
