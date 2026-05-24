@@ -254,10 +254,13 @@
       <div class="sum-row"><span><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
       <div class="sum-row"><span>Contract</span><span id="sum-duration">1 month</span></div>
       <div class="sum-row"><span>Monthly salary</span><span id="sum-rate">3,500 ETB</span></div>
-      <div class="sum-row"><span>Kebet fee</span><span>Free 🎉</span></div>
+      <div class="sum-row"><span>🏢 Kebet service fee</span><span style="color:#c87800; font-weight:700;">200 ETB</span></div>
       <div class="sum-divider"></div>
-      <div class="sum-total"><span id="sum-label">Total</span><span id="sum-total">3,500 ETB</span></div>
+      <div class="sum-total"><span id="sum-label">Total (incl. fee)</span><span id="sum-total">3,700 ETB</span></div>
       <div class="sum-note" id="sum-discount"></div>
+      <div style="background:#fff5e0;border:1px solid #f0d080;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#a06000;line-height:1.5;">
+        ℹ️ A one-time <strong>200 ETB Kebet service fee</strong> is added per booking. This supports the platform and worker verification.
+      </div>
       <div class="not-logged-in" id="not-logged-in">
         You must <a href="signin.html">sign in</a> to book a worker!
       </div>
@@ -355,16 +358,19 @@
     calcTotal();
   }
 
+  const SERVICE_FEE = 200; // Kebet one-time service fee per booking (ETB)
+
   window.calcTotal = function() {
     let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    let total = Math.round(salary * months * discount);
+    let salaryTotal = Math.round(salary * months * discount);
+    let grandTotal = salaryTotal + SERVICE_FEE;
     let discountText = '';
-    if (months >= 12) discountText = '🎉 10% discount applied!';
-    else if (months >= 6) discountText = '🎉 5% discount applied!';
+    if (months >= 12) discountText = '🎉 10% discount applied on salary!';
+    else if (months >= 6) discountText = '🎉 5% discount applied on salary!';
     document.getElementById('sum-duration').textContent = months + (months === 1 ? ' month' : ' months');
     document.getElementById('sum-rate').textContent = salary.toLocaleString() + ' ETB/month';
-    document.getElementById('sum-label').textContent = 'Total (' + months + (months === 1 ? ' mo)' : ' mos)');
-    document.getElementById('sum-total').textContent = total.toLocaleString() + ' ETB';
+    document.getElementById('sum-label').textContent = 'Total (' + months + (months === 1 ? ' mo' : ' mos') + ' + 200 fee)';
+    document.getElementById('sum-total').textContent = grandTotal.toLocaleString() + ' ETB';
     document.getElementById('sum-discount').textContent = discountText;
   }
 
@@ -401,7 +407,8 @@
     if (document.getElementById('s6').checked) services.push('Baby Care');
 
     let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    let totalAmount = Math.round(salary * months * discount);
+    let salaryTotal = Math.round(salary * months * discount);
+    let totalAmount = salaryTotal + SERVICE_FEE; // includes 200 ETB Kebet service fee
 
     try {
       await addDoc(collection(db, 'bookings'), {
@@ -418,6 +425,8 @@
         workerRole: workerRole,
         monthlySalary: salary,
         contractMonths: months,
+        serviceFee: SERVICE_FEE,
+        salaryTotal: salaryTotal,
         totalAmount: totalAmount,
         startDate: document.getElementById('start-date').value,
         services: services,
