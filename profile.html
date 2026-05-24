@@ -83,7 +83,17 @@
     .modal-btns { display: flex; gap: 10px; }
     .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-
+    .fee-row { display:flex; justify-content:space-between; align-items:center; background:#fff8e8; border:1.5px solid #f0a500; border-radius:10px; padding:10px 14px; margin-bottom:10px; }
+    .fee-label { font-size:13px; color:#555; }
+    .fee-amount { font-size:15px; font-weight:800; color:#c87800; }
+    .pay-tabs { display:flex; gap:8px; margin-bottom:8px; }
+    .pay-tab { flex:1; border:2px solid #eee; background:#fff; border-radius:10px; padding:9px 6px; text-align:center; cursor:pointer; font-size:12px; font-weight:700; color:#888; }
+    .pay-tab.on { border-color:#1a6b3c; background:#e8f5ee; color:#1a6b3c; }
+    .pay-info { background:#f5f5f0; border-radius:10px; padding:10px 14px; margin-bottom:10px; }
+    .pay-num { font-size:20px; font-weight:900; color:#1a6b3c; letter-spacing:1px; margin:3px 0; }
+    .copy-btn { background:#fff; border:1px solid #ddd; border-radius:7px; padding:4px 10px; font-size:11px; font-weight:600; color:#555; cursor:pointer; }
+    .fee-check-row { display:flex; align-items:center; gap:8px; background:#e8f5ee; border-radius:10px; padding:10px 12px; margin-bottom:12px; }
+    .fee-check-row label { font-size:12px; color:#1a6b3c; font-weight:600; cursor:pointer; }
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -220,7 +230,6 @@
   <div class="modal-box">
     <div class="modal-title"><span class="en">📋 Book Worker</span><span class="am">📋 ሰራተኛ ያዝ</span></div>
     <div class="modal-sub" id="modal-sub">—</div>
-
     <div class="form-group">
       <label class="form-label"><span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
       <input type="date" id="book-start-date" class="form-input" />
@@ -250,32 +259,27 @@
     </div>
     <div class="total-box" id="total-box"></div>
 
-    <!-- Service fee row -->
-    <div style="display:flex;justify-content:space-between;align-items:center;background:#fff8e8;border:1.5px solid #f0a500;border-radius:10px;padding:10px 14px;margin-bottom:10px;">
-      <span style="font-size:13px;color:#555;">💳 Kebet service fee</span>
-      <span style="font-size:15px;font-weight:800;color:#c87800;">200 ETB</span>
+    <div class="fee-row">
+      <span class="fee-label">💳 Kebet service fee</span>
+      <span class="fee-amount">200 ETB</span>
     </div>
-
-    <!-- Payment options -->
-    <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px;">Pay fee via:</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <div id="pm-telebirr" onclick="selectFeeMethod('telebirr')" style="flex:1;border:2px solid #1a6b3c;background:#e8f5ee;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#1a6b3c;">📱 Telebirr</div>
-      <div id="pm-cbe" onclick="selectFeeMethod('cbe')" style="flex:1;border:2px solid #eee;background:#fff;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#888;">🏦 CBE Bank</div>
+    <div class="pay-tabs">
+      <div class="pay-tab on" id="tab-telebirr" onclick="switchPay('telebirr')">📱 Telebirr</div>
+      <div class="pay-tab" id="tab-cbe" onclick="switchPay('cbe')">🏦 CBE Bank</div>
     </div>
-    <div id="detail-telebirr" style="background:#f5f5f0;border-radius:10px;padding:10px 14px;margin-bottom:10px;">
-      <div style="font-size:11px;color:#888;margin-bottom:2px;">Send 200 ETB to Telebirr:</div>
-      <div style="font-size:20px;font-weight:900;color:#1a6b3c;letter-spacing:2px;">0979 559 549</div>
-      <button onclick="copyFeeNum('0979559549',this)" style="margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:#555;cursor:pointer;">📋 Copy</button>
+    <div class="pay-info" id="pay-telebirr">
+      <div style="font-size:11px;color:#888;">Send 200 ETB to:</div>
+      <div class="pay-num">0979 559 549</div>
+      <button class="copy-btn" onclick="doCopy('0979559549',this)">📋 Copy number</button>
     </div>
-    <div id="detail-cbe" style="background:#f5f5f0;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:none;">
-      <div style="font-size:11px;color:#888;margin-bottom:2px;">Transfer 200 ETB to CBE:</div>
-      <div style="font-size:17px;font-weight:900;color:#1a6b3c;letter-spacing:2px;">1000481802214</div>
-      <button onclick="copyFeeNum('1000481802214',this)" style="margin-top:4px;background:#fff;border:1px solid #ddd;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:#555;cursor:pointer;">📋 Copy</button>
+    <div class="pay-info" id="pay-cbe" style="display:none;">
+      <div style="font-size:11px;color:#888;">Transfer 200 ETB to CBE:</div>
+      <div class="pay-num" style="font-size:16px;">1000481802214</div>
+      <button class="copy-btn" onclick="doCopy('1000481802214',this)">📋 Copy account</button>
     </div>
-
-    <div style="display:flex;align-items:center;gap:8px;background:#e8f5ee;border-radius:10px;padding:10px 12px;margin-bottom:12px;">
-      <input type="checkbox" id="fee-paid-check" style="accent-color:#1a6b3c;width:15px;height:15px;flex-shrink:0;" />
-      <label for="fee-paid-check" style="font-size:12px;color:#1a6b3c;font-weight:600;cursor:pointer;">I have paid the 200 ETB service fee</label>
+    <div class="fee-check-row">
+      <input type="checkbox" id="fee-done" style="accent-color:#1a6b3c;width:15px;height:15px;flex-shrink:0;">
+      <label for="fee-done">I have paid the 200 ETB Kebet service fee</label>
     </div>
 
     <div class="error-box" id="error-box"></div>
@@ -448,11 +452,12 @@
     document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
     document.getElementById('total-box').style.display = 'none';
     document.getElementById('error-box').style.display = 'none';
-    document.getElementById('fee-paid-check').checked = false;
-    window.selectFeeMethod('telebirr');
-    const workerName = ((workerData?.firstName || '') + ' ' + (workerData?.lastName || '')).trim();
-    const workerSkill = workerData?.skill || '';
-    document.getElementById('modal-sub').textContent = workerName + (workerSkill ? ' · ' + workerSkill : '');
+    document.getElementById('modal-sub').textContent = 'Booking: ' + (workerData?.firstName || '') + ' ' + (workerData?.lastName || '') + ' · ' + (workerData?.skill || '');
+    document.getElementById('fee-done').checked = false;
+    document.getElementById('tab-telebirr').classList.add('on');
+    document.getElementById('tab-cbe').classList.remove('on');
+    document.getElementById('pay-telebirr').style.display = 'block';
+    document.getElementById('pay-cbe').style.display = 'none';
     document.getElementById('book-modal').classList.add('show');
     document.getElementById('book-salary').oninput = updateTotal;
     document.getElementById('book-months').onchange = updateTotal;
@@ -474,24 +479,6 @@
     }
   }
 
-  let selectedFeeMethod = 'telebirr';
-
-  window.selectFeeMethod = function(method) {
-    selectedFeeMethod = method;
-    document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('pm-' + method).classList.add('active');
-    document.getElementById('detail-telebirr').style.display = method === 'telebirr' ? 'block' : 'none';
-    document.getElementById('detail-cbe').style.display = method === 'cbe' ? 'block' : 'none';
-  }
-
-  window.copyFeeNum = function(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-      const orig = btn.textContent;
-      btn.textContent = '✅ Copied!';
-      setTimeout(() => { btn.textContent = orig; }, 2000);
-    });
-  }
-
   window.confirmBooking = async function() {
     const startDate = document.getElementById('book-start-date').value;
     const months = parseInt(document.getElementById('book-months').value);
@@ -504,10 +491,10 @@
     if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
     if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
     if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
-    if (!document.getElementById('fee-paid-check').checked) {
-      errEl.textContent = '⚠️ Please pay the 200 ETB Kebet service fee and check the confirmation box.';
+
+    if (!document.getElementById('fee-done').checked) {
+      errEl.textContent = '⚠️ Please pay the 200 ETB service fee then tick the box above.';
       errEl.style.display = 'block';
-      document.getElementById('fee-paid-check').scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
@@ -532,13 +519,11 @@
         services: services,
         status: 'pending',
         serviceFee: 200,
-        feePaymentMethod: selectedFeeMethod,
-        feeStatus: 'pending_verification',
         createdAt: new Date().toISOString()
       });
 
       closeBookModal();
-      alert('✅ Booking sent to ' + (workerData?.firstName || 'worker') + '! They will be notified.\n\nYour 200 ETB service fee will be verified by Kebet.');
+      alert('✅ Booking sent to ' + (workerData?.firstName || 'worker') + '! They will be notified.');
       window.location.href = 'dashboard-owner.html';
     } catch (err) {
       errEl.textContent = '❌ Booking failed: ' + err.message;
@@ -546,6 +531,20 @@
       btn.textContent = 'Confirm Booking ✓';
       btn.disabled = false;
     }
+  }
+
+  window.switchPay = function(method) {
+    document.getElementById('tab-telebirr').classList.toggle('on', method === 'telebirr');
+    document.getElementById('tab-cbe').classList.toggle('on', method === 'cbe');
+    document.getElementById('pay-telebirr').style.display = method === 'telebirr' ? 'block' : 'none';
+    document.getElementById('pay-cbe').style.display = method === 'cbe' ? 'block' : 'none';
+  }
+
+  window.doCopy = function(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent; btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
   }
 
   loadProfile();
