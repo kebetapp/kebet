@@ -6,276 +6,453 @@
   <title>Kebet — Book Worker</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; }
-    nav { background: #fff; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; }
-    .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
-    .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
-    .nav-logo-am { font-size: 13px; color: #f0a500; }
-    .back-bar { padding: 16px 40px; }
-    .back-btn { background: none; border: none; color: #1a6b3c; font-size: 14px; cursor: pointer; font-weight: 600; }
-    .page-title { text-align: center; padding: 10px 40px 30px; }
-    .page-title h1 { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 6px; }
-    .page-title p { font-size: 14px; color: #888; }
-    .live-in-banner { max-width: 1000px; margin: 0 auto 0; padding: 0 40px 20px; }
-    .live-in-badge { background: #1a6b3c; color: #fff; border-radius: 14px; padding: 16px 24px; display: flex; align-items: center; gap: 14px; }
-    .live-in-badge-icon { font-size: 32px; }
-    .live-in-badge-text { font-size: 14px; line-height: 1.6; }
-    .live-in-badge-text strong { font-size: 15px; }
-    .main { display: flex; gap: 24px; padding: 0 40px 60px; max-width: 1000px; margin: 0 auto; }
-    .left-col { flex: 1; }
-    .right-col { width: 300px; flex-shrink: 0; }
-    .card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #eee; margin-bottom: 16px; }
-    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 18px; }
-    .worker-mini { display: flex; align-items: center; gap: 14px; }
-    .w-av { width: 56px; height: 56px; border-radius: 14px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
-    .w-name { font-size: 16px; font-weight: 700; color: #111; }
-    .w-role { font-size: 13px; color: #888; margin: 2px 0; }
-    .w-badge { background: #e8f5ee; color: #1a6b3c; font-size: 11px; padding: 3px 8px; border-radius: 8px; display: inline-block; }
-    .salary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-    .salary-btn { border: 2px solid #eee; border-radius: 12px; padding: 14px 8px; cursor: pointer; background: #fff; text-align: center; transition: all 0.2s; }
-    .salary-btn.active { border-color: #1a6b3c; background: #e8f5ee; }
-    .salary-amount { font-size: 15px; font-weight: 700; color: #111; }
-    .salary-btn.active .salary-amount { color: #1a6b3c; }
-    .salary-label { font-size: 10px; color: #aaa; margin-top: 3px; }
-    .salary-custom { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-    .salary-custom input { flex: 1; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
-    .salary-custom input:focus { border-color: #1a6b3c; }
-    .salary-custom span { font-size: 13px; color: #888; white-space: nowrap; }
-    .duration-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .dur-btn { border: 2px solid #eee; border-radius: 10px; padding: 12px 6px; cursor: pointer; background: #fff; text-align: center; font-size: 13px; font-weight: 600; color: #555; transition: all 0.2s; }
-    .dur-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
-    .dur-btn small { display: block; font-size: 10px; color: #aaa; font-weight: 400; margin-top: 2px; }
-    .dur-btn.active small { color: #1a6b3c; }
-    .form-group { margin-bottom: 16px; }
-    .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
-    .form-input, .form-select { width: 100%; padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; color: #111; background: #fff; outline: none; transition: border 0.2s; }
-    .form-input:focus, .form-select:focus { border-color: #1a6b3c; }
-    .service-option { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
-    .service-option input { accent-color: #1a6b3c; width: 16px; height: 16px; }
-    .service-option label { font-size: 13px; color: #333; cursor: pointer; font-weight: 500; }
-    .service-icon { font-size: 18px; }
-    .provides-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .provides-item { display: flex; align-items: center; gap: 8px; padding: 12px; background: #f5f5f0; border-radius: 10px; }
-    .provides-icon { font-size: 18px; }
-    .provides-text { font-size: 12px; color: #333; font-weight: 600; }
-    .provides-sub { font-size: 10px; color: #888; }
-    .rights-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
-    .rights-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-    .rights-text { font-size: 13px; color: #555; line-height: 1.6; }
-    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .rule-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; font-size: 13px; color: #555; line-height: 1.6; }
-    .rule-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-    .summary-card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; position: sticky; top: 80px; }
-    .summary-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; }
-    .summary-worker { display: flex; align-items: center; gap: 10px; background: #f5f5f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-    .sum-av { width: 40px; height: 40px; border-radius: 10px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
-    .sum-name { font-size: 13px; font-weight: 600; color: #111; }
-    .sum-role { font-size: 11px; color: #888; }
-    .sum-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 10px; }
-    .sum-row span:last-child { font-weight: 600; color: #111; }
-    .sum-divider { height: 1px; background: #eee; margin: 12px 0; }
-    .sum-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
-    .sum-total span:last-child { color: #1a6b3c; font-size: 20px; }
-    .sum-note { font-size: 11px; color: #aaa; margin-bottom: 16px; }
-    .confirm-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
-    .confirm-btn:hover { background: #145530; }
-    .confirm-btn:disabled { background: #aaa; cursor: not-allowed; }
-    .safe-note { text-align: center; font-size: 11px; color: #aaa; line-height: 1.6; }
-    .not-logged-in { background: #fff5e0; border: 1px solid #f0a500; border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 13px; color: #c87800; text-align: center; display: none; }
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #f5f5f0;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* Modal card */
+    .booking-modal {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #e8e8e8;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .modal-header {
+      background: #1a6b3c;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header-left { display: flex; align-items: center; gap: 10px; }
+    .modal-header-icon { font-size: 20px; }
+    .modal-header-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .modal-header-sub { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 1px; }
+
+    /* Worker info bar */
+    .worker-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      background: #f5f5f0;
+      border-bottom: 1px solid #eee;
+    }
+    .w-av {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: #fde8c8;
+      color: #c87800;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .w-name { font-size: 14px; font-weight: 700; color: #111; }
+    .w-meta { font-size: 12px; color: #888; margin-top: 1px; }
+    .w-badge {
+      margin-left: auto;
+      background: #e8f5ee;
+      color: #1a6b3c;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* Body */
+    .modal-body { padding: 20px 24px; }
+
+    /* Field label */
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    .field-label:first-child { margin-top: 0; }
+
+    /* Date input */
+    .date-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #eee;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #111;
+      background: #fff;
+      outline: none;
+      transition: border 0.15s;
+      font-family: inherit;
+    }
+    .date-input:focus { border-color: #1a6b3c; }
+
+    /* Contract buttons */
+    .contract-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .contract-btn {
+      border: 2px solid #eee;
+      border-radius: 10px;
+      padding: 10px 4px;
+      cursor: pointer;
+      background: #fff;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .contract-btn:hover { border-color: #1a6b3c; background: #f0faf5; }
+    .contract-btn.active { border-color: #1a6b3c; background: #e8f5ee; }
+    .contract-btn-main { font-size: 13px; font-weight: 700; color: #333; }
+    .contract-btn.active .contract-btn-main { color: #1a6b3c; }
+    .contract-btn-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+    .contract-btn.active .contract-btn-sub { color: #1a6b3c; }
+
+    /* Salary input */
+    .salary-wrap {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border 0.15s;
+    }
+    .salary-wrap:focus-within { border-color: #1a6b3c; }
+    .salary-input {
+      flex: 1;
+      padding: 11px 14px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+      font-family: inherit;
+    }
+    .salary-unit {
+      padding: 0 14px;
+      font-size: 13px;
+      color: #888;
+      background: #f9f9f9;
+      border-left: 1px solid #eee;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    /* Services */
+    .services-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .service-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border: 1.5px solid #eee;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      background: #fff;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .service-chip:hover { border-color: #1a6b3c; color: #1a6b3c; }
+    .service-chip.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
+    .service-chip-icon { font-size: 14px; }
+
+    /* Fee notice */
+    .fee-notice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff8e8;
+      border: 1px solid #f0d888;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #a07800;
+    }
+    .fee-notice strong { font-weight: 700; }
+
+    /* Summary row */
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #888;
+      margin-top: 10px;
+    }
+    .summary-row .val { font-weight: 700; color: #111; }
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1.5px solid #eee;
+    }
+    .summary-total .val { color: #1a6b3c; font-size: 18px; }
+    .discount-tag {
+      font-size: 11px;
+      color: #1a6b3c;
+      background: #e8f5ee;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    /* Footer buttons */
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      padding: 16px 24px 20px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .btn-cancel {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1.5px solid #ddd;
+      background: #fff;
+      color: #555;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-cancel:hover { background: #f5f5f0; }
+    .btn-confirm {
+      flex: 2;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #1a6b3c;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .btn-confirm:hover { background: #145530; }
+    .btn-confirm:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* Not logged in */
+    .not-logged-in {
+      background: #fff5e0;
+      border: 1px solid #f0a500;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #c87800;
+      text-align: center;
+      margin-top: 16px;
+      display: none;
+    }
     .not-logged-in a { color: #1a6b3c; font-weight: 700; text-decoration: none; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
-    .modal-overlay.show { display: flex; }
-    .modal { background: #fff; border-radius: 24px; padding: 40px; max-width: 400px; width: 90%; text-align: center; }
-    .modal-icon { font-size: 56px; margin-bottom: 16px; }
-    .modal-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 8px; }
-    .modal-sub { font-size: 14px; color: #888; line-height: 1.7; margin-bottom: 24px; }
-    .modal-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
-    @media (max-width: 768px) { .main { flex-direction: column; padding: 0 20px 40px; } .right-col { width: 100%; } nav { padding: 16px 20px; } .back-bar { padding: 12px 20px; } .live-in-banner { padding: 0 20px 20px; } .salary-grid { grid-template-columns: repeat(3, 1fr); } .duration-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    /* Error */
+    .error-bar {
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      color: #cc2222;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* Success modal */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    .overlay.show { display: flex; }
+    .success-modal {
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px 32px;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+    }
+    .success-icon { font-size: 52px; margin-bottom: 12px; }
+    .success-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .success-sub { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 24px; }
+    .success-btn {
+      background: #1a6b3c; color: #fff; border: none;
+      padding: 13px 32px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 0; align-items: flex-start; }
+      .booking-modal { border-radius: 0; min-height: 100vh; box-shadow: none; }
+      .contract-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
   <script src="kebet-lang.js"></script>
-  <link rel="stylesheet" href="kebet-smooth.css"/>
-  <script src="kebet-smooth.js"></script>
-  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">
-    <div class="nav-logo-icon">🏠</div>
-    <div><div class="nav-logo-text">KEBET</div><div class="nav-logo-am">ከቤት</div></div>
-  </div>
-</nav>
-<div style="position:fixed;top:12px;right:20px;z-index:200;"><div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div></div>
+<div class="booking-modal">
 
-<div class="back-bar">
-  <button class="back-btn" onclick="window.location.href='profile.html'"><span class="en">← Back to profile</span><span class="am">← ወደ መገለጫ ተመለስ</span></button>
-</div>
-
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">
-  <h1><span class="en">Book Your Live-in House Worker</span><span class="am">የቤት ሰራተኛዎን ያዙ</span></h1>
-  <p>የቤት ሰራተኛ — Monthly contract, lives in your home</p>
-</div>
-
-<div class="live-in-banner">
-  <div class="live-in-badge">
-    <div class="live-in-badge-icon">🛏️</div>
-    <div class="live-in-badge-text">
-      <strong>Live-in work — የቤት ሰራተኛ</strong><br/>
-      In Ethiopia, house workers live with the family. You provide a room, meals and monthly salary.
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <div class="modal-header-icon">📋</div>
+      <div>
+        <div class="modal-header-title">Book Worker</div>
+        <div class="modal-header-sub">Fill in the details to send a booking request</div>
+      </div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')" style="color:#fff;border-color:rgba(255,255,255,0.4);">EN</button>
+      <button class="lang-btn" id="btn-am" onclick="setLang('am')" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.3);">አማ</button>
     </div>
   </div>
-</div>
 
-<div class="main">
-  <div class="left-col">
+  <!-- Worker info -->
+  <div class="worker-bar">
+    <div class="w-av" id="worker-av">EJ</div>
+    <div>
+      <div class="w-name" id="worker-name">Etenesh Jenbere</div>
+      <div class="w-meta" id="worker-meta">Cooking · Lideta</div>
+    </div>
+    <div class="w-badge">✓ Verified</div>
+  </div>
 
-    <div class="card ks-reveal">
-      <div class="card-title">👤 Worker</div>
-      <div class="worker-mini">
-        <div class="w-av" id="worker-av">SA</div>
-        <div>
-          <div class="w-name" id="worker-name">Sara Alemu</div>
-          <div class="w-role" id="worker-role">Cleaner · Nanny · Cook</div>
-          <span class="w-badge">✓ Verified · ⭐ 4.9 · 3 yrs experience</span>
-        </div>
+  <!-- Body -->
+  <div class="modal-body">
+
+    <!-- Start date -->
+    <div class="field-label">📅 <span class="en">Start Date</span><span class="am">የጀምር ቀን</span></div>
+    <input type="date" class="date-input" id="start-date" onchange="calcTotal()" />
+
+    <!-- Contract length -->
+    <div class="field-label">⏱ <span class="en">Contract Length</span><span class="am">የኮንትራት ርዝማኔ</span></div>
+    <div class="contract-grid">
+      <div class="contract-btn active" onclick="setDuration(1, this)">
+        <div class="contract-btn-main"><span class="en">1 month</span><span class="am">1 ወር</span></div>
+        <div class="contract-btn-sub"><span class="en">Trial</span><span class="am">ሙከራ</span></div>
+      </div>
+      <div class="contract-btn" onclick="setDuration(3, this)">
+        <div class="contract-btn-main"><span class="en">3 months</span><span class="am">3 ወር</span></div>
+        <div class="contract-btn-sub"><span class="en">Popular</span><span class="am">ታዋቂ</span></div>
+      </div>
+      <div class="contract-btn" onclick="setDuration(6, this)">
+        <div class="contract-btn-main"><span class="en">6 months</span><span class="am">6 ወር</span></div>
+        <div class="contract-btn-sub">Save 5%</div>
+      </div>
+      <div class="contract-btn" onclick="setDuration(12, this)">
+        <div class="contract-btn-main"><span class="en">12 months</span><span class="am">12 ወር</span></div>
+        <div class="contract-btn-sub">Save 10%</div>
       </div>
     </div>
 
-    <div class="card ks-reveal">
-      <div class="card-title">💰 Monthly Salary</div>
-      <div class="salary-grid">
-        <div class="salary-btn" onclick="setSalary(2500, this)"><div class="salary-amount">2,500</div><div class="salary-label">ETB/month</div></div>
-        <div class="salary-btn active" onclick="setSalary(3500, this)"><div class="salary-amount">3,500</div><div class="salary-label">ETB/month</div></div>
-        <div class="salary-btn" onclick="setSalary(4500, this)"><div class="salary-amount">4,500</div><div class="salary-label">ETB/month</div></div>
-      </div>
-      <div class="salary-custom">
-        <input type="number" id="custom-salary" placeholder="Custom amount" oninput="setCustomSalary(this.value)" />
-        <span>ETB / month</span>
-      </div>
-      <div style="margin-top:10px; font-size:12px; color:#888;">💡 Average salary in Addis Ababa is 2,500 – 4,500 ETB/month</div>
+    <!-- Monthly salary -->
+    <div class="field-label">💰 <span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></div>
+    <div class="salary-wrap">
+      <input type="number" class="salary-input" id="salary-input" value="3500" min="500" oninput="setSalaryCustom(this.value)" />
+      <div class="salary-unit">ETB / <span class="en">month</span><span class="am">ወር</span></div>
+    </div>
+    <div style="font-size:11px; color:#aaa; margin-top:6px;">💡 <span class="en">Typical range in Addis Ababa: 2,500 – 4,500 ETB/month</span><span class="am">አዲስ አበባ ውስጥ ተለምዷዊ ክልል: 2,500 – 4,500 ብር/ወር</span></div>
+
+    <!-- Services needed -->
+    <div class="field-label">🧹 <span class="en">Services Needed</span><span class="am">የሚፈልጉት አገልግሎቶች</span></div>
+    <div class="services-grid">
+      <div class="service-chip active" onclick="toggleService(this)"><span class="service-chip-icon">🧹</span><span class="en">Cleaning</span><span class="am">ጽዳት</span></div>
+      <div class="service-chip active" onclick="toggleService(this)"><span class="service-chip-icon">🍳</span><span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></div>
+      <div class="service-chip active" onclick="toggleService(this)"><span class="service-chip-icon">👕</span><span class="en">Laundry</span><span class="am">ልብስ ማጠብ</span></div>
+      <div class="service-chip" onclick="toggleService(this)"><span class="service-chip-icon">👶</span><span class="en">Nanny</span><span class="am">አሳዳጊ</span></div>
+      <div class="service-chip" onclick="toggleService(this)"><span class="service-chip-icon">🌿</span><span class="en">Gardening</span><span class="am">የአትክልት እንክብካቤ</span></div>
+      <div class="service-chip" onclick="toggleService(this)"><span class="service-chip-icon">🛒</span><span class="en">Shopping</span><span class="am">ግዢ</span></div>
     </div>
 
-    <div class="card ks-reveal">
-      <div class="card-title">📅 Contract Duration</div>
-      <div class="duration-grid">
-        <div class="dur-btn active" onclick="setDuration(1, this)">1 Month<small>Trial</small></div>
-        <div class="dur-btn" onclick="setDuration(3, this)">3 Months<small>Popular</small></div>
-        <div class="dur-btn" onclick="setDuration(6, this)">6 Months<small>Save 5%</small></div>
-        <div class="dur-btn" onclick="setDuration(12, this)">1 Year<small>Save 10%</small></div>
-      </div>
-      <div style="margin-top:16px;">
-        <div class="form-label">Start date</div>
-        <input type="date" class="form-input" id="start-date" onchange="calcTotal()" />
-      </div>
+    <!-- 200 ETB fee notice -->
+    <div class="fee-notice">
+      <span style="font-size:18px;">🏢</span>
+      <div><strong>200 ETB Kebet service fee</strong> <span class="en">included — one-time per booking</span><span class="am">ተካትቷል — በጥያቄ አንድ ጊዜ</span></div>
     </div>
 
-    <div class="card ks-reveal">
-      <div class="card-title">🧹 Duties & Services</div>
-      <div class="service-option"><input type="checkbox" id="s1" checked><span class="service-icon">🧹</span><label for="s1">House Cleaning (daily)</label></div>
-      <div class="service-option"><input type="checkbox" id="s2" checked><span class="service-icon">🍳</span><label for="s2">Cooking (Ethiopian & other food)</label></div>
-      <div class="service-option"><input type="checkbox" id="s3"><span class="service-icon">👶</span><label for="s3">Child Care / Nanny</label></div>
-      <div class="service-option"><input type="checkbox" id="s4" checked><span class="service-icon">👕</span><label for="s4">Laundry & Ironing</label></div>
-      <div class="service-option"><input type="checkbox" id="s5"><span class="service-icon">🛒</span><label for="s5">Grocery Shopping</label></div>
-      <div class="service-option"><input type="checkbox" id="s6"><span class="service-icon">🍼</span><label for="s6">Baby / Infant care</label></div>
+    <!-- Booking summary -->
+    <div class="summary-row">
+      <span><span class="en">Salary</span><span class="am">ደሞዝ</span></span>
+      <span class="val" id="sum-salary">3,500 ETB × 1 month</span>
+    </div>
+    <div class="summary-row">
+      <span><span class="en">Kebet fee</span><span class="am">የከቤት ክፍያ</span></span>
+      <span class="val" style="color:#c87800;">200 ETB</span>
+    </div>
+    <div class="summary-total">
+      <span><span class="en">Total due</span><span class="am">ጠቅላላ ክፍያ</span> <span class="discount-tag" id="discount-tag" style="display:none;"></span></span>
+      <span class="val" id="sum-total">3,700 ETB</span>
     </div>
 
-    <div class="card ks-reveal">
-      <div class="card-title">🏠 What You Provide</div>
-      <div class="provides-grid">
-        <div class="provides-item"><span class="provides-icon">🛏️</span><div><div class="provides-text">Private room</div><div class="provides-sub">A room to sleep safely</div></div></div>
-        <div class="provides-item"><span class="provides-icon">🍽️</span><div><div class="provides-text">3 meals daily</div><div class="provides-sub">Breakfast, lunch, dinner</div></div></div>
-        <div class="provides-item"><span class="provides-icon">💧</span><div><div class="provides-text">Water & electricity</div><div class="provides-sub">Included in home</div></div></div>
-        <div class="provides-item"><span class="provides-icon">📅</span><div><div class="provides-text">1 day off/week</div><div class="provides-sub">Usually Sunday</div></div></div>
-        <div class="provides-item"><span class="provides-icon">🏥</span><div><div class="provides-text">Basic health care</div><div class="provides-sub">Clinic visits if sick</div></div></div>
-        <div class="provides-item"><span class="provides-icon">📞</span><div><div class="provides-text">Phone access</div><div class="provides-sub">Contact her family</div></div></div>
-      </div>
+    <!-- Not logged in -->
+    <div class="not-logged-in" id="not-logged-in">
+      <span class="en">You must <a href="signin.html">sign in</a> to book a worker.</span>
+      <span class="am"><a href="signin.html">ይግቡ</a> ሰራተኛ ለማስያዝ።</span>
     </div>
 
-    <div class="card ks-reveal">
-      <div class="card-title">🙏 Worker Rights</div>
-      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Worker can leave anytime if she feels unsafe or mistreated</div></div>
-      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Salary must be paid on time every month — no delays</div></div>
-      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">No physical punishment or shouting — zero tolerance</div></div>
-      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">She keeps her ID and phone at all times</div></div>
-      <div class="rights-item"><span class="rights-icon">✅</span><div class="rights-text">Kebet can be contacted by the worker anytime</div></div>
-    </div>
-
-    <div class="card ks-reveal">
-      <div class="card-title">📍 Your Home Address</div>
-      <div class="form-group">
-        <div class="form-label">Sub-city</div>
-        <select class="form-select" id="subcity">
-          <option value="">Select sub-city</option>
-          <option>Bole</option><option>Kirkos</option><option>Yeka</option>
-          <option>Arada</option><option>Lideta</option><option>Kazanchis</option>
-          <option>Piassa</option><option>Kolfe Keranio</option><option>Gulele</option>
-          <option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
-        </select>
-      </div>
-      <div class="row2">
-        <div class="form-group">
-          <div class="form-label">Woreda</div>
-          <input type="text" class="form-input" id="woreda" placeholder="e.g. Woreda 3" />
-        </div>
-        <div class="form-group">
-          <div class="form-label">House number</div>
-          <input type="text" class="form-input" id="houseno" placeholder="e.g. 045" />
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Landmark</div>
-        <input type="text" class="form-input" id="landmark" placeholder="e.g. Near Edna Mall, blue gate" />
-      </div>
-    </div>
-
-    <div class="card ks-reveal">
-      <div class="card-title">📋 Agreement</div>
-      <div class="rule-item"><span class="rule-icon">📌</span>1 month notice required from both sides before ending contract</div>
-      <div class="rule-item"><span class="rule-icon">📌</span>Salary paid at end of each month</div>
-      <div class="rule-item"><span class="rule-icon">📌</span>Kebet mediates any dispute between owner and worker</div>
-      <div style="margin-top:14px; display:flex; align-items:flex-start; gap:10px;">
-        <input type="checkbox" id="agree" style="accent-color:#1a6b3c; width:16px; height:16px; margin-top:2px; flex-shrink:0;">
-        <label for="agree" style="font-size:13px; color:#555; line-height:1.6; cursor:pointer;">I have read and agree to the worker rights, house rules and <a href="#" style="color:#1a6b3c; font-weight:600;">Kebet Terms of Service</a></label>
-      </div>
-    </div>
+    <!-- Error -->
+    <div class="error-bar" id="error-bar"></div>
 
   </div>
 
-  <div class="right-col">
-    <div class="summary-card">
-      <div class="summary-title">📋 Booking Summary</div>
-      <div class="summary-worker">
-        <div class="sum-av" id="sum-av">SA</div>
-        <div><div class="sum-name" id="sum-name">Sara Alemu</div><div class="sum-role">Live-in · የቤት ሰራተኛ</div></div>
-      </div>
-      <div class="sum-row"><span><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
-      <div class="sum-row"><span>Contract</span><span id="sum-duration">1 month</span></div>
-      <div class="sum-row"><span>Monthly salary</span><span id="sum-rate">3,500 ETB</span></div>
-      <div class="sum-row"><span>🏢 Kebet service fee</span><span style="color:#c87800; font-weight:700;">200 ETB</span></div>
-      <div class="sum-divider"></div>
-      <div class="sum-total"><span id="sum-label">Total (incl. fee)</span><span id="sum-total">3,700 ETB</span></div>
-      <div class="sum-note" id="sum-discount"></div>
-      <div style="background:#fff5e0;border:1px solid #f0d080;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#a06000;line-height:1.5;">
-        ℹ️ A one-time <strong>200 ETB Kebet service fee</strong> is added per booking. This supports the platform and worker verification.
-      </div>
-      <div class="not-logged-in" id="not-logged-in">
-        You must <a href="signin.html">sign in</a> to book a worker!
-      </div>
-      <button class="confirm-btn" id="confirm-btn" onclick="confirmBooking()">✅ Confirm Booking</button>
-      <div class="safe-note">🔒 Protected by Kebet<br/>All workers verified before entering your home.</div>
-    </div>
+  <!-- Footer actions -->
+  <div class="modal-footer">
+    <button class="btn-cancel" onclick="window.history.back()">
+      <span class="en">Cancel</span><span class="am">ሰርዝ</span>
+    </button>
+    <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()" disabled>
+      <span class="en">Confirm Booking ✓</span><span class="am">ቦታ አስያዝ ✓</span>
+    </button>
   </div>
+
 </div>
 
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-icon">🎉</div>
-    <div class="modal-title">Booking Confirmed!</div>
-    <div class="modal-sub" id="modal-sub">Your booking has been saved! The worker will be notified and will contact you within 24 hours.<br/><br/>ወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹</div>
-    <button class="modal-btn" onclick="window.location.href='dashboard-owner.html'">Go to Dashboard</button>
+<!-- Success overlay -->
+<div class="overlay" id="success-overlay">
+  <div class="success-modal">
+    <div class="success-icon">🎉</div>
+    <div class="success-title"><span class="en">Booking Sent!</span><span class="am">ቦታ ተያዘ!</span></div>
+    <div class="success-sub" id="success-sub">Your request has been sent. The worker will contact you within 24 hours.<br/><br/>ወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹</div>
+    <button class="success-btn" onclick="window.location.href='dashboard-owner.html'">
+      <span class="en">Go to Dashboard</span><span class="am">ወደ ዳሽቦርድ</span>
+    </button>
   </div>
 </div>
 
@@ -297,34 +474,35 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  const SERVICE_FEE = 200;
   let salary = 3500;
   let months = 1;
   let currentUser = null;
   let currentUserData = null;
 
-  // Get worker info from URL params
+  // Read worker info from URL params
   const params = new URLSearchParams(window.location.search);
-  const workerName = params.get('name') || 'Sara Alemu';
-  const workerRole = params.get('role') || 'Cleaner · Nanny · Cook';
-  const workerId = params.get('id') || 'worker1';
+  const workerName = params.get('name') || 'Etenesh Jenbere';
+  const workerRole = params.get('role') || 'Cooking';
+  const workerLocation = params.get('location') || 'Lideta';
+  const workerId = params.get('id') || '';
   const workerInitials = workerName.split(' ').map(n => n[0]).join('').toUpperCase();
 
-  document.getElementById('worker-name').textContent = workerName;
-  document.getElementById('worker-role').textContent = workerRole;
   document.getElementById('worker-av').textContent = workerInitials;
-  document.getElementById('sum-name').textContent = workerName;
-  document.getElementById('sum-av').textContent = workerInitials;
+  document.getElementById('worker-name').textContent = workerName;
+  document.getElementById('worker-meta').textContent = workerRole + ' · ' + workerLocation;
 
-  // Check if user is logged in
+  // Auth check
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
         currentUserData = userDoc.data();
-        // Pre-fill location if available
-        if (currentUserData.location) {
-          document.getElementById('subcity').value = currentUserData.location;
+        if (currentUserData.userType === 'worker') {
+          // Workers can't book
+          showError('Workers cannot make bookings. Please sign in as a house owner.');
+          return;
         }
       }
       document.getElementById('not-logged-in').style.display = 'none';
@@ -335,80 +513,63 @@
     }
   });
 
-  window.setSalary = function(amount, btn) {
-    salary = amount;
-    document.getElementById('custom-salary').value = '';
-    document.querySelectorAll('.salary-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    calcTotal();
-  }
-
-  window.setCustomSalary = function(val) {
-    if (val && parseInt(val) > 0) {
-      salary = parseInt(val);
-      document.querySelectorAll('.salary-btn').forEach(b => b.classList.remove('active'));
-      calcTotal();
-    }
-  }
-
+  // Duration picker
   window.setDuration = function(m, btn) {
     months = m;
-    document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.contract-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     calcTotal();
   }
 
-  const SERVICE_FEE = 200; // Kebet one-time service fee per booking (ETB)
-
-  window.calcTotal = function() {
-    let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    let salaryTotal = Math.round(salary * months * discount);
-    let grandTotal = salaryTotal + SERVICE_FEE;
-    let discountText = '';
-    if (months >= 12) discountText = '🎉 10% discount applied on salary!';
-    else if (months >= 6) discountText = '🎉 5% discount applied on salary!';
-    document.getElementById('sum-duration').textContent = months + (months === 1 ? ' month' : ' months');
-    document.getElementById('sum-rate').textContent = salary.toLocaleString() + ' ETB/month';
-    document.getElementById('sum-label').textContent = 'Total (' + months + (months === 1 ? ' mo' : ' mos') + ' + 200 fee)';
-    document.getElementById('sum-total').textContent = grandTotal.toLocaleString() + ' ETB';
-    document.getElementById('sum-discount').textContent = discountText;
+  // Salary input
+  window.setSalaryCustom = function(val) {
+    const v = parseInt(val);
+    if (v > 0) { salary = v; calcTotal(); }
   }
 
+  // Service chip toggle
+  window.toggleService = function(chip) {
+    chip.classList.toggle('active');
+  }
+
+  // Recalculate total
+  window.calcTotal = function() {
+    const discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
+    const salaryTotal = Math.round(salary * months * discount);
+    const grandTotal = salaryTotal + SERVICE_FEE;
+    const mo = months === 1 ? 'month' : 'months';
+    document.getElementById('sum-salary').textContent =
+      salary.toLocaleString() + ' ETB × ' + months + ' ' + mo +
+      (discount < 1 ? ' (−' + Math.round((1 - discount) * 100) + '%)' : '');
+    document.getElementById('sum-total').textContent = grandTotal.toLocaleString() + ' ETB';
+    const tag = document.getElementById('discount-tag');
+    if (months >= 12) { tag.textContent = '10% off'; tag.style.display = 'inline'; }
+    else if (months >= 6) { tag.textContent = '5% off'; tag.style.display = 'inline'; }
+    else { tag.style.display = 'none'; }
+  }
+
+  // Confirm booking
   window.confirmBooking = async function() {
     if (!currentUser) {
-      alert('Please sign in first to book a worker!');
       window.location.href = 'signin.html';
       return;
     }
-    if (!document.getElementById('agree').checked) {
-      alert('Please agree to the worker rights and terms.');
-      return;
-    }
-    if (!document.getElementById('subcity').value) {
-      alert('Please enter your sub-city.');
-      return;
-    }
-    if (!document.getElementById('start-date').value) {
-      alert('Please select a start date.');
+    const startDate = document.getElementById('start-date').value;
+    if (!startDate) {
+      showError('Please select a start date.');
       return;
     }
 
     const btn = document.getElementById('confirm-btn');
-    btn.textContent = 'Saving booking...';
+    btn.textContent = 'Saving...';
     btn.disabled = true;
 
-    // Get selected services
-    const services = [];
-    if (document.getElementById('s1').checked) services.push('House Cleaning');
-    if (document.getElementById('s2').checked) services.push('Cooking');
-    if (document.getElementById('s3').checked) services.push('Child Care');
-    if (document.getElementById('s4').checked) services.push('Laundry & Ironing');
-    if (document.getElementById('s5').checked) services.push('Grocery Shopping');
-    if (document.getElementById('s6').checked) services.push('Baby Care');
+    const services = Array.from(document.querySelectorAll('.service-chip.active'))
+      .map(c => c.querySelector('.en')?.textContent || c.textContent.trim());
 
-    let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
-    let salaryTotal = Math.round(salary * months * discount);
-    let totalAmount = salaryTotal + SERVICE_FEE; // includes 200 ETB Kebet service fee
+    const discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
+    const salaryTotal = Math.round(salary * months * discount);
+    const totalAmount = salaryTotal + SERVICE_FEE;
 
     try {
       await addDoc(collection(db, 'bookings'), {
@@ -416,33 +577,37 @@
         ownerName: (currentUserData?.firstName || '') + ' ' + (currentUserData?.lastName || ''),
         ownerEmail: currentUser.email,
         ownerPhone: currentUserData?.phone || '',
-        ownerLocation: document.getElementById('subcity').value,
-        ownerWoreda: document.getElementById('woreda').value,
-        ownerHouseNo: document.getElementById('houseno').value,
-        ownerLandmark: document.getElementById('landmark').value,
+        ownerLocation: currentUserData?.location || '',
         workerId: workerId,
         workerName: workerName,
         workerRole: workerRole,
+        workerLocation: workerLocation,
         monthlySalary: salary,
         contractMonths: months,
         serviceFee: SERVICE_FEE,
         salaryTotal: salaryTotal,
         totalAmount: totalAmount,
-        startDate: document.getElementById('start-date').value,
+        startDate: startDate,
         services: services,
         status: 'pending',
         createdAt: new Date().toISOString()
       });
 
-      document.getElementById('modal-sub').textContent =
-        'Your booking for ' + workerName + ' has been saved! She will be notified and contact you within 24 hours.\n\nወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹';
-      document.getElementById('modal').classList.add('show');
+      document.getElementById('success-sub').innerHTML =
+        'Your booking for <strong>' + workerName + '</strong> has been sent! She will contact you within 24 hours.<br/><br/>ወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹';
+      document.getElementById('success-overlay').classList.add('show');
 
-    } catch (error) {
-      btn.textContent = '✅ Confirm Booking';
+    } catch (err) {
+      btn.innerHTML = '<span class="en">Confirm Booking ✓</span><span class="am">ቦታ አስያዝ ✓</span>';
       btn.disabled = false;
-      alert('Error saving booking: ' + error.message);
+      showError('Error: ' + err.message);
     }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-bar');
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
   }
 
   calcTotal();
