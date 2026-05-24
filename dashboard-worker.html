@@ -258,7 +258,7 @@
   function renderJobs(bookings) {
     const list = document.getElementById('jobs-list');
     if (bookings.length === 0) {
-      list.innerHTML = `<div class="card ks-reveal"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title"><span class="en">No job offers yet</span><span class="am">እስካሁን የስራ ቅናሽ የለም</span></div><div class="no-jobs-sub"><span class="en">Your profile is live! House owners can find and book you on Kebet.</span><span class="am">መገለጫዎ ንቁ ነው! የቤት ባለቤቶች በከቤት ላይ ሊያገኙዎ እና ሊይዙዎ ይችላሉ።</span></div></div></div>`;
+      list.innerHTML = `<div class="card"><div class="no-jobs"><div class="no-jobs-icon">🔍</div><div class="no-jobs-title"><span class="en">No job offers yet</span><span class="am">እስካሁን የስራ ቅናሽ የለም</span></div><div class="no-jobs-sub"><span class="en">Your profile is live! House owners can find and book you on Kebet.</span><span class="am">መገለጫዎ ንቁ ነው! የቤት ባለቤቶች በከቤት ላይ ሊያገኙዎ እና ሊይዙዎ ይችላሉ።</span></div></div></div>`;
       return;
     }
     let active = 0;
@@ -294,7 +294,7 @@
           <button class="btn-sm-outline" onclick="window.location.href='help.html'">📞 Help & Rights</button>
         </div>` : '';
       html += `
-        <div class="job-offer-card ks-reveal">
+        <div class="job-offer-card">
           <div class="job-offer-top">
             <div class="job-house-av">🏡</div>
             <div style="flex:1;">
