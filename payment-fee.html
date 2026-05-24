@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Service Fee Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #111; min-height: 100vh; }
+
+    /* LANG */
+    body.am-mode .en { display: none !important; }
+    body.am-mode .am { display: inline !important; }
+    body:not(.am-mode) .am { display: none !important; }
+    body:not(.am-mode) .en { display: inline !important; }
+
+    /* NAV */
+    nav { background: #1a6b3c; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 38px; height: 38px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .nav-logo-text { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+    .nav-logo-am { font-size: 11px; color: #f0a500; font-weight: 700; }
+    .back-btn { background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .lang-toggle { display: flex; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 3px; }
+    .lang-btn { padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 800; cursor: pointer; border: none; background: transparent; color: rgba(255,255,255,0.7); }
+    .lang-btn.active { background: #fff; color: #1a6b3c; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+
+    /* PAGE */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* TOP BANNER */
+    .top-banner { background: linear-gradient(135deg, #1a6b3c, #2d8a56); border-radius: 20px; padding: 32px; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
+    .banner-icon { font-size: 48px; flex-shrink: 0; }
+    .banner-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+    .banner-sub { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+    .banner-price { margin-left: auto; text-align: center; flex-shrink: 0; }
+    .price-big { font-size: 48px; font-weight: 900; color: #f0a500; line-height: 1; }
+    .price-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+    /* VS AGENT */
+    .vs-bar { background: #fff5e0; border: 2px solid #f0a500; border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .vs-item { text-align: center; flex: 1; }
+    .vs-label { font-size: 12px; color: #888; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .vs-price { font-size: 24px; font-weight: 900; }
+    .vs-price.old { color: #cc2222; text-decoration: line-through; }
+    .vs-price.new { color: #1a6b3c; }
+    .vs-divider { font-size: 28px; color: #f0a500; font-weight: 900; }
+    .vs-save { background: #1a6b3c; color: #fff; font-size: 12px; font-weight: 800; padding: 6px 16px; border-radius: 20px; margin-top: 6px; display: inline-block; }
+
+    /* WORKER SUMMARY */
+    .worker-summary { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
+    .w-av { width: 56px; height: 56px; border-radius: 14px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; flex-shrink: 0; }
+    .w-name { font-size: 16px; font-weight: 800; color: #111; }
+    .w-role { font-size: 13px; color: #888; margin: 2px 0; }
+    .w-salary { font-size: 13px; color: #1a6b3c; font-weight: 700; }
+    .w-verified { background: #e8f5ee; color: #1a6b3c; font-size: 11px; padding: 4px 10px; border-radius: 8px; margin-left: auto; font-weight: 700; }
+
+    /* WHAT YOU GET */
+    .what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .what-item { background: #fff; border-radius: 14px; padding: 16px; border: 1px solid #eee; display: flex; gap: 12px; align-items: flex-start; }
+    .what-icon { width: 38px; height: 38px; border-radius: 10px; background: #e8f5ee; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .what-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .what-desc { font-size: 12px; color: #888; line-height: 1.5; }
+
+    /* PAYMENT METHODS */
+    .section-title { font-size: 16px; font-weight: 800; color: #111; margin-bottom: 14px; }
+    .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .pay-method { background: #fff; border: 2px solid #eee; border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .pay-method:hover { border-color: #1a6b3c; background: #f9fff5; }
+    .pay-method.selected { border-color: #1a6b3c; background: #e8f5ee; }
+    .pay-icon { font-size: 36px; margin-bottom: 10px; }
+    .pay-name { font-size: 15px; font-weight: 800; color: #111; margin-bottom: 4px; }
+    .pay-detail { font-size: 12px; color: #888; }
+    .pay-number { font-size: 18px; font-weight: 900; color: #1a6b3c; margin-top: 8px; }
+
+    /* INSTRUCTIONS */
+    .instructions { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #eee; margin-bottom: 24px; display: none; }
+    .instructions.show { display: block; }
+    .inst-title { font-size: 15px; font-weight: 800; color: #111; margin-bottom: 16px; }
+    .inst-step { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+    .inst-num { width: 28px; height: 28px; background: #1a6b3c; color: #fff; border-radius: 50%; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .inst-text { font-size: 14px; color: #444; line-height: 1.6; }
+    .inst-text strong { color: #1a6b3c; font-size: 16px; }
+    .copy-btn { background: #e8f5ee; color: #1a6b3c; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-left: 8px; }
+    .copy-btn:hover { background: #1a6b3c; color: #fff; }
+
+    /* UPLOAD PROOF */
+    .upload-area { background: #fff; border: 2px dashed #ccc; border-radius: 16px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+    .upload-area:hover { border-color: #1a6b3c; background: #f9fff5; }
+    .upload-area.has-file { border-color: #1a6b3c; background: #e8f5ee; border-style: solid; }
+    .upload-icon { font-size: 40px; margin-bottom: 12px; }
+    .upload-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .upload-sub { font-size: 13px; color: #888; }
+    .upload-success { font-size: 14px; color: #1a6b3c; font-weight: 700; margin-top: 8px; }
+
+    /* CONFIRM */
+    .confirm-card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #eee; margin-bottom: 20px; }
+    .confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f0; font-size: 14px; }
+    .confirm-row:last-child { border-bottom: none; }
+    .confirm-label { color: #888; }
+    .confirm-val { font-weight: 700; color: #111; }
+    .confirm-val.green { color: #1a6b3c; font-size: 18px; }
+
+    .submit-btn { width: 100%; background: linear-gradient(135deg, #1a6b3c, #2d8a56); color: #fff; border: none; padding: 18px; border-radius: 14px; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(26,107,60,0.3); }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(26,107,60,0.4); }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .safety-note { text-align: center; font-size: 12px; color: #aaa; margin-top: 14px; line-height: 1.7; }
+
+    /* SUCCESS MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(4px); }
+    .modal-overlay.show { display: flex; }
+    .modal { background: #fff; border-radius: 24px; padding: 48px 40px; max-width: 420px; width: 90%; text-align: center; animation: popIn 0.4s ease; }
+    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-icon { font-size: 64px; margin-bottom: 16px; }
+    .modal-title { font-size: 24px; font-weight: 900; color: #111; margin-bottom: 10px; }
+    .modal-sub { font-size: 15px; color: #666; line-height: 1.8; margin-bottom: 28px; }
+    .modal-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 36px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; }
+
+    /* PENDING REVIEW */
+    .pending-banner { background: #fff5e0; border: 2px solid #f0a500; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #555; display: none; }
+    .pending-banner.show { display: flex; }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .top-banner { flex-direction: column; text-align: center; }
+      .banner-price { margin-left: 0; }
+      .what-grid, .pay-methods { grid-template-columns: 1fr; }
+      .vs-bar { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">
+    <div class="nav-logo-icon">🏠</div>
+    <div>
+      <div class="nav-logo-text">KEBET</div>
+      <div class="nav-logo-am">ከቤት</div>
+    </div>
+  </a>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+    </div>
+    <button class="back-btn" onclick="history.back()">← <span class="en">Back</span><span class="am">ተመለስ</span></button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- TOP BANNER -->
+  <div class="top-banner">
+    <div class="banner-icon">🏠</div>
+    <div>
+      <div class="banner-title"><span class="en">One-Time Service Fee</span><span class="am">አንድ ጊዜ የአገልግሎት ክፍያ</span></div>
+      <div class="banner-sub">
+        <span class="en">Pay once to connect with your verified house worker. No monthly fees. No hidden charges. Ever.</span>
+        <span class="am">ከተረጋገጠ ሰራተኛዎ ጋር ለመገናኘት አንድ ጊዜ ይክፈሉ። ወርሃዊ ክፍያ የለም። ምንም ሚስጥራዊ ክፍያ የለም።</span>
+      </div>
+    </div>
+    <div class="banner-price">
+      <div class="price-big">200</div>
+      <div class="price-label"><span class="en">ETB — One time only</span><span class="am">ብር — አንድ ጊዜ ብቻ</span></div>
+    </div>
+  </div>
+
+  <!-- VS AGENT -->
+  <div class="vs-bar">
+    <div class="vs-item">
+      <div class="vs-label"><span class="en">Traditional Agent</span><span class="am">ባህላዊ ደላላ</span></div>
+      <div class="vs-price old">3,500+ ETB</div>
+      <div style="font-size:12px; color:#cc2222; margin-top:4px;"><span class="en">1 full month salary!</span><span class="am">1 ሙሉ ወር ደሞዝ!</span></div>
+    </div>
+    <div class="vs-divider">VS</div>
+    <div class="vs-item">
+      <div class="vs-label">Kebet</div>
+      <div class="vs-price new">200 ETB</div>
+      <div class="vs-save"><span class="en">Save 3,300+ ETB! 🔥</span><span class="am">3,300+ ብር ይቆጥቡ! 🔥</span></div>
+    </div>
+  </div>
+
+  <!-- WORKER SUMMARY -->
+  <div class="section-title"><span class="en">👤 You are hiring</span><span class="am">👤 እርስዎ የሚቅጥሩት</span></div>
+  <div class="worker-summary">
+    <div class="w-av" id="worker-av">SA</div>
+    <div>
+      <div class="w-name" id="worker-name">Sara Alemu</div>
+      <div class="w-role" id="worker-role">Cleaner · Nanny · Cook</div>
+      <div class="w-salary" id="worker-salary">💰 3,500 ETB/month agreed salary</div>
+    </div>
+    <div class="w-verified">✓ <span class="en">Verified</span><span class="am">የተረጋገጠ</span></div>
+  </div>
+
+  <!-- WHAT YOU GET -->
+  <div class="section-title"><span class="en">✅ What you get for 200 ETB</span><span class="am">✅ በ200 ብር የሚያገኙት</span></div>
+  <div class="what-grid">
+    <div class="what-item">
+      <div class="what-icon">📞</div>
+      <div>
+        <div class="what-title"><span class="en">Worker's contact unlocked</span><span class="am">የሰራተኛ ስልክ ይከፈታል</span></div>
+        <div class="what-desc"><span class="en">Full phone number and address revealed after payment</span><span class="am">ክፍያ ከተደረገ በኋላ ሙሉ ስልክ ቁጥር እና አድራሻ ይከፈታል</span></div>
+      </div>
+    </div>
+    <div class="what-item">
+      <div class="what-icon">💬</div>
+      <div>
+        <div class="what-title"><span class="en">Direct chat unlocked</span><span class="am">ቀጥታ ቻት ይከፈታል</span></div>
+        <div class="what-desc"><span class="en">Message the worker directly through the Kebet platform</span><span class="am">በከቤት መድረክ በኩል ቀጥታ ይላኩ</span></div>
+      </div>
+    </div>
+    <div class="what-item">
+      <div class="what-icon">📋</div>
+      <div>
+        <div class="what-title"><span class="en">Salary tracking dashboard</span><span class="am">የደሞዝ ክትትል ዳሽቦርድ</span></div>
+        <div class="what-desc"><span class="en">Track monthly salary payments and get reminders</span><span class="am">ወርሃዊ ደሞዝ ይከታተሉ እና ማሳሰቢያዎች ያግኙ</span></div>
+      </div>
+    </div>
+    <div class="what-item">
+      <div class="what-icon">🛡️</div>
+      <div>
+        <div class="what-title"><span class="en">Kebet protection</span><span class="am">የከቤት ጥበቃ</span></div>
+        <div class="what-desc"><span class="en">We mediate disputes and support both sides throughout</span><span class="am">ሁለቱ ወገኖችን ሙሉ ጊዜ እንደግፋለን</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT METHOD -->
+  <div class="section-title"><span class="en">💳 Choose payment method</span><span class="am">💳 የክፍያ ዘዴ ይምረጡ</span></div>
+  <div class="pay-methods">
+    <div class="pay-method" id="pm-telebirr" onclick="selectMethod('telebirr')">
+      <div class="pay-icon">📱</div>
+      <div class="pay-name">Telebirr</div>
+      <div class="pay-detail"><span class="en">Send to our Telebirr number</span><span class="am">ወደ ቴሌብር ቁጥራችን ይላኩ</span></div>
+      <div class="pay-number">0979 559 549</div>
+    </div>
+    <div class="pay-method" id="pm-cbe" onclick="selectMethod('cbe')">
+      <div class="pay-icon">🏦</div>
+      <div class="pay-name">CBE Birr</div>
+      <div class="pay-detail"><span class="en">Send to our CBE account</span><span class="am">ወደ CBE አካውንታችን ይላኩ</span></div>
+      <div class="pay-number">1000xxxxxxxx</div>
+    </div>
+  </div>
+
+  <!-- INSTRUCTIONS -->
+  <div class="instructions" id="instructions">
+    <div class="inst-title" id="inst-title">📱 How to pay via Telebirr</div>
+    <div id="inst-steps"></div>
+  </div>
+
+  <!-- PENDING BANNER -->
+  <div class="pending-banner" id="pending-banner">
+    <span style="font-size:20px;">⏳</span>
+    <span><strong><span class="en">Previous payment under review</span><span class="am">ቀዳሚ ክፍያ በግምገማ ላይ</span></strong> — <span class="en">We will confirm within 24 hours</span><span class="am">በ24 ሰዓት ውስጥ እናረጋግጣለን</span></span>
+  </div>
+
+  <!-- UPLOAD PROOF -->
+  <div class="section-title"><span class="en">📸 Upload payment screenshot</span><span class="am">📸 የክፍያ ስክሪን ምስል አስገቡ</span></div>
+  <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+    <div class="upload-icon" id="upload-icon">📸</div>
+    <div class="upload-title" id="upload-title"><span class="en">Tap to upload your screenshot</span><span class="am">ምስሉን ለመጫን ይጫኑ</span></div>
+    <div class="upload-sub"><span class="en">After sending payment take a screenshot and upload it here</span><span class="am">ክፍያ ከላኩ በኋላ ስክሪን ምስል ወስደው እዚህ ያስገቡ</span></div>
+    <div class="upload-success" id="upload-success" style="display:none;">✅ <span class="en">Screenshot uploaded!</span><span class="am">ምስሉ ተስቀሏል!</span></div>
+    <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleUpload(this)" />
+  </div>
+
+  <!-- CONFIRM -->
+  <div class="section-title"><span class="en">📋 Payment summary</span><span class="am">📋 የክፍያ ማጠቃለያ</span></div>
+  <div class="confirm-card">
+    <div class="confirm-row">
+      <span class="confirm-label"><span class="en">Service fee</span><span class="am">የአገልግሎት ክፍያ</span></span>
+      <span class="confirm-val">200 ETB</span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-label"><span class="en">Worker</span><span class="am">ሰራተኛ</span></span>
+      <span class="confirm-val" id="confirm-worker">Sara Alemu</span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-label"><span class="en">Payment method</span><span class="am">የክፍያ ዘዴ</span></span>
+      <span class="confirm-val" id="confirm-method"><span class="en">Not selected</span><span class="am">አልተመረጠም</span></span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-label"><span class="en">Screenshot</span><span class="am">ስክሪን ምስል</span></span>
+      <span class="confirm-val" id="confirm-screenshot"><span class="en">Not uploaded</span><span class="am">አልተጫነም</span></span>
+    </div>
+    <div class="confirm-row">
+      <span class="confirm-label"><span class="en">Total</span><span class="am">ጠቅላላ</span></span>
+      <span class="confirm-val green">200 ETB</span>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitPayment()" disabled>
+    <span class="en">✅ Submit Payment — 200 ETB</span>
+    <span class="am">✅ ክፍያ ያስገቡ — 200 ብር</span>
+  </button>
+  <div class="safety-note">
+    🔒 <span class="en">Your payment is reviewed by Kebet within 24 hours. Worker contact is unlocked immediately after confirmation.</span>
+    <span class="am">ክፍያዎ በ24 ሰዓት ውስጥ በከቤት ይፈተሻል። ከተረጋገጠ በኋላ ወዲያውኑ የሰራተኛ ስልክ ይከፈታል።</span>
+  </div>
+
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title"><span class="en">Payment Submitted!</span><span class="am">ክፍያ ቀርቧል!</span></div>
+    <div class="modal-sub">
+      <span class="en">Thank you! We will review your payment screenshot within <strong>24 hours</strong> and unlock the worker's contact details. You will receive a notification when confirmed.</span>
+      <span class="am">አመሰግናለን! በ<strong>24 ሰዓት</strong> ውስጥ የክፍያ ስክሪን ምስልዎን እናፈትሻለን እና የሰራተኛ ስልክ ቁጥር ይከፈታል። ሲረጋገጥ ማሳሰቢያ ይደርስዎታል።</span>
+    </div>
+    <button class="modal-btn" onclick="window.location.href='dashboard-owner.html'">
+      <span class="en">Go to Dashboard →</span><span class="am">ዳሽቦርድ ሂድ →</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // ── Language ──
+  let currentLang = localStorage.getItem('kebet-lang') || 'en';
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('kebet-lang', lang);
+    document.body.classList.toggle('am-mode', lang === 'am');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-am').classList.toggle('active', lang === 'am');
+  }
+  setLang(currentLang);
+
+  // ── Payment method ──
+  let selectedMethod = null;
+  let screenshotUploaded = false;
+
+  const instructions = {
+    telebirr: {
+      en: {
+        title: '📱 How to pay via Telebirr',
+        steps: [
+          'Open your <strong>Telebirr</strong> app on your phone',
+          'Tap <strong>"Send Money"</strong> or <strong>"ላክ"</strong>',
+          'Enter number: <strong>0979 559 549</strong> <button class="copy-btn" onclick="copyNum(\'0979559549\')">Copy</button>',
+          'Enter amount: <strong>200 ETB</strong>',
+          'Confirm and send — take a <strong>screenshot</strong> of the confirmation',
+          'Upload the screenshot below ⬇️'
+        ]
+      },
+      am: {
+        title: '📱 በቴሌብር እንዴት መክፈል እንደሚቻል',
+        steps: [
+          'በስልክዎ <strong>Telebirr</strong> አፕ ይክፈቱ',
+          '<strong>"ላክ"</strong> ወይም <strong>"Send Money"</strong> ይጫኑ',
+          'ቁጥር ያስገቡ: <strong>0979 559 549</strong> <button class="copy-btn" onclick="copyNum(\'0979559549\')">ቅዳ</button>',
+          'መጠን ያስገቡ: <strong>200 ብር</strong>',
+          'ያረጋግጡ እና ይላኩ — ማረጋገጫ <strong>ስክሪን ምስል</strong> ይውሰዱ',
+          'ስክሪን ምስሉን ከዚህ በታች ያስገቡ ⬇️'
+        ]
+      }
+    },
+    cbe: {
+      en: {
+        title: '🏦 How to pay via CBE Birr',
+        steps: [
+          'Open your <strong>CBE Birr</strong> app on your phone',
+          'Tap <strong>"Transfer"</strong> or <strong>"Send Money"</strong>',
+          'Enter account: <strong>1000xxxxxxxx</strong> <button class="copy-btn" onclick="copyNum(\'1000xxxxxxxx\')">Copy</button>',
+          'Enter amount: <strong>200 ETB</strong>',
+          'Add note: <strong>"Kebet service fee"</strong>',
+          'Take a <strong>screenshot</strong> and upload below ⬇️'
+        ]
+      },
+      am: {
+        title: '🏦 በCBE Birr እንዴት መክፈል እንደሚቻል',
+        steps: [
+          'በስልክዎ <strong>CBE Birr</strong> አፕ ይክፈቱ',
+          '<strong>"ዝውውር"</strong> ወይም <strong>"Send Money"</strong> ይጫኑ',
+          'አካውንት ያስገቡ: <strong>1000xxxxxxxx</strong> <button class="copy-btn" onclick="copyNum(\'1000xxxxxxxx\')">ቅዳ</button>',
+          'መጠን ያስገቡ: <strong>200 ብር</strong>',
+          'ማስታወሻ ያስገቡ: <strong>"Kebet service fee"</strong>',
+          'ስክሪን ምስል ወስደው ከዚህ በታች ያስገቡ ⬇️'
+        ]
+      }
+    }
+  };
+
+  function selectMethod(method) {
+    selectedMethod = method;
+    document.querySelectorAll('.pay-method').forEach(el => el.classList.remove('selected'));
+    document.getElementById('pm-' + method).classList.add('selected');
+
+    const lang = currentLang;
+    const data = instructions[method][lang === 'am' ? 'am' : 'en'];
+    document.getElementById('inst-title').textContent = data.title;
+    document.getElementById('inst-steps').innerHTML = data.steps.map((s, i) =>
+      `<div class="inst-step"><div class="inst-num">${i+1}</div><div class="inst-text">${s}</div></div>`
+    ).join('');
+    document.getElementById('instructions').classList.add('show');
+    document.getElementById('confirm-method').textContent = method === 'telebirr' ? 'Telebirr — 0979 559 549' : 'CBE Birr — 1000xxxxxxxx';
+    checkReady();
+  }
+
+  function copyNum(num) {
+    navigator.clipboard.writeText(num);
+    alert('✅ ' + num + ' copied!');
+  }
+
+  function handleUpload(input) {
+    if (input.files && input.files[0]) {
+      screenshotUploaded = true;
+      const area = document.getElementById('upload-area');
+      area.classList.add('has-file');
+      document.getElementById('upload-icon').textContent = '✅';
+      document.getElementById('upload-success').style.display = 'block';
+      document.getElementById('confirm-screenshot').innerHTML = '<span style="color:#1a6b3c;">✅ ' + input.files[0].name + '</span>';
+      checkReady();
+    }
+  }
+
+  function checkReady() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = !(selectedMethod && screenshotUploaded);
+  }
+
+  function submitPayment() {
+    document.getElementById('modal').classList.add('show');
+  }
+
+  // ── Get worker from URL params ──
+  const params = new URLSearchParams(window.location.search);
+  const workerName = params.get('worker') || 'Sara Alemu';
+  const workerRole = params.get('role') || 'Cleaner · Nanny · Cook';
+  const workerSalary = params.get('salary') || '3,500';
+  const initials = workerName.split(' ').map(n => n[0]).join('');
+
+  document.getElementById('worker-av').textContent = initials;
+  document.getElementById('worker-name').textContent = workerName;
+  document.getElementById('worker-role').textContent = workerRole;
+  document.getElementById('worker-salary').textContent = '💰 ' + workerSalary + ' ETB/month agreed salary';
+  document.getElementById('confirm-worker').textContent = workerName;
+</script>
+
+</body>
+</html>
