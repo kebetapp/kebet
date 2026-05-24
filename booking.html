@@ -83,6 +83,27 @@
     .confirm-btn:disabled { background: #aaa; cursor: not-allowed; }
     .safe-note { text-align: center; font-size: 11px; color: #aaa; line-height: 1.6; }
     .not-logged-in { background: #fff5e0; border: 1px solid #f0a500; border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 13px; color: #c87800; text-align: center; display: none; }
+    .fee-banner { background: linear-gradient(135deg, #fff8e8, #fff3d0); border: 2px solid #f0a500; border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }
+    .fee-banner-title { font-size: 15px; font-weight: 700; color: #c87800; margin-bottom: 6px; }
+    .fee-banner-amount { font-size: 32px; font-weight: 900; color: #c87800; margin-bottom: 6px; }
+    .fee-banner-sub { font-size: 12px; color: #888; line-height: 1.6; }
+    .payment-method { border: 2px solid #eee; border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+    .payment-method.active { border-color: #1a6b3c; background: #e8f5ee; }
+    .payment-method-top { display: flex; align-items: center; gap: 10px; }
+    .payment-method-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: #f5f5f0; }
+    .payment-method-name { font-size: 14px; font-weight: 700; color: #111; }
+    .payment-method-num { font-size: 12px; color: #888; font-family: monospace; letter-spacing: 1px; }
+    .payment-method-detail { margin-top: 12px; display: none; }
+    .payment-method.active .payment-method-detail { display: block; }
+    .copy-btn { background: #f5f5f0; border: 1px solid #ddd; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: #555; cursor: pointer; margin-top: 8px; }
+    .copy-btn:hover { background: #eee; }
+    .upload-area { border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; margin-top: 12px; cursor: pointer; transition: border 0.2s; }
+    .upload-area:hover { border-color: #1a6b3c; }
+    .upload-area input { display: none; }
+    .upload-preview { max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 10px; display: none; }
+    .fee-paid-check { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 14px; background: #e8f5ee; border-radius: 10px; }
+    .fee-paid-check input { accent-color: #1a6b3c; width: 16px; height: 16px; }
+    .fee-paid-check label { font-size: 13px; color: #1a6b3c; font-weight: 600; cursor: pointer; }
     .not-logged-in a { color: #1a6b3c; font-weight: 700; text-decoration: none; }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
     .modal-overlay.show { display: flex; }
@@ -231,6 +252,68 @@
       </div>
     </div>
 
+    <div class="card ks-reveal" id="fee-section">
+      <div class="card-title">💳 Kebet Service Fee — 200 ETB</div>
+
+      <div class="fee-banner">
+        <div class="fee-banner-title">📌 One-time platform fee</div>
+        <div class="fee-banner-amount">200 <span style="font-size:16px;font-weight:600;">ETB</span></div>
+        <div class="fee-banner-sub">
+          Paid once per booking. This covers worker verification, contract support, and Kebet mediation.<br/>
+          <strong>Pay via Telebirr or CBE, then upload your receipt below.</strong>
+        </div>
+      </div>
+
+      <!-- Telebirr -->
+      <div class="payment-method active" id="pm-telebirr" onclick="selectPayment('telebirr')">
+        <div class="payment-method-top">
+          <div class="payment-method-icon">📱</div>
+          <div>
+            <div class="payment-method-name">Telebirr</div>
+            <div class="payment-method-num">0979 559 549</div>
+          </div>
+          <div style="margin-left:auto; font-size:20px;" id="check-telebirr">✅</div>
+        </div>
+        <div class="payment-method-detail">
+          <div style="font-size:13px; color:#555; margin-bottom:6px;">Send <strong>200 ETB</strong> to this Telebirr number:</div>
+          <div style="font-size:22px; font-weight:800; color:#1a6b3c; letter-spacing:2px;">0979 559 549</div>
+          <button class="copy-btn" onclick="copyText('0979559549', event)">📋 Copy number</button>
+        </div>
+      </div>
+
+      <!-- CBE -->
+      <div class="payment-method" id="pm-cbe" onclick="selectPayment('cbe')">
+        <div class="payment-method-top">
+          <div class="payment-method-icon">🏦</div>
+          <div>
+            <div class="payment-method-name">CBE (Commercial Bank)</div>
+            <div class="payment-method-num">1000 4818 02214</div>
+          </div>
+          <div style="margin-left:auto; font-size:20px; display:none;" id="check-cbe">✅</div>
+        </div>
+        <div class="payment-method-detail">
+          <div style="font-size:13px; color:#555; margin-bottom:6px;">Transfer <strong>200 ETB</strong> to this CBE account:</div>
+          <div style="font-size:20px; font-weight:800; color:#1a6b3c; letter-spacing:2px;">1000481802214</div>
+          <button class="copy-btn" onclick="copyText('1000481802214', event)">📋 Copy account</button>
+        </div>
+      </div>
+
+      <!-- Upload receipt -->
+      <div style="margin-top:16px;">
+        <div class="form-label">📎 Upload payment screenshot / receipt</div>
+        <div class="upload-area" onclick="document.getElementById('receipt-file').click()">
+          <div id="upload-label">🖼️ Tap to upload screenshot<br/><span style="font-size:11px;color:#aaa;">PNG, JPG — max 5MB</span></div>
+          <input type="file" id="receipt-file" accept="image/*" onchange="previewReceipt(this)" />
+          <img id="upload-preview" class="upload-preview" />
+        </div>
+      </div>
+
+      <div class="fee-paid-check">
+        <input type="checkbox" id="fee-paid" />
+        <label for="fee-paid">I have paid the 200 ETB Kebet service fee</label>
+      </div>
+    </div>
+
     <div class="card ks-reveal">
       <div class="card-title">📋 Agreement</div>
       <div class="rule-item"><span class="rule-icon">📌</span>1 month notice required from both sides before ending contract</div>
@@ -254,9 +337,9 @@
       <div class="sum-row"><span><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
       <div class="sum-row"><span>Contract</span><span id="sum-duration">1 month</span></div>
       <div class="sum-row"><span>Monthly salary</span><span id="sum-rate">3,500 ETB</span></div>
-      <div class="sum-row"><span>Kebet fee</span><span>Free 🎉</span></div>
+      <div class="sum-row"><span>Kebet service fee</span><span style="color:#c87800; font-weight:700;">200 ETB</span></div>
       <div class="sum-divider"></div>
-      <div class="sum-total"><span id="sum-label">Total</span><span id="sum-total">3,500 ETB</span></div>
+      <div class="sum-total"><span id="sum-label">Worker Total</span><span id="sum-total">3,500 ETB</span></div>
       <div class="sum-note" id="sum-discount"></div>
       <div class="not-logged-in" id="not-logged-in">
         You must <a href="signin.html">sign in</a> to book a worker!
@@ -378,6 +461,11 @@
       alert('Please agree to the worker rights and terms.');
       return;
     }
+    if (!document.getElementById('fee-paid').checked) {
+      alert('⚠️ Please pay the 200 ETB Kebet service fee and check the box to confirm.');
+      document.getElementById('fee-section').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
     if (!document.getElementById('subcity').value) {
       alert('Please enter your sub-city.');
       return;
@@ -403,6 +491,17 @@
     let discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
     let totalAmount = Math.round(salary * months * discount);
 
+    // Get receipt file as base64 if uploaded
+    let receiptBase64 = null;
+    const fileInput = document.getElementById('receipt-file');
+    if (fileInput.files && fileInput.files[0]) {
+      receiptBase64 = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(fileInput.files[0]);
+      });
+    }
+
     try {
       await addDoc(collection(db, 'bookings'), {
         ownerId: currentUser.uid,
@@ -422,11 +521,15 @@
         startDate: document.getElementById('start-date').value,
         services: services,
         status: 'pending',
+        serviceFee: 200,
+        feePaymentMethod: selectedPaymentMethod,
+        feeStatus: 'pending_verification',
+        feeReceiptImage: receiptBase64 || null,
         createdAt: new Date().toISOString()
       });
 
       document.getElementById('modal-sub').textContent =
-        'Your booking for ' + workerName + ' has been saved! She will be notified and contact you within 24 hours.\n\nወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹';
+        'Your booking for ' + workerName + ' has been saved! She will be notified and contact you within 24 hours.\n\nYour 200 ETB service fee receipt has been submitted and will be verified by Kebet.\n\nወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹';
       document.getElementById('modal').classList.add('show');
 
     } catch (error) {
@@ -434,6 +537,40 @@
       btn.disabled = false;
       alert('Error saving booking: ' + error.message);
     }
+  }
+
+  let selectedPaymentMethod = 'telebirr';
+
+  window.selectPayment = function(method) {
+    selectedPaymentMethod = method;
+    document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
+    document.getElementById('check-telebirr').style.display = 'none';
+    document.getElementById('check-cbe').style.display = 'none';
+    document.getElementById('pm-' + method).classList.add('active');
+    document.getElementById('check-' + method).style.display = 'inline';
+  }
+
+  window.copyText = function(text, event) {
+    event.stopPropagation();
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      const original = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => { btn.textContent = original; }, 2000);
+    });
+  }
+
+  window.previewReceipt = function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById('upload-preview');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('upload-label').innerHTML = '✅ ' + file.name + '<br/><span style="font-size:11px;color:#aaa;">Tap to change</span>';
+    };
+    reader.readAsDataURL(file);
   }
 
   calcTotal();
