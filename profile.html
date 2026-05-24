@@ -280,12 +280,22 @@
   const params = new URLSearchParams(window.location.search);
   workerId = params.get('id');
 
+  // Resolve when auth + owner data are ready
+  let authReady = false;
+  const authReadyCallbacks = [];
+  function onAuthReady(cb) {
+    if (authReady) { cb(); return; }
+    authReadyCallbacks.push(cb);
+  }
+
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
       const snap = await getDoc(doc(db, 'users', user.uid));
       if (snap.exists()) currentOwnerData = snap.data();
     }
+    authReady = true;
+    authReadyCallbacks.forEach(cb => cb());
   });
 
   function starsHtml(rating) {
@@ -399,15 +409,22 @@
   }
 
   window.openBookModal = function() {
-    if (!currentUser) {
-      alert('Please sign in first to book a worker.');
-      window.location.href = 'signin.html';
-      return;
-    }
-    if (currentOwnerData?.userType !== 'owner') {
-      alert('Only house owners can book workers. Please sign in as an owner.');
-      return;
-    }
+    // Wait for auth state to resolve before checking
+    onAuthReady(function() {
+      if (!currentUser) {
+        alert('Please sign in first to book a worker.');
+        window.location.href = 'signin.html';
+        return;
+      }
+      if (currentOwnerData?.userType !== 'owner') {
+        alert('Only house owners can book workers. Please sign in as an owner.');
+        return;
+      }
+      _openBookModalInner();
+    });
+  }
+
+  function _openBookModalInner() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('book-start-date').min = today;
     document.getElementById('book-start-date').value = today;
