@@ -415,7 +415,7 @@
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, collection, query, where,
-    getDocs, addDoc, orderBy, onSnapshot, updateDoc, serverTimestamp
+    getDocs, addDoc, onSnapshot, updateDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -626,13 +626,22 @@
 
     if (messagesUnsubscribe) messagesUnsubscribe();
 
-    const msgsQuery = query(collection(db, 'conversations', convoId, 'messages'), orderBy('createdAt', 'asc'));
+    const msgsQuery = query(collection(db, 'conversations', convoId, 'messages'));
     messagesUnsubscribe = onSnapshot(msgsQuery, (snap) => {
       const container = document.getElementById('chat-messages');
       const myInitials = ((currentUserData.firstName?.[0] || '') + (currentUserData.lastName?.[0] || '')).toUpperCase();
       const otherInitials = otherName.split(' ').map(n => n[0] || '').join('').toUpperCase().slice(0, 2);
 
-      container.innerHTML = snap.docs.map(d => {
+      // Sort client-side — avoids needing a Firestore composite index
+      const docs = snap.docs.slice().sort((a, b) => {
+        const ta = a.data().createdAt;
+        const tb = b.data().createdAt;
+        const da = ta ? (ta.toDate ? ta.toDate() : new Date(ta)) : new Date(0);
+        const db2 = tb ? (tb.toDate ? tb.toDate() : new Date(tb)) : new Date(0);
+        return da - db2;
+      });
+
+      container.innerHTML = docs.map(d => {
         const msg = d.data();
         const isMine = msg.senderId === currentUser.uid;
         const time = msg.createdAt
@@ -668,6 +677,8 @@
           </div>`;
       }).join('');
       container.scrollTop = container.scrollHeight;
+    }, (err) => {
+      console.error('onSnapshot error:', err.message);
     });
   }
 
