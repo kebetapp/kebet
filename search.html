@@ -374,7 +374,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, where, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -390,159 +390,220 @@
   const db = getFirestore(app);
 
   let allWorkers = [];
-  let salaryFilter = 'any';
-  let customMax = null;
+  let currentSkillFilter = '';
+  let currentUser = null;
+  let currentOwnerData = null;
+  let selectedWorkerId = null;
+  let selectedWorkerData = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (snap.exists()) currentOwnerData = snap.data();
+    }
+  });
 
   async function loadWorkers() {
     try {
-      // Load ALL workers — rules now allow public read of users
-      const snap = await getDocs(query(
-        collection(db, 'users'),
-        where('userType', '==', 'worker')
-      ));
-
-      allWorkers = [];
-      snap.forEach(d => {
-        allWorkers.push({ id: d.id, ...d.data() });
-      });
-
-      if (allWorkers.length === 0) {
-        document.getElementById('workers-grid').innerHTML = '';
-        document.getElementById('no-results').style.display = 'block';
-        document.getElementById('no-results').innerHTML = '<div style="font-size:40px; margin-bottom:12px;">👷</div><div>No workers registered yet. Check back soon!</div>';
-        document.getElementById('result-count').textContent = '0';
-      } else {
-        filterWorkers();
-      }
+      const q = query(collection(db, 'users'), where('userType', '==', 'worker'));
+      const snap = await getDocs(q);
+      allWorkers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      filterWorkers();
     } catch (err) {
-      document.getElementById('workers-grid').innerHTML = '';
-      document.getElementById('no-results').style.display = 'block';
-      document.getElementById('no-results').innerHTML = '<div style="font-size:40px; margin-bottom:12px;">❌</div><div>Error loading workers: ' + err.message + '</div>';
-      console.error('Error loading workers:', err);
+      document.getElementById('worker-grid').innerHTML =
+        `<div class="loading-state">❌ Error loading workers: ${err.message}</div>`;
     }
   }
 
-  window.setSalFilter = function(type) {
-    salaryFilter = type;
-    customMax = null;
-    document.getElementById('custom-max') && (document.getElementById('custom-max').value = '');
-    document.querySelectorAll('.sal-filter-btn').forEach(b => b.classList.remove('active'));
-    const map = { any:'sal-any', 'under2000':'sal-1', '2000-3000':'sal-2', '3000-4500':'sal-3', 'above4500':'sal-4' };
-    if (map[type]) document.getElementById(map[type])?.classList.add('active');
+  window.setSkillFilter = function(skill, btn) {
+    currentSkillFilter = skill;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
     filterWorkers();
-  }
-
-  window.setCustomMax = function(val) {
-    customMax = val ? parseInt(val) : null;
-    salaryFilter = 'custom';
-    document.querySelectorAll('.sal-filter-btn').forEach(b => b.classList.remove('active'));
-    filterWorkers();
-  }
+  };
 
   window.filterWorkers = function() {
-    const search = (document.getElementById('search-input')?.value || '').toLowerCase();
-    const location = document.getElementById('location-filter')?.value || '';
-    const onlyVerified = document.getElementById('f-verified')?.checked || false;
-    const only5star = document.getElementById('f-r5')?.checked || false;
-    const only4star = document.getElementById('f-r4')?.checked || false;
-    const sortVal = document.getElementById('sort-select')?.value || 'rating';
-
-    const categories = [];
-    if (document.getElementById('f-clean')?.checked) categories.push('cleaning');
-    if (document.getElementById('f-cook')?.checked) categories.push('cooking');
-    if (document.getElementById('f-nanny')?.checked) categories.push('nanny');
-    if (document.getElementById('f-laundry')?.checked) categories.push('laundry');
-    if (document.getElementById('f-full')?.checked) categories.push('full');
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const location = document.getElementById('location-filter').value.toLowerCase();
+    const sort = document.getElementById('sort-select').value;
+    const grid = document.getElementById('worker-grid');
+    const countEl = document.getElementById('results-count');
 
     let filtered = allWorkers.filter(w => {
       const fullName = ((w.firstName || '') + ' ' + (w.lastName || '')).toLowerCase();
       const skill = (w.skill || '').toLowerCase();
-      const workerSalary = parseInt(w.expectedSalary || w.salary || 0);
-      const rating = parseFloat(w.rating || 0);
-
-      if (search && !fullName.includes(search) && !skill.includes(search)) return false;
-      if (location && w.location !== location) return false;
-      if (onlyVerified && !w.verified) return false;
-      if (only5star && rating < 5.0) return false;
-      if (only4star && rating < 4.0) return false;
-
-      if (categories.length > 0) {
-        const skillLower = skill;
-        const match = categories.some(cat => {
-          if (cat === 'cleaning') return skillLower.includes('clean');
-          if (cat === 'cooking') return skillLower.includes('cook');
-          if (cat === 'nanny') return skillLower.includes('nanny') || skillLower.includes('child');
-          if (cat === 'laundry') return skillLower.includes('laundry');
-          if (cat === 'full') return skillLower.includes('full');
-          return false;
-        });
-        if (!match) return false;
-      }
-
-      if (workerSalary > 0) {
-        if (salaryFilter === 'under2000' && workerSalary >= 2000) return false;
-        if (salaryFilter === '2000-3000' && (workerSalary < 2000 || workerSalary > 3000)) return false;
-        if (salaryFilter === '3000-4500' && (workerSalary < 3000 || workerSalary > 4500)) return false;
-        if (salaryFilter === 'above4500' && workerSalary <= 4500) return false;
-        if (salaryFilter === 'custom' && customMax && workerSalary > customMax) return false;
-      }
-
-      return true;
+      const loc = (w.location || '').toLowerCase();
+      const matchSearch = !search || fullName.includes(search) || skill.includes(search);
+      const matchLocation = !location || loc.includes(location);
+      const matchSkill = !currentSkillFilter || skill.toLowerCase().includes(currentSkillFilter.toLowerCase());
+      return matchSearch && matchLocation && matchSkill;
     });
 
-    if (sortVal === 'low') filtered.sort((a, b) => (parseInt(a.expectedSalary || a.salary || 0)) - (parseInt(b.expectedSalary || b.salary || 0)));
-    else if (sortVal === 'high') filtered.sort((a, b) => (parseInt(b.expectedSalary || b.salary || 0)) - (parseInt(a.expectedSalary || a.salary || 0)));
-    else filtered.sort((a, b) => (parseFloat(b.rating || 0)) - (parseFloat(a.rating || 0)));
+    if (sort === 'rating') {
+      filtered.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+    } else if (sort === 'name') {
+      filtered.sort((a, b) => (a.firstName || '').localeCompare(b.firstName || ''));
+    } else {
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
 
-    const grid = document.getElementById('workers-grid');
-    const noResults = document.getElementById('no-results');
-    document.getElementById('result-count').textContent = filtered.length;
+    countEl.textContent = filtered.length === 0
+      ? 'No workers found'
+      : `${filtered.length} worker${filtered.length !== 1 ? 's' : ''} available`;
 
     if (filtered.length === 0) {
-      grid.innerHTML = '';
-      noResults.style.display = 'block';
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title"><span class="en">No workers found</span><span class="am">ሰራተኛ አልተገኘም</span></div>
+          <div class="empty-sub">Try adjusting your filters or search terms.</div>
+        </div>`;
       return;
     }
 
-    noResults.style.display = 'none';
-
-    const colors = ['av-gold', 'av-green', 'av-blue', 'av-pink'];
-    grid.innerHTML = filtered.map((w, i) => {
+    grid.innerHTML = filtered.map(w => {
       const fullName = ((w.firstName || '') + ' ' + (w.lastName || '')).trim();
-      const initials = ((w.firstName?.[0] || '') + (w.lastName?.[0] || '')).toUpperCase();
-      const skill = w.skill || 'House Worker';
+      const initials = (w.firstName?.[0] || '') + (w.lastName?.[0] || '');
+      const skill = w.skill || '—';
       const location = w.location || '—';
-      const salary = parseInt(w.expectedSalary || w.salary || 0);
-      const rating = parseFloat(w.rating || 0);
-      const stars = rating > 0 ? '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating)) : '☆☆☆☆☆';
-      const color = colors[i % colors.length];
-      const verified = w.verified ? '<div class="verified">✓ Verified</div>' : '';
+      const rating = parseFloat(w.rating) || 0;
+      const stars = rating >= 5 ? '★★★★★'
+                  : rating >= 4 ? '★★★★☆'
+                  : rating >= 3 ? '★★★☆☆'
+                  : rating > 0  ? '★★☆☆☆'
+                  : '☆☆☆☆☆';
+      const isVerified = w.verified === true || w.verified === 'true';
+      const joined = w.createdAt
+        ? new Date(w.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+        : '';
+      const safeFullName = fullName.replace(/'/g, "\\'");
 
       return `
         <div class="worker-card" onclick="window.location.href='profile.html?id=${w.id}'">
           <div class="worker-top">
-            <div class="worker-av ${color}">${initials}</div>
-            <div>
+            <div class="worker-av">${initials || '?'}</div>
+            <div style="flex:1;">
               <div class="worker-name">${fullName}</div>
               <div class="worker-role">${skill}</div>
               <div class="worker-loc">📍 ${location}, Addis Ababa</div>
-              <span class="live-in-tag">🛏️ Live-in</span>
+              <span class="live-in-tag"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span>
             </div>
-            ${verified}
+            ${isVerified ? '<div class="verified">✓ Verified</div>' : ''}
           </div>
-          <div class="worker-skills"><span class="skill">${skill}</span></div>
+          <div class="worker-skills">
+            <span class="skill-tag">🧹 ${skill}</span>
+            ${joined ? `<span class="skill-tag">📅 Joined ${joined}</span>` : ''}
+            ${w.phone ? `<span class="skill-tag">📞 Has phone</span>` : ''}
+          </div>
           <div class="worker-bottom">
             <div>
-              <div class="worker-salary">${salary > 0 ? salary.toLocaleString() + ' ETB' : 'Negotiable'} <span>/month</span></div>
-              <div class="stars">${stars} ${rating > 0 ? rating.toFixed(1) : 'New'}</div>
+              <div style="font-size:13px; color:#555;">Salary: negotiable</div>
+              <div class="stars">${rating > 0 ? stars + ' ' + rating.toFixed(1) : '☆ New worker'}</div>
             </div>
-            <button class="hire-btn" onclick="event.stopPropagation(); window.location.href='profile.html?id=${w.id}'">Hire now</button>
+            <button class="hire-btn" onclick="event.stopPropagation(); openBookModal('${w.id}', '${safeFullName}', '${skill}', '${location}')">
+              Hire Now
+            </button>
           </div>
-        </div>`;
+        </div>
+      `;
     }).join('');
+  };
+
+  window.openBookModal = function(id, name, skill, location) {
+    if (!currentUser) {
+      alert('Please sign in first to book a worker.');
+      window.location.href = 'signin.html';
+      return;
+    }
+    if (currentOwnerData?.userType !== 'owner') {
+      alert('Only house owners can book workers. Please sign in as an owner.');
+      return;
+    }
+    selectedWorkerId = id;
+    selectedWorkerData = allWorkers.find(w => w.id === id) || null;
+
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('book-start-date').min = today;
+    document.getElementById('book-start-date').value = today;
+    document.getElementById('book-months').value = '3';
+    document.getElementById('book-salary').value = '';
+    document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
+    document.getElementById('total-box').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+    document.getElementById('modal-sub').textContent = `Booking: ${name} · ${skill} · ${location}`;
+    document.getElementById('book-modal').classList.add('show');
+    document.getElementById('book-salary').oninput = updateTotal;
+    document.getElementById('book-months').onchange = updateTotal;
+  };
+
+  window.closeBookModal = function() {
+    document.getElementById('book-modal').classList.remove('show');
+    selectedWorkerId = null;
+    selectedWorkerData = null;
+  };
+
+  function updateTotal() {
+    const sal = parseInt(document.getElementById('book-salary').value) || 0;
+    const months = parseInt(document.getElementById('book-months').value) || 1;
+    const el = document.getElementById('total-box');
+    if (sal > 0) {
+      el.style.display = 'block';
+      el.textContent = `💰 Total: ${(sal * months).toLocaleString()} ETB (${sal.toLocaleString()} × ${months} months)`;
+    } else {
+      el.style.display = 'none';
+    }
   }
 
-  // Load workers immediately — no auth needed since rules allow public read
+  window.confirmBooking = async function() {
+    const startDate = document.getElementById('book-start-date').value;
+    const months = parseInt(document.getElementById('book-months').value);
+    const salary = parseInt(document.getElementById('book-salary').value);
+    const services = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
+    const errEl = document.getElementById('error-box');
+    const btn = document.getElementById('confirm-btn');
+
+    errEl.style.display = 'none';
+    if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
+    if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
+    if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Booking...';
+    btn.disabled = true;
+
+    try {
+      const ownerName = ((currentOwnerData?.firstName || '') + ' ' + (currentOwnerData?.lastName || '')).trim();
+      const workerFullName = selectedWorkerData
+        ? ((selectedWorkerData.firstName || '') + ' ' + (selectedWorkerData.lastName || '')).trim()
+        : document.getElementById('modal-sub').textContent.split('·')[0].replace('Booking:', '').trim();
+
+      await addDoc(collection(db, 'bookings'), {
+        workerId: selectedWorkerId,
+        workerName: workerFullName,
+        workerRole: selectedWorkerData?.skill || '',
+        ownerId: currentUser.uid,
+        ownerName: ownerName,
+        ownerLocation: currentOwnerData?.location || '',
+        startDate: startDate,
+        contractMonths: months,
+        monthlySalary: salary,
+        totalAmount: salary * months,
+        services: services,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+
+      closeBookModal();
+      alert(`✅ Booking sent to ${workerFullName}! They will be notified.`);
+      window.location.href = 'dashboard-owner.html';
+    } catch (err) {
+      errEl.textContent = '❌ Booking failed: ' + err.message;
+      errEl.style.display = 'block';
+      btn.textContent = 'Confirm Booking ✓';
+      btn.disabled = false;
+    }
+  };
+
   loadWorkers();
 </script>
 
