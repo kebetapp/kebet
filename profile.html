@@ -12,7 +12,7 @@
     .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
     .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
     .nav-logo-am { font-size: 13px; color: #f0a500; }
-    .nav-btns { display: flex; gap: 10px; align-items: center; }
+    .nav-btns { display: flex; gap: 10px; }
     .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
     .btn-green-nav { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
     .back-bar { padding: 16px 40px; display: flex; align-items: center; gap: 10px; }
@@ -30,7 +30,7 @@
     .tag-gold { background: #fff5e0; color: #c87800; }
     .tag-blue { background: #e8f0ff; color: #2255cc; }
     .tag-gray { background: #f0f0f0; color: #555; }
-    .hire-big-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; transition: background 0.2s; }
+    .hire-big-btn { background: #1a6b3c; color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; }
     .hire-big-btn:hover { background: #145530; }
     .profile-right { min-width: 200px; display: flex; flex-direction: column; gap: 12px; }
     .salary-box { background: #e8f5ee; border-radius: 14px; padding: 18px; text-align: center; }
@@ -55,6 +55,8 @@
     .not-found-icon { font-size: 60px; margin-bottom: 16px; }
     .not-found-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
     .not-found-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
+
+    /* Reviews */
     .review-item { padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
     .review-item:last-child { border-bottom: none; }
     .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
@@ -64,25 +66,15 @@
     .review-stars { color: #f0a500; font-size: 13px; margin-bottom: 3px; }
     .review-comment { font-size: 12px; color: #555; line-height: 1.6; font-style: italic; }
 
-    /* Lang toggle */
-    .lang-toggle { display: inline-flex; align-items: center; background: #f0f0f0; border: 1px solid #ddd; border-radius: 20px; padding: 3px; }
-    .lang-btn { padding: 5px 13px; border-radius: 16px; font-size: 12px; font-weight: 800; border: none; background: transparent; color: #888; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .lang-btn.active { background: #1a6b3c; color: #fff; }
-    body.am-mode .en { display: none !important; }
-    body.am-mode .am { display: inline !important; }
-    body:not(.am-mode) .am { display: none !important; }
-    body:not(.am-mode) .en { display: inline !important; }
-    .am { display: none; }
-
-    /* ── BOOKING DETAILS MODAL ── */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px; }
+    /* Book Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
     .modal-overlay.show { display: flex; }
-    .modal-box { background: #fff; border-radius: 24px; padding: 32px; max-width: 420px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal-box { background: #fff; border-radius: 24px; padding: 32px; max-width: 420px; width: 90%; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px; }
     .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
     .form-group { margin-bottom: 14px; }
     .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
-    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #1a6b3c; }
     .svc-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
     .svc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
@@ -91,24 +83,26 @@
     .modal-btns { display: flex; gap: 10px; }
     .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-
-    /* ── PAYMENT MODAL ── */
-    .pay-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 16px; }
-    .pay-overlay.show { display: flex; }
-    .pay-box { background: #fff; border-radius: 24px; max-width: 460px; width: 100%; max-height: 92vh; overflow-y: auto; }
-    .pay-header { background: linear-gradient(135deg,#1a6b3c,#2d9b5a); border-radius: 24px 24px 0 0; padding: 24px; text-align: center; }
-    .pay-body { padding: 20px 24px 24px; }
-    .pay-method-card { flex: 1; border: 2px solid #eee; border-radius: 12px; padding: 14px; text-align: center; cursor: pointer; transition: all 0.2s; }
-    .pay-method-card.selected { border-color: #1a6b3c; background: #f0fff6; }
-    .pay-account-box { background: #fff; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .copy-btn { background: #1a6b3c; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .screenshot-label { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #c3e6d0; border-radius: 12px; padding: 20px; cursor: pointer; background: #f9fff9; transition: all 0.2s; }
-    .submit-pay-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 800; cursor: pointer; margin-bottom: 10px; transition: opacity 0.2s; }
-    .submit-pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* ── SUCCESS MODAL ── */
-    .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 1001; display: none; align-items: center; justify-content: center; padding: 16px; }
-    .success-overlay.show { display: flex; }
+    /* Fee section */
+    .fee-divider { height: 1px; background: #eee; margin: 16px 0; }
+    .fee-banner-modal { background: linear-gradient(135deg, #fff8e8, #fff3d0); border: 2px solid #f0a500; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+    .fee-banner-modal-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .fee-amount-badge { font-size: 20px; font-weight: 900; color: #c87800; }
+    .fee-banner-modal-title { font-size: 13px; font-weight: 700; color: #c87800; }
+    .fee-banner-modal-sub { font-size: 11px; color: #888; line-height: 1.5; }
+    .pay-method-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .pay-method-btn { flex: 1; border: 2px solid #eee; border-radius: 10px; padding: 10px 8px; text-align: center; cursor: pointer; background: #fff; transition: all 0.2s; font-size: 12px; font-weight: 600; color: #555; }
+    .pay-method-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
+    .pay-detail-box { background: #f5f5f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+    .pay-number { font-size: 18px; font-weight: 800; color: #1a6b3c; letter-spacing: 2px; margin: 4px 0; }
+    .copy-btn-sm { background: #fff; border: 1px solid #ddd; border-radius: 7px; padding: 5px 10px; font-size: 11px; font-weight: 600; color: #555; cursor: pointer; margin-top: 4px; }
+    .upload-sm { border: 2px dashed #ddd; border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; margin-bottom: 10px; transition: border 0.2s; }
+    .upload-sm:hover { border-color: #1a6b3c; }
+    .upload-sm input { display: none; }
+    .upload-preview-sm { max-width: 100%; max-height: 100px; border-radius: 8px; margin-top: 8px; display: none; }
+    .fee-confirm-row { display: flex; align-items: center; gap: 8px; background: #e8f5ee; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
+    .fee-confirm-row input { accent-color: #1a6b3c; width: 15px; height: 15px; flex-shrink: 0; }
+    .fee-confirm-row label { font-size: 12px; color: #1a6b3c; font-weight: 600; cursor: pointer; }
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -121,6 +115,11 @@
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
+  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -133,36 +132,32 @@
     </div>
   </div>
   <div class="nav-btns">
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
-    </div>
+        <div class="lang-toggle" style="margin-left:auto;">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+</div>
     <button class="btn-outline-nav" onclick="window.location.href='signin.html'"><span class="en">Sign in</span><span class="am">ግባ</span></button>
     <button class="btn-green-nav" onclick="window.location.href='signup.html'"><span class="en">Get Started</span><span class="am">ጀምር</span></button>
   </div>
 </nav>
 
 <div class="back-bar">
-  <button class="back-btn" onclick="window.history.back()">
-    <span class="en">← Back to search</span><span class="am">← ወደ ፍለጋ ተመለስ</span>
-  </button>
+  <button class="back-btn" onclick="window.history.back()"><span class="en">← Back to search</span><span class="am">← ወደ ፍለጋ ተመለስ</span></button>
 </div>
 
 <div class="page">
-  <div id="loading" class="loading">⏳ <span class="en">Loading worker profile...</span><span class="am">የሰራተኛ መገለጫ እየጫነ...</span></div>
+  <div id="loading" class="loading"><span class="en">⏳ Loading worker profile...</span><span class="am">⏳ የሰራተኛ መገለጫ እየጫነ...</span></div>
   <div id="not-found" class="not-found" style="display:none;">
     <div class="not-found-icon">😔</div>
     <div class="not-found-title"><span class="en">Worker not found</span><span class="am">ሰራተኛ አልተገኘም</span></div>
     <div class="not-found-sub"><span class="en">This profile does not exist or was removed.</span><span class="am">ይህ መገለጫ የለም ወይም ተወግዷል።</span></div>
-    <button onclick="window.location.href='search.html'" style="background:#1a6b3c;color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">
-      <span class="en">← Back to Search</span><span class="am">← ወደ ፍለጋ ተመለስ</span>
-    </button>
+    <button onclick="window.location.href='search.html'" style="background:#1a6b3c; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;"><span class="en">← Back to Search</span><span class="am">← ወደ ፍለጋ ተመለስ</span></button>
   </div>
-
   <div id="profile-content" style="display:none;">
+
     <div class="profile-hero">
       <div style="flex:1;">
-        <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:20px;">
+        <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:20px;">
           <div class="profile-av-lg" id="p-initials">??</div>
           <div class="profile-info">
             <div class="profile-name-lg" id="p-name">—</div>
@@ -171,10 +166,7 @@
             <div class="profile-tags" id="p-tags"></div>
           </div>
         </div>
-        <button class="hire-big-btn" onclick="startHire()">
-          <span class="en">🏠 Hire Now — Book This Worker</span>
-          <span class="am">🏠 አሁን ቅጠር — ይህን ሰራተኛ ይያዙ</span>
-        </button>
+        <button class="hire-big-btn" onclick="openBookModal()"><span class="en">🏠 Hire Now — Book This Worker</span><span class="am">🏠 አሁን ቅጠር — ይህን ሰራተኛ ይያዙ</span></button>
       </div>
       <div class="profile-right">
         <div class="salary-box">
@@ -193,7 +185,7 @@
     <div class="two-col">
       <div>
         <div class="section-card">
-          <div class="section-title">👤 <span class="en">Personal Info</span><span class="am">የግል መረጃ</span></div>
+          <div class="section-title ks-reveal">👤 Personal Info</div>
           <div class="info-row"><span class="info-label"><span class="en">Full name</span><span class="am">ሙሉ ስም</span></span><span class="info-val" id="d-name">—</span></div>
           <div class="info-row"><span class="info-label"><span class="en">Location</span><span class="am">አካባቢ</span></span><span class="info-val" id="d-loc">—</span></div>
           <div class="info-row"><span class="info-label"><span class="en">Main skill</span><span class="am">ዋና ችሎታ</span></span><span class="info-val" id="d-skill">—</span></div>
@@ -202,52 +194,52 @@
           <div class="info-row"><span class="info-label"><span class="en">Member since</span><span class="am">አባልነት ጀምሮ</span></span><span class="info-val" id="d-joined">—</span></div>
         </div>
         <div class="section-card">
-          <div class="section-title">🧹 <span class="en">Skills & Services</span><span class="am">ችሎታዎች እና አገልግሎቶች</span></div>
+          <div class="section-title ks-reveal">🧹 Skills & Services</div>
           <div class="skills-grid" id="d-skills"></div>
         </div>
       </div>
+
       <div>
         <div class="section-card">
-          <div class="section-title">⭐ <span class="en">Reviews</span><span class="am">ግምገማዎች</span> <span id="review-count-badge" style="font-size:12px;color:#888;font-weight:400;"></span></div>
+          <div class="section-title ks-reveal">⭐ Reviews <span id="review-count-badge" style="font-size:12px; color:#888; font-weight:400;"></span></div>
           <div id="d-reviews">
-            <div style="text-align:center;padding:24px;color:#aaa;">
-              <div style="font-size:32px;margin-bottom:8px;">⭐</div>
-              <div style="font-size:13px;"><span class="en">No reviews yet — be the first to hire and rate!</span><span class="am">እስካሁን ምንም ግምገማ የለም!</span></div>
+            <div style="text-align:center; padding:24px; color:#aaa;">
+              <div style="font-size:32px; margin-bottom:8px;">⭐</div>
+              <div style="font-size:13px;">No reviews yet — be the first to hire and rate!</div>
             </div>
           </div>
         </div>
         <div class="section-card" style="background:#1a6b3c;">
-          <div class="section-title" style="color:#fff;">🙏 <span class="en">Worker Rights</span><span class="am">የሰራተኛ መብቶች</span></div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.8;">
-            ✅ <span class="en">Right to 1 day off per week</span><span class="am">በሳምንት 1 ቀን ዕረፍት</span><br>
-            ✅ <span class="en">Salary paid on time monthly</span><span class="am">ደሞዝ በወቅቱ ይከፈላል</span><br>
-            ✅ <span class="en">Keeps phone and ID at all times</span><span class="am">ስልክ እና መታወቂያ ሁሌ ይይዛሉ</span><br>
-            ✅ <span class="en">Zero tolerance for abuse</span><span class="am">ጥቃት ተቀባይነት የለውም</span><br>
-            ✅ <span class="en">Can contact Kebet anytime</span><span class="am">ከቤትን ማናኛውም ጊዜ ማናጋር ይቻላል</span><br>
-            ✅ <span class="en">Can leave if unsafe</span><span class="am">ደህንነት ካልተሰማ መሄድ ይቻላል</span>
+          <div class="section-title ks-reveal" style="color:#fff;">🙏 Worker Rights</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); line-height:1.8;">
+            ✅ Right to 1 day off per week<br>
+            ✅ Salary paid on time monthly<br>
+            ✅ Keeps phone and ID at all times<br>
+            ✅ Zero tolerance for abuse<br>
+            ✅ Can contact Kebet anytime<br>
+            ✅ Can leave if unsafe
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Bottom CTA -->
-    <div style="background:#fff;border-radius:16px;padding:20px 24px;border:1px solid #eee;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div style="background:#fff; border-radius:16px; padding:20px 24px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
       <div>
-        <div style="font-size:16px;font-weight:700;color:#111;" id="bottom-name"><span class="en">Ready to hire?</span><span class="am">ለቅጠር ዝግጁ ነዎት?</span></div>
-        <div style="font-size:13px;color:#888;margin-top:2px;"><span class="en">Send a booking request — it only takes 1 minute</span><span class="am">የቦታ ማስያዣ ጥያቄ ይላኩ — 1 ደቂቃ ብቻ</span></div>
+        <div style="font-size:16px; font-weight:700; color:#111;" id="bottom-name">Ready to hire?</div>
+        <div style="font-size:13px; color:#888; margin-top:2px;"><span class="en">Send a booking request — it only takes 1 minute</span><span class="am">የቦታ ማስያዣ ጥያቄ ይላኩ — 1 ደቂቃ ብቻ ይወስዳል</span></div>
       </div>
-      <button onclick="startHire()" style="background:#1a6b3c;color:#fff;border:none;padding:14px 32px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">
-        <span class="en">🏠 Hire Now</span><span class="am">🏠 አሁን ቅጠር</span>
-      </button>
+      <button onclick="openBookModal()" style="background:#1a6b3c; color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;"><span class="en">🏠 Hire Now</span><span class="am">🏠 አሁን ቅጠር</span></button>
     </div>
+
   </div>
 </div>
 
-<!-- ══ STEP 1: BOOKING DETAILS MODAL ══ -->
+<!-- Book Modal -->
 <div class="modal-overlay" id="book-modal">
   <div class="modal-box">
-    <div class="modal-title">📋 <span class="en">Booking Details</span><span class="am">የቦታ ማስያዣ ዝርዝሮች</span></div>
+    <div class="modal-title"><span class="en">📋 Book Worker</span><span class="am">📋 ሰራተኛ ያዝ</span></div>
     <div class="modal-sub" id="modal-sub">—</div>
+
     <div class="form-group">
       <label class="form-label"><span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
       <input type="date" id="book-start-date" class="form-input" />
@@ -268,199 +260,73 @@
     <div class="form-group">
       <label class="form-label"><span class="en">Services needed</span><span class="am">የሚፈለጉ አገልግሎቶች</span></label>
       <div class="svc-wrap">
-        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Cleaning</span><span class="am">ጽዳት</span></label>
-        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></label>
-        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Laundry</span><span class="am">ልብስ ማጠብ</span></label>
-        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Nanny</span><span class="am">የልጆች ጥበቃ</span></label>
-        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Gardening</span><span class="am">የአትክልት እንክብካቤ</span></label>
+        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
+        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
+        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> Laundry</label>
+        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> Nanny</label>
+        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
       </div>
     </div>
     <div class="total-box" id="total-box"></div>
+
+    <!-- ===== KEBET SERVICE FEE ===== -->
+    <div class="fee-divider"></div>
+    <div class="fee-banner-modal">
+      <div class="fee-banner-modal-top">
+        <span style="font-size:22px;">💳</span>
+        <div>
+          <div class="fee-banner-modal-title">Kebet Service Fee &nbsp;<span class="fee-amount-badge">200 ETB</span></div>
+          <div class="fee-banner-modal-sub">One-time fee per booking. Covers worker verification &amp; Kebet support.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment method picker -->
+    <div style="font-size:12px; font-weight:600; color:#555; margin-bottom:6px;">Pay via:</div>
+    <div class="pay-method-row">
+      <div class="pay-method-btn active" id="pm-telebirr" onclick="selectFeeMethod('telebirr')">📱 Telebirr</div>
+      <div class="pay-method-btn" id="pm-cbe" onclick="selectFeeMethod('cbe')">🏦 CBE Bank</div>
+    </div>
+
+    <!-- Telebirr detail -->
+    <div class="pay-detail-box" id="detail-telebirr">
+      <div style="font-size:11px; color:#888;">Send <strong>200 ETB</strong> to Telebirr:</div>
+      <div class="pay-number">0979 559 549</div>
+      <button class="copy-btn-sm" onclick="copyFeeNum('0979559549', this)">📋 Copy</button>
+    </div>
+    <!-- CBE detail -->
+    <div class="pay-detail-box" id="detail-cbe" style="display:none;">
+      <div style="font-size:11px; color:#888;">Transfer <strong>200 ETB</strong> to CBE account:</div>
+      <div class="pay-number" style="font-size:15px;">1000481802214</div>
+      <button class="copy-btn-sm" onclick="copyFeeNum('1000481802214', this)">📋 Copy</button>
+    </div>
+
+    <!-- Receipt upload -->
+    <div class="upload-sm" onclick="document.getElementById('fee-receipt').click()">
+      <div id="upload-sm-label" style="font-size:12px; color:#888;">🖼️ Upload payment screenshot (optional)<br/><span style="font-size:10px;">PNG or JPG</span></div>
+      <input type="file" id="fee-receipt" accept="image/*" onchange="previewFeeReceipt(this)" />
+      <img id="upload-preview-sm" class="upload-preview-sm" />
+    </div>
+
+    <!-- Fee confirmation checkbox -->
+    <div class="fee-confirm-row">
+      <input type="checkbox" id="fee-paid-check" />
+      <label for="fee-paid-check">I have paid the 200 ETB Kebet service fee</label>
+    </div>
+    <!-- ===== END FEE SECTION ===== -->
+
     <div class="error-box" id="error-box"></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeBookModal()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
-      <button class="btn-confirm" onclick="proceedToPayment()">
-        <span class="en">Next — Pay 200 ETB →</span><span class="am">ቀጣይ — 200 ብር ይክፈሉ →</span>
-      </button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()"><span class="en">Confirm Booking ✓</span><span class="am">ቦታ ማስያዣ ያረጋግጡ ✓</span></button>
     </div>
-  </div>
-</div>
-
-<!-- ══ STEP 2: PAYMENT MODAL ══ -->
-<div class="pay-overlay" id="pay-modal">
-  <div class="pay-box">
-
-    <!-- Header -->
-    <div class="pay-header">
-      <div style="font-size:36px;margin-bottom:8px;">🏠</div>
-      <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:4px;">
-        <span class="en">One-Time Service Fee</span><span class="am">አንድ ጊዜ የአገልግሎት ክፍያ</span>
-      </div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6;">
-        <span class="en">Pay once to connect with your verified house worker.<br/>No monthly fees. No hidden charges. Ever.</span>
-        <span class="am">አንድ ጊዜ ይክፈሉ እና ሰራተኛዎን ያገኙ።<br/>ምንም ወርሃዊ ክፍያ የለም። ምንም ሌላ ወጪ የለም።</span>
-      </div>
-    </div>
-
-    <div class="pay-body">
-
-      <!-- Price comparison -->
-      <div style="display:flex;gap:12px;margin-bottom:20px;margin-top:4px;">
-        <div style="flex:1;background:#fff5f5;border:1.5px solid #ffcccc;border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:10px;font-weight:700;color:#cc2222;letter-spacing:1px;margin-bottom:6px;">
-            <span class="en">TRADITIONAL AGENT</span><span class="am">ቀደምት ደላላ</span>
-          </div>
-          <div style="font-size:20px;font-weight:800;color:#cc2222;text-decoration:line-through;">3,500+ ETB</div>
-          <div style="font-size:11px;color:#888;margin-top:4px;"><span class="en">1 full month salary!</span><span class="am">1 ሙሉ ወር ደሞዝ!</span></div>
-        </div>
-        <div style="display:flex;align-items:center;font-size:13px;font-weight:800;color:#888;">VS</div>
-        <div style="flex:1;background:#e8f5ee;border:2px solid #1a6b3c;border-radius:14px;padding:16px;text-align:center;position:relative;">
-          <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#f0a500;color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:10px;white-space:nowrap;">
-            <span class="en">SAVE 3,300+ ETB 🔥</span><span class="am">3,300+ ብር ይቆጥቡ 🔥</span>
-          </div>
-          <div style="font-size:10px;font-weight:700;color:#1a6b3c;letter-spacing:1px;margin-bottom:6px;">KEBET</div>
-          <div style="font-size:28px;font-weight:800;color:#1a6b3c;">200 <span style="font-size:14px;">ETB</span></div>
-          <div style="font-size:11px;color:#1a6b3c;font-weight:600;margin-top:4px;"><span class="en">One time only ✓</span><span class="am">አንድ ጊዜ ብቻ ✓</span></div>
-        </div>
-      </div>
-
-      <!-- Booking summary -->
-      <div style="background:#f9f9f7;border-radius:12px;padding:14px;margin-bottom:20px;">
-        <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:10px;">📋 <span class="en">Booking Summary</span><span class="am">የቦታ ማስያዣ ማጠቃለያ</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-          <span style="color:#888;"><span class="en">Worker</span><span class="am">ሰራተኛ</span></span>
-          <span style="font-weight:600;" id="pay-worker-name">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-          <span style="color:#888;"><span class="en">Monthly salary</span><span class="am">ወርሃዊ ደሞዝ</span></span>
-          <span style="font-weight:600;color:#1a6b3c;" id="pay-salary">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-          <span style="color:#888;"><span class="en">Contract</span><span class="am">ውል</span></span>
-          <span style="font-weight:600;" id="pay-months">—</span>
-        </div>
-        <div style="border-top:1px solid #eee;margin:10px 0;"></div>
-        <div style="display:flex;justify-content:space-between;font-size:14px;">
-          <span style="font-weight:700;"><span class="en">Service fee (pay now)</span><span class="am">የአገልግሎት ክፍያ (አሁን ይክፈሉ)</span></span>
-          <span style="font-weight:800;color:#1a6b3c;font-size:16px;">200 ETB</span>
-        </div>
-      </div>
-
-      <!-- Payment method -->
-      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:10px;">💳 <span class="en">Choose Payment Method</span><span class="am">የክፍያ ዘዴ ይምረጡ</span></div>
-      <div style="display:flex;gap:10px;margin-bottom:16px;">
-        <div class="pay-method-card" id="method-telebirr" onclick="selectMethod('telebirr')">
-          <div style="font-size:24px;margin-bottom:4px;">📱</div>
-          <div style="font-size:13px;font-weight:700;color:#111;">Telebirr</div>
-          <div style="font-size:11px;color:#888;"><span class="en">Send to number</span><span class="am">ወደ ቁጥር ይላኩ</span></div>
-        </div>
-        <div class="pay-method-card" id="method-cbe" onclick="selectMethod('cbe')">
-          <div style="font-size:24px;margin-bottom:4px;">🏦</div>
-          <div style="font-size:13px;font-weight:700;color:#111;">CBE Birr</div>
-          <div style="font-size:11px;color:#888;"><span class="en">Bank transfer</span><span class="am">የባንክ ዝውውር</span></div>
-        </div>
-      </div>
-
-      <!-- Payment instructions -->
-      <div id="pay-instructions" style="display:none;background:#e8f5ee;border:1.5px solid #c3e6d0;border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:700;color:#1a6b3c;margin-bottom:10px;" id="pay-inst-title">
-          <span class="en">Send payment to:</span><span class="am">ክፍያ ይላኩ ወደ:</span>
-        </div>
-
-        <!-- Telebirr -->
-        <div id="telebirr-details">
-          <div class="pay-account-box">
-            <div>
-              <div style="font-size:11px;color:#888;margin-bottom:2px;"><span class="en">Telebirr Number</span><span class="am">የቴሌብር ቁጥር</span></div>
-              <div style="font-size:20px;font-weight:800;color:#1a6b3c;letter-spacing:2px;">0979 559 549</div>
-            </div>
-            <button class="copy-btn" onclick="copyText('0979559549')"><span class="en">Copy</span><span class="am">ቅዳ</span></button>
-          </div>
-          <div style="font-size:12px;color:#555;background:#fff;border-radius:8px;padding:10px;line-height:1.8;">
-            <strong><span class="en">Account name:</span><span class="am">የሂሳብ ስም:</span></strong> Dagmawi Teklu<br/>
-            <strong><span class="en">Amount:</span><span class="am">መጠን:</span></strong> <span style="color:#1a6b3c;font-weight:700;">200 ETB</span> <span class="en">exactly</span><span class="am">ትክክለኛ</span><br/>
-            <strong><span class="en">Note:</span><span class="am">ማስታወሻ:</span></strong> <span class="en">Write your full name</span><span class="am">ሙሉ ስምዎን ይፃፉ</span>
-          </div>
-        </div>
-
-        <!-- CBE -->
-        <div id="cbe-details" style="display:none;">
-          <div class="pay-account-box">
-            <div>
-              <div style="font-size:11px;color:#888;margin-bottom:2px;"><span class="en">CBE Account Number</span><span class="am">የCBE ሂሳብ ቁጥር</span></div>
-              <div style="font-size:16px;font-weight:800;color:#1a6b3c;letter-spacing:1px;">1000481802214</div>
-            </div>
-            <button class="copy-btn" onclick="copyText('1000481802214')"><span class="en">Copy</span><span class="am">ቅዳ</span></button>
-          </div>
-          <div style="font-size:12px;color:#555;background:#fff;border-radius:8px;padding:10px;line-height:1.8;">
-            <strong><span class="en">Account name:</span><span class="am">የሂሳብ ስም:</span></strong> Dagmawi Teklu<br/>
-            <strong><span class="en">Bank:</span><span class="am">ባንክ:</span></strong> Commercial Bank of Ethiopia<br/>
-            <strong><span class="en">Amount:</span><span class="am">መጠን:</span></strong> <span style="color:#1a6b3c;font-weight:700;">200 ETB</span> <span class="en">exactly</span><span class="am">ትክክለኛ</span><br/>
-            <strong><span class="en">Description:</span><span class="am">ዝርዝር:</span></strong> <span class="en">Write your full name</span><span class="am">ሙሉ ስምዎን ይፃፉ</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Screenshot upload -->
-      <div id="screenshot-section" style="display:none;margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:8px;">
-          📸 <span class="en">Upload Payment Screenshot</span><span class="am">የክፍያ ስክሪንሾት ይጫኑ</span>
-        </div>
-        <div style="font-size:12px;color:#888;margin-bottom:10px;">
-          <span class="en">Take a screenshot of your payment confirmation and upload it here.</span>
-          <span class="am">የክፍያ ማረጋገጫ ስክሪንሾት ይውሰዱ እና እዚህ ይጫኑ።</span>
-        </div>
-        <label for="screenshot-input" class="screenshot-label" id="screenshot-label">
-          <div style="font-size:28px;margin-bottom:6px;">📷</div>
-          <div style="font-size:13px;font-weight:600;color:#1a6b3c;">
-            <span class="en">Click to upload screenshot</span><span class="am">ስክሪንሾት ለመጫን ጠቅ ያድርጉ</span>
-          </div>
-          <div style="font-size:11px;color:#aaa;margin-top:4px;">JPG, PNG — max 5MB</div>
-        </label>
-        <input type="file" id="screenshot-input" accept="image/*" style="display:none;" onchange="handleScreenshot(event)" />
-        <div id="screenshot-preview" style="display:none;margin-top:10px;text-align:center;">
-          <img id="screenshot-img" style="max-width:100%;border-radius:10px;border:1px solid #eee;" />
-          <div style="font-size:12px;color:#1a6b3c;font-weight:600;margin-top:6px;">
-            ✓ <span class="en">Screenshot ready</span><span class="am">ስክሪንሾት ዝግጁ ነው</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Buttons -->
-      <button class="submit-pay-btn" id="submit-pay-btn" onclick="submitPayment()" style="display:none;">
-        ✅ <span class="en">I've Paid — Submit Booking</span><span class="am">ከፍያለሁ — ቦታ ማስያዣ ይላኩ</span>
-      </button>
-      <button onclick="closePayModal()" style="width:100%;background:#f5f5f0;color:#888;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:4px;">
-        <span class="en">Cancel</span><span class="am">ሰርዝ</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SUCCESS MODAL ══ -->
-<div class="success-overlay" id="success-modal">
-  <div style="background:#fff;border-radius:24px;max-width:380px;width:100%;padding:32px;text-align:center;">
-    <div style="font-size:56px;margin-bottom:12px;">🎉</div>
-    <div style="font-size:20px;font-weight:800;color:#111;margin-bottom:8px;">
-      <span class="en">Booking Submitted!</span><span class="am">ቦታ ማስያዣ ተልኳል!</span>
-    </div>
-    <div style="font-size:13px;color:#888;line-height:1.7;margin-bottom:20px;">
-      <span class="en">Your payment screenshot has been sent to Kebet for review.<br/><br/>Once confirmed <strong>(usually 2–4 hours)</strong>, your booking will be activated and the worker will be notified.</span>
-      <span class="am">የክፍያ ስክሪንሾቱ ለከቤት ለማረጋገጥ ተልኳል።<br/><br/>ከተረጋገጠ በኋላ <strong>(ብዙውን ጊዜ 2-4 ሰዓት)</strong> ቦታ ማስያዣዎ ይንቃል።</span>
-    </div>
-    <div style="background:#e8f5ee;border-radius:12px;padding:14px;margin-bottom:20px;font-size:13px;color:#1a6b3c;font-weight:600;">
-      📞 <span class="en">Questions? Call:</span><span class="am">ጥያቄ? ይደውሉ:</span> <strong>0979 559 549</strong>
-    </div>
-    <button onclick="window.location.href='dashboard-owner.html'" style="width:100%;background:#1a6b3c;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;">
-      <span class="en">Go to My Dashboard →</span><span class="am">ወደ ዳሽቦርዴ ሂድ →</span>
-    </button>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, addDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, addDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -473,36 +339,15 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const db = getFirestore(app);
 
   let workerData = null;
-  let workerId   = null;
+  let workerId = null;
   let currentUser = null;
   let currentOwnerData = null;
 
-  // booking details filled in step 1
-  let bookingDetails = {};
-
-  // payment state
-  let selectedMethod   = null;
-  let screenshotBase64 = null;
-
   const params = new URLSearchParams(window.location.search);
   workerId = params.get('id');
-
-  // ── Language toggle ──
-  (function() {
-    var lang = localStorage.getItem('kebet-lang') || 'en';
-    window.setLang = function(l) {
-      lang = l; localStorage.setItem('kebet-lang', l);
-      document.body.classList.toggle('am-mode', l === 'am');
-      var be = document.getElementById('btn-en');
-      var ba = document.getElementById('btn-am');
-      if (be) be.classList.toggle('active', l === 'en');
-      if (ba) ba.classList.toggle('active', l === 'am');
-    };
-    document.addEventListener('DOMContentLoaded', function() { setLang(lang); });
-  })();
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -524,6 +369,7 @@
       document.getElementById('not-found').style.display = 'block';
       return;
     }
+
     try {
       const snap = await getDoc(doc(db, 'users', workerId));
       if (!snap.exists() || snap.data().userType !== 'worker') {
@@ -531,265 +377,237 @@
         document.getElementById('not-found').style.display = 'block';
         return;
       }
+
       workerData = snap.data();
       const firstName = workerData.firstName || '';
-      const lastName  = workerData.lastName  || '';
-      const fullName  = firstName + ' ' + lastName;
-      const initials  = (firstName[0] || '') + (lastName[0] || '');
-      const skill     = workerData.skill || '—';
-      const location  = workerData.location || '—';
-      const rating    = parseFloat(workerData.rating) || 0;
+      const lastName = workerData.lastName || '';
+      const fullName = firstName + ' ' + lastName;
+      const initials = (firstName[0] || '') + (lastName[0] || '');
+      const skill = workerData.skill || '—';
+      const location = workerData.location || '—';
+      const rating = parseFloat(workerData.rating) || 0;
       const reviewCount = parseInt(workerData.reviewCount) || 0;
-      const joined    = workerData.createdAt
-        ? new Date(workerData.createdAt).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
+      const joined = workerData.createdAt
+        ? new Date(workerData.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
         : '—';
       const isVerified = workerData.verified === true || workerData.verified === 'true';
 
       document.title = 'Kebet — ' + fullName;
-      document.getElementById('p-initials').textContent   = initials || '?';
-      document.getElementById('p-name').textContent       = fullName;
-      document.getElementById('p-skill').textContent      = '🧹 ' + skill;
-      document.getElementById('p-loc').textContent        = '📍 ' + location + ', Addis Ababa';
+      document.getElementById('p-initials').textContent = initials || '?';
+      document.getElementById('p-name').textContent = fullName;
+      document.getElementById('p-skill').textContent = '🧹 ' + skill;
+      document.getElementById('p-loc').textContent = '📍 ' + location + ', Addis Ababa';
       document.getElementById('p-rating-num').textContent = rating > 0 ? rating.toFixed(1) : 'New';
-      document.getElementById('p-stars').textContent      = starsHtml(rating);
+      document.getElementById('p-stars').textContent = starsHtml(rating);
       document.getElementById('p-review-count').textContent = reviewCount > 0 ? reviewCount + ' review' + (reviewCount > 1 ? 's' : '') : 'No reviews yet';
       document.getElementById('review-count-badge').textContent = reviewCount > 0 ? '(' + reviewCount + ')' : '';
-      document.getElementById('d-name').textContent       = fullName;
-      document.getElementById('d-loc').textContent        = location + ', Addis Ababa';
-      document.getElementById('d-skill').textContent      = skill;
-      document.getElementById('d-phone').textContent      = workerData.phone ? '📞 Available after booking' : '—';
-      document.getElementById('d-joined').textContent     = joined;
-      document.getElementById('bottom-name').innerHTML    = '<span class="en">Hire ' + firstName + ' today</span><span class="am">' + firstName + 'ን ዛሬ ቅጠሩ</span>';
-
-      // Salary
-      if (workerData.expectedSalary || workerData.salary) {
-        document.getElementById('p-salary').textContent = Number(workerData.expectedSalary || workerData.salary).toLocaleString();
-      }
+      document.getElementById('d-name').textContent = fullName;
+      document.getElementById('d-loc').textContent = location + ', Addis Ababa';
+      document.getElementById('d-skill').textContent = skill;
+      document.getElementById('d-phone').textContent = workerData.phone ? '📞 Available after booking' : '—';
+      document.getElementById('d-joined').textContent = joined;
+      document.getElementById('bottom-name').textContent = 'Hire ' + firstName + ' today';
 
       // Tags
+      const tagsEl = document.getElementById('p-tags');
       let tagsHtml = '<span class="tag tag-gold"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span>';
       if (isVerified) tagsHtml += '<span class="tag tag-green">✓ Verified</span>';
-      if (rating > 0)  tagsHtml += '<span class="tag tag-gold">★ ' + rating.toFixed(1) + '</span>';
+      if (rating > 0) tagsHtml += '<span class="tag tag-gold">★ ' + rating.toFixed(1) + ' rating</span>';
       tagsHtml += '<span class="tag tag-blue">📍 ' + location + '</span>';
-      document.getElementById('p-tags').innerHTML = tagsHtml;
+      if (workerData.phone) tagsHtml += '<span class="tag tag-gray">📞 Has phone</span>';
+      tagsEl.innerHTML = tagsHtml;
 
       // Skills
       const skillsEl = document.getElementById('d-skills');
-      const skillList = ['Cleaning','Cooking','Laundry','Nanny / Child care','Full-time helper','Gardening'];
+      const skillList = ['Cleaning', 'Cooking', 'Laundry', 'Nanny / Child care', 'Full-time helper', 'Gardening'];
       const workerSkillLower = skill.toLowerCase();
-      const matched = skillList.filter(s => workerSkillLower.includes(s.toLowerCase().split('/')[0].trim()) || s.toLowerCase().includes(workerSkillLower));
-      skillsEl.innerHTML = (matched.length ? matched : [skill]).map(s => `<span class="skill-pill">✓ ${s}</span>`).join('');
+      skillsEl.innerHTML = skillList
+        .filter(s => workerSkillLower.includes(s.toLowerCase().split('/')[0].trim()) || s.toLowerCase().includes(workerSkillLower))
+        .map(s => `<span class="skill-pill">✓ ${s}</span>`)
+        .join('') || `<span class="skill-pill">✓ ${skill}</span>`;
 
-      // Reviews
+      // Load reviews from Firestore
       const reviewsSnap = await getDocs(query(collection(db, 'reviews'), where('workerId', '==', workerId)));
       const reviews = [];
       reviewsSnap.forEach(r => reviews.push(r.data()));
-      reviews.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       const reviewsEl = document.getElementById('d-reviews');
       if (reviews.length === 0) {
-        reviewsEl.innerHTML = `<div style="text-align:center;padding:24px;color:#aaa;"><div style="font-size:32px;margin-bottom:8px;">⭐</div><div style="font-size:13px;"><span class="en">No reviews yet</span><span class="am">እስካሁን ምንም ግምገማ የለም</span></div></div>`;
-      } else {
-        reviewsEl.innerHTML = reviews.map(r => {
-          const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
-          return `<div class="review-item">
-            <div class="review-top">
-              <div class="review-av">${r.ownerInitials||'??'}</div>
-              <div><div class="review-owner">${r.ownerName||'House Owner'}</div>
-              <div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px;color:#888;">${r.rating}/5</span></div></div>
-              <div class="review-date">${date}</div>
-            </div>
-            ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ''}
+        reviewsEl.innerHTML = `
+          <div style="text-align:center; padding:24px; color:#aaa;">
+            <div style="font-size:32px; margin-bottom:8px;">⭐</div>
+            <div style="font-size:13px;">No reviews yet — be the first to hire and rate!</div>
           </div>`;
-        }).join('');
+      } else {
+        let html = '';
+        reviews.forEach(r => {
+          const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+          html += `
+            <div class="review-item ks-reveal">
+              <div class="review-top">
+                <div class="review-av">${r.ownerInitials || '??'}</div>
+                <div>
+                  <div class="review-owner">${r.ownerName || 'House Owner'}</div>
+                  <div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px; color:#888;">${r.rating}/5</span></div>
+                </div>
+                <div class="review-date">${date}</div>
+              </div>
+              ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ''}
+            </div>`;
+        });
+        reviewsEl.innerHTML = html;
       }
 
       document.getElementById('loading').style.display = 'none';
       document.getElementById('profile-content').style.display = 'block';
 
     } catch (err) {
-      document.getElementById('loading').textContent = '❌ Error: ' + err.message;
+      document.getElementById('loading').textContent = '❌ Error loading profile: ' + err.message;
     }
   }
 
-  // ── STEP 1: Open booking details modal ──
-  window.startHire = function() {
+  window.openBookModal = function() {
     if (!currentUser) {
       alert('Please sign in first to book a worker.');
       window.location.href = 'signin.html';
       return;
     }
     if (currentOwnerData?.userType !== 'owner') {
-      alert('Only house owners can book workers.');
+      alert('Only house owners can book workers. Please sign in as an owner.');
       return;
     }
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('book-start-date').min   = today;
+    document.getElementById('book-start-date').min = today;
     document.getElementById('book-start-date').value = today;
-    document.getElementById('book-months').value     = '3';
-    document.getElementById('book-salary').value     = '';
+    document.getElementById('book-months').value = '3';
+    document.getElementById('book-salary').value = '';
     document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
-    document.getElementById('total-box').style.display  = 'none';
-    document.getElementById('error-box').style.display  = 'none';
-    document.getElementById('modal-sub').textContent    = 'Booking: ' + (workerData?.firstName||'') + ' ' + (workerData?.lastName||'') + ' · ' + (workerData?.skill||'');
+    document.getElementById('total-box').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+    document.getElementById('modal-sub').textContent = 'Booking: ' + (workerData?.firstName || '') + ' ' + (workerData?.lastName || '') + ' · ' + (workerData?.skill || '');
     document.getElementById('book-modal').classList.add('show');
-    document.getElementById('book-salary').oninput  = updateTotal;
+    document.getElementById('book-salary').oninput = updateTotal;
     document.getElementById('book-months').onchange = updateTotal;
-  };
+  }
 
   window.closeBookModal = function() {
     document.getElementById('book-modal').classList.remove('show');
-  };
+  }
 
   function updateTotal() {
-    const sal    = parseInt(document.getElementById('book-salary').value) || 0;
+    const sal = parseInt(document.getElementById('book-salary').value) || 0;
     const months = parseInt(document.getElementById('book-months').value) || 1;
-    const el     = document.getElementById('total-box');
+    const el = document.getElementById('total-box');
     if (sal > 0) {
       el.style.display = 'block';
-      el.textContent   = '💰 Total: ' + (sal * months).toLocaleString() + ' ETB (' + sal.toLocaleString() + ' × ' + months + ' months)';
+      el.textContent = '💰 Total: ' + (sal * months).toLocaleString() + ' ETB (' + sal.toLocaleString() + ' × ' + months + ' months)';
     } else {
       el.style.display = 'none';
     }
   }
 
-  // ── STEP 1 → STEP 2: Validate then open payment modal ──
-  window.proceedToPayment = function() {
-    const startDate = document.getElementById('book-start-date').value;
-    const months    = parseInt(document.getElementById('book-months').value);
-    const salary    = parseInt(document.getElementById('book-salary').value);
-    const services  = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
-    const errEl     = document.getElementById('error-box');
-    errEl.style.display = 'none';
+  let selectedFeeMethod = 'telebirr';
 
-    if (!startDate)              { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display='block'; return; }
-    if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display='block'; return; }
-    if (services.length === 0)   { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display='block'; return; }
+  window.selectFeeMethod = function(method) {
+    selectedFeeMethod = method;
+    document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('pm-' + method).classList.add('active');
+    document.getElementById('detail-telebirr').style.display = method === 'telebirr' ? 'block' : 'none';
+    document.getElementById('detail-cbe').style.display = method === 'cbe' ? 'block' : 'none';
+  }
 
-    // Save booking details for later
-    bookingDetails = { startDate, months, salary, services };
+  window.copyFeeNum = function(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  }
 
-    // Close booking modal, open payment modal
-    closeBookModal();
-
-    const workerName = ((workerData?.firstName||'') + ' ' + (workerData?.lastName||'')).trim();
-    document.getElementById('pay-worker-name').textContent = workerName;
-    document.getElementById('pay-salary').textContent      = salary.toLocaleString() + ' ETB/month';
-    document.getElementById('pay-months').textContent      = months + ' month' + (months > 1 ? 's' : '');
-
-    // Reset payment state
-    selectedMethod   = null;
-    screenshotBase64 = null;
-    document.getElementById('pay-instructions').style.display   = 'none';
-    document.getElementById('screenshot-section').style.display = 'none';
-    document.getElementById('submit-pay-btn').style.display     = 'none';
-    document.getElementById('screenshot-preview').style.display = 'none';
-    document.getElementById('screenshot-label').style.borderColor = '#c3e6d0';
-    document.querySelectorAll('.pay-method-card').forEach(m => m.classList.remove('selected'));
-
-    document.getElementById('pay-modal').classList.add('show');
-  };
-
-  window.closePayModal = function() {
-    document.getElementById('pay-modal').classList.remove('show');
-  };
-
-  window.selectMethod = function(method) {
-    selectedMethod = method;
-    document.querySelectorAll('.pay-method-card').forEach(m => m.classList.remove('selected'));
-    document.getElementById('method-' + method).classList.add('selected');
-    document.getElementById('pay-instructions').style.display   = 'block';
-    document.getElementById('screenshot-section').style.display = 'block';
-    document.getElementById('telebirr-details').style.display   = method === 'telebirr' ? 'block' : 'none';
-    document.getElementById('cbe-details').style.display        = method === 'cbe'      ? 'block' : 'none';
-  };
-
-  window.copyText = function(text) {
-    navigator.clipboard.writeText(text).then(() => alert('✓ Copied: ' + text));
-  };
-
-  window.handleScreenshot = function(event) {
-    const file = event.target.files[0];
+  window.previewFeeReceipt = function(input) {
+    const file = input.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert('File too large. Max 5MB.'); return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-      screenshotBase64 = e.target.result;
-      document.getElementById('screenshot-img').src             = screenshotBase64;
-      document.getElementById('screenshot-preview').style.display = 'block';
-      document.getElementById('screenshot-label').style.borderColor = '#1a6b3c';
-      document.getElementById('submit-pay-btn').style.display   = 'block';
+    reader.onload = e => {
+      const img = document.getElementById('upload-preview-sm');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('upload-sm-label').innerHTML = '✅ ' + file.name;
     };
     reader.readAsDataURL(file);
-  };
+  }
 
-  // ── STEP 2: Submit payment + create booking ──
-  window.submitPayment = async function() {
-    if (!selectedMethod)    { alert('Please select a payment method.'); return; }
-    if (!screenshotBase64)  { alert('Please upload your payment screenshot.'); return; }
+  window.confirmBooking = async function() {
+    const startDate = document.getElementById('book-start-date').value;
+    const months = parseInt(document.getElementById('book-months').value);
+    const salary = parseInt(document.getElementById('book-salary').value);
+    const services = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
+    const errEl = document.getElementById('error-box');
+    const btn = document.getElementById('confirm-btn');
 
-    const btn = document.getElementById('submit-pay-btn');
+    errEl.style.display = 'none';
+    if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
+    if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
+    if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
+    if (!document.getElementById('fee-paid-check').checked) {
+      errEl.textContent = '⚠️ Please pay the 200 ETB Kebet service fee and check the confirmation box.';
+      errEl.style.display = 'block';
+      document.getElementById('fee-paid-check').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    btn.textContent = 'Booking...';
     btn.disabled = true;
-    btn.innerHTML = '⏳ <span class="en">Submitting...</span><span class="am">እየላከ...</span>';
+
+    // Get receipt as base64 if uploaded
+    let receiptBase64 = null;
+    const fileInput = document.getElementById('fee-receipt');
+    if (fileInput.files && fileInput.files[0]) {
+      receiptBase64 = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(fileInput.files[0]);
+      });
+    }
 
     try {
-      const ownerName    = ((currentOwnerData?.firstName||'') + ' ' + (currentOwnerData?.lastName||'')).trim();
-      const workerName   = ((workerData?.firstName||'') + ' ' + (workerData?.lastName||'')).trim();
+      const ownerName = ((currentOwnerData?.firstName || '') + ' ' + (currentOwnerData?.lastName || '')).trim();
+      const workerFullName = ((workerData?.firstName || '') + ' ' + (workerData?.lastName || '')).trim();
 
-      // Create booking with status pending_payment
-      const bookingRef = await addDoc(collection(db, 'bookings'), {
-        workerId:       workerId,
-        workerName:     workerName,
-        workerRole:     workerData?.skill || '',
-        ownerId:        currentUser.uid,
-        ownerName:      ownerName,
-        ownerLocation:  currentOwnerData?.location || '',
-        startDate:      bookingDetails.startDate,
-        contractMonths: bookingDetails.months,
-        monthlySalary:  bookingDetails.salary,
-        totalAmount:    bookingDetails.salary * bookingDetails.months,
-        services:       bookingDetails.services,
-        status:         'pending_payment',
-        paymentMethod:  selectedMethod,
-        paymentStatus:  'pending_review',
-        serviceFee:     200,
-        screenshotURL:  screenshotBase64,
-        createdAt:      new Date().toISOString()
-      });
-
-      // Notify admin
-      await addDoc(collection(db, 'notifications'), {
-        userId:        'WMYqXwIuTPUfQhEeABr70oYmvf72',
-        type:          'payment',
-        title:         '💰 New payment from ' + ownerName,
-        body:          ownerName + ' paid 200 ETB via ' + selectedMethod + ' to hire ' + workerName + '. Please verify screenshot.',
-        bookingId:     bookingRef.id,
-        paymentMethod: selectedMethod,
-        read:          false,
-        createdAt:     new Date().toISOString()
-      });
-
-      // Notify worker
-      await addDoc(collection(db, 'notifications'), {
-        userId:    workerId,
-        type:      'booking',
-        title:     '🏠 New booking request!',
-        body:      ownerName + ' wants to hire you. Payment is being verified by Kebet.',
-        read:      false,
+      await addDoc(collection(db, 'bookings'), {
+        workerId: workerId,
+        workerName: workerFullName,
+        workerRole: workerData?.skill || '',
+        ownerId: currentUser.uid,
+        ownerName: ownerName,
+        ownerLocation: currentOwnerData?.location || '',
+        startDate: startDate,
+        contractMonths: months,
+        monthlySalary: salary,
+        totalAmount: salary * months,
+        services: services,
+        status: 'pending',
+        serviceFee: 200,
+        feePaymentMethod: selectedFeeMethod,
+        feeStatus: 'pending_verification',
+        feeReceiptImage: receiptBase64 || null,
         createdAt: new Date().toISOString()
       });
 
-      closePayModal();
-      document.getElementById('success-modal').classList.add('show');
-
+      closeBookModal();
+      alert('✅ Booking sent to ' + (workerData?.firstName || 'worker') + '! They will be notified.\n\nYour 200 ETB service fee will be verified by Kebet.');
+      window.location.href = 'dashboard-owner.html';
     } catch (err) {
-      alert('Error: ' + err.message);
+      errEl.textContent = '❌ Booking failed: ' + err.message;
+      errEl.style.display = 'block';
+      btn.textContent = 'Confirm Booking ✓';
       btn.disabled = false;
-      btn.innerHTML = '✅ <span class="en">I\'ve Paid — Submit Booking</span><span class="am">ከፍያለሁ — ቦታ ማስያዣ ይላኩ</span>';
     }
-  };
+  }
 
   loadProfile();
 </script>
+
 </body>
 </html>
