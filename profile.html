@@ -12,7 +12,10 @@
     .nav-logo-icon { width: 38px; height: 38px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
     .nav-logo-text { font-size: 20px; font-weight: 600; color: #1a6b3c; letter-spacing: 2px; }
     .nav-logo-am { font-size: 13px; color: #f0a500; }
-    .nav-btns { display: flex; gap: 10px; }
+    .nav-btns { display: flex; gap: 10px; align-items: center; }
+    .lang-toggle { display: flex; gap: 4px; background: #f5f5f0; border-radius: 20px; padding: 4px; }
+    .lang-btn { border: none; background: transparent; padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; color: #888; }
+    .lang-btn.active { background: #1a6b3c; color: #fff; }
     .btn-outline-nav { border: 1.5px solid #1a6b3c; color: #1a6b3c; background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
     .btn-green-nav { background: #1a6b3c; color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
     .back-bar { padding: 16px 40px; display: flex; align-items: center; gap: 10px; }
@@ -55,8 +58,6 @@
     .not-found-icon { font-size: 60px; margin-bottom: 16px; }
     .not-found-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
     .not-found-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
-
-    /* Reviews */
     .review-item { padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
     .review-item:last-child { border-bottom: none; }
     .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
@@ -69,20 +70,47 @@
     /* Book Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
     .modal-overlay.show { display: flex; }
-    .modal-box { background: #fff; border-radius: 24px; padding: 32px; max-width: 420px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-box { background: #fff; border-radius: 24px; padding: 32px; max-width: 440px; width: 90%; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px; }
     .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
     .form-group { margin-bottom: 14px; }
     .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
-    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; color: #111; }
     .form-input:focus { border-color: #1a6b3c; }
     .svc-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-    .svc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
-    .total-box { background: #e8f5ee; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #1a6b3c; font-weight: 600; margin-bottom: 16px; display: none; }
+    .svc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; padding: 6px 10px; background: #f5f5f0; border-radius: 8px; cursor: pointer; }
+
+    /* Salary picker inside modal */
+    .sal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+    .sal-btn { border: 2px solid #eee; border-radius: 10px; padding: 10px 6px; cursor: pointer; background: #fff; text-align: center; transition: all 0.2s; }
+    .sal-btn.active { border-color: #1a6b3c; background: #e8f5ee; }
+    .sal-btn-amount { font-size: 14px; font-weight: 700; color: #111; }
+    .sal-btn.active .sal-btn-amount { color: #1a6b3c; }
+    .sal-btn-label { font-size: 9px; color: #aaa; }
+    .sal-custom-row { display: flex; gap: 8px; align-items: center; }
+    .sal-custom-row input { flex: 1; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .sal-custom-row input:focus { border-color: #1a6b3c; }
+    .sal-custom-row span { font-size: 12px; color: #888; white-space: nowrap; }
+
+    /* Duration buttons */
+    .dur-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .dur-btn { border: 2px solid #eee; border-radius: 8px; padding: 8px 4px; cursor: pointer; background: #fff; text-align: center; font-size: 12px; font-weight: 600; color: #555; transition: all 0.2s; }
+    .dur-btn.active { border-color: #1a6b3c; background: #e8f5ee; color: #1a6b3c; }
+    .dur-btn small { display: block; font-size: 9px; color: #aaa; font-weight: 400; margin-top: 1px; }
+    .dur-btn.active small { color: #1a6b3c; }
+
+    .total-box { background: #e8f5ee; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #1a6b3c; font-weight: 600; margin-bottom: 16px; display: none; }
+    .total-box .total-big { font-size: 20px; font-weight: 700; margin-top: 4px; }
     .error-box { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: none; }
     .modal-btns { display: flex; gap: 10px; }
     .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-confirm:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* Language */
+    .am { display: none; }
+    body.lang-am .en { display: none; }
+    body.lang-am .am { display: inline; }
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -95,16 +123,11 @@
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="kebet-lang.css"/>
-  <script src="kebet-lang.js"></script>
-  <link rel="stylesheet" href="kebet-smooth.css"/>
-  <script src="kebet-smooth.js"></script>
-  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo" onclick="window.location.href='search.html'">
+  <div class="nav-logo" onclick="window.location.href='index.html'">
     <div class="nav-logo-icon">🏠</div>
     <div>
       <div class="nav-logo-text">KEBET</div>
@@ -112,27 +135,47 @@
     </div>
   </div>
   <div class="nav-btns">
-        <div class="lang-toggle" style="margin-left:auto;">
-  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-  <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
-</div>
-    <button class="btn-outline-nav" onclick="window.location.href='signin.html'"><span class="en">Sign in</span><span class="am">ግባ</span></button>
-    <button class="btn-green-nav" onclick="window.location.href='signup.html'"><span class="en">Get Started</span><span class="am">ጀምር</span></button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+    </div>
+    <button class="btn-outline-nav" onclick="window.location.href='signin.html'">
+      <span class="en">Sign in</span><span class="am">ግባ</span>
+    </button>
+    <button class="btn-green-nav" onclick="window.location.href='signup.html'">
+      <span class="en">Get Started</span><span class="am">ጀምር</span>
+    </button>
   </div>
 </nav>
 
 <div class="back-bar">
-  <button class="back-btn" onclick="window.history.back()"><span class="en">← Back to search</span><span class="am">← ወደ ፍለጋ ተመለስ</span></button>
+  <button class="back-btn" onclick="window.history.back()">
+    <span class="en">← Back to search</span>
+    <span class="am">← ወደ ፍለጋ ተመለስ</span>
+  </button>
 </div>
 
 <div class="page">
-  <div id="loading" class="loading"><span class="en">⏳ Loading worker profile...</span><span class="am">⏳ የሰራተኛ መገለጫ እየጫነ...</span></div>
+  <div id="loading" class="loading">
+    <span class="en">⏳ Loading worker profile...</span>
+    <span class="am">⏳ የሰራተኛ መገለጫ እየጫነ...</span>
+  </div>
   <div id="not-found" class="not-found" style="display:none;">
     <div class="not-found-icon">😔</div>
-    <div class="not-found-title"><span class="en">Worker not found</span><span class="am">ሰራተኛ አልተገኘም</span></div>
-    <div class="not-found-sub"><span class="en">This profile does not exist or was removed.</span><span class="am">ይህ መገለጫ የለም ወይም ተወግዷል።</span></div>
-    <button onclick="window.location.href='search.html'" style="background:#1a6b3c; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;"><span class="en">← Back to Search</span><span class="am">← ወደ ፍለጋ ተመለስ</span></button>
+    <div class="not-found-title">
+      <span class="en">Worker not found</span>
+      <span class="am">ሰራተኛ አልተገኘም</span>
+    </div>
+    <div class="not-found-sub">
+      <span class="en">This profile does not exist or was removed.</span>
+      <span class="am">ይህ መገለጫ የለም ወይም ተወግዷል።</span>
+    </div>
+    <button onclick="window.location.href='search.html'" style="background:#1a6b3c; color:#fff; border:none; padding:12px 28px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;">
+      <span class="en">← Back to Search</span>
+      <span class="am">← ወደ ፍለጋ ተመለስ</span>
+    </button>
   </div>
+
   <div id="profile-content" style="display:none;">
 
     <div class="profile-hero">
@@ -146,18 +189,30 @@
             <div class="profile-tags" id="p-tags"></div>
           </div>
         </div>
-        <button class="hire-big-btn" onclick="openBookModal()"><span class="en">🏠 Hire Now — Book This Worker</span><span class="am">🏠 አሁን ቅጠር — ይህን ሰራተኛ ይያዙ</span></button>
+        <button class="hire-big-btn" onclick="openBookModal()">
+          <span class="en">🏠 Hire Now — Book This Worker</span>
+          <span class="am">🏠 አሁን ቅጠር — ይህን ሰራተኛ ይያዙ</span>
+        </button>
       </div>
       <div class="profile-right">
         <div class="salary-box">
-          <div class="salary-box-label"><span class="en">SALARY</span><span class="am">ደሞዝ</span></div>
-          <div class="salary-box-val" id="p-salary"><span class="en">Negotiable</span><span class="am">በድርድር</span></div>
-          <div class="salary-box-sub"><span class="en">/month ETB</span><span class="am">/ ወር ብር</span></div>
+          <div class="salary-box-label">
+            <span class="en">SALARY</span><span class="am">ደሞዝ</span>
+          </div>
+          <div class="salary-box-val" id="p-salary">
+            <span class="en">Negotiable</span><span class="am">በድርድር</span>
+          </div>
+          <div class="salary-box-sub">
+            <span class="en">/month ETB</span><span class="am">/ ወር ብር</span>
+          </div>
         </div>
         <div class="rating-box">
           <div class="rating-box-val" id="p-rating-num">New</div>
           <div class="rating-box-stars" id="p-stars">☆☆☆☆☆</div>
-          <div class="rating-box-sub" id="p-review-count"><span class="en">No reviews yet</span><span class="am">እስካሁን ምንም ግምገማ የለም</span></div>
+          <div class="rating-box-sub" id="p-review-count">
+            <span class="en">No reviews yet</span>
+            <span class="am">እስካሁን ምንም ግምገማ የለም</span>
+          </div>
         </div>
       </div>
     </div>
@@ -165,39 +220,87 @@
     <div class="two-col">
       <div>
         <div class="section-card">
-          <div class="section-title ks-reveal">👤 Personal Info</div>
-          <div class="info-row"><span class="info-label"><span class="en">Full name</span><span class="am">ሙሉ ስም</span></span><span class="info-val" id="d-name">—</span></div>
-          <div class="info-row"><span class="info-label"><span class="en">Location</span><span class="am">አካባቢ</span></span><span class="info-val" id="d-loc">—</span></div>
-          <div class="info-row"><span class="info-label"><span class="en">Main skill</span><span class="am">ዋና ችሎታ</span></span><span class="info-val" id="d-skill">—</span></div>
-          <div class="info-row"><span class="info-label"><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span class="info-val"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
-          <div class="info-row"><span class="info-label"><span class="en">Phone</span><span class="am">ስልክ</span></span><span class="info-val" id="d-phone">—</span></div>
-          <div class="info-row"><span class="info-label"><span class="en">Member since</span><span class="am">አባልነት ጀምሮ</span></span><span class="info-val" id="d-joined">—</span></div>
+          <div class="section-title">
+            <span class="en">👤 Personal Info</span>
+            <span class="am">👤 የግል መረጃ</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><span class="en">Full name</span><span class="am">ሙሉ ስም</span></span>
+            <span class="info-val" id="d-name">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><span class="en">Location</span><span class="am">አካባቢ</span></span>
+            <span class="info-val" id="d-loc">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><span class="en">Main skill</span><span class="am">ዋና ችሎታ</span></span>
+            <span class="info-val" id="d-skill">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><span class="en">Work type</span><span class="am">የስራ አይነት</span></span>
+            <span class="info-val">
+              <span class="en">🛏️ Live-in</span>
+              <span class="am">🛏️ ቤት ውስጥ ሆኖ</span>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><span class="en">Phone</span><span class="am">ስልክ</span></span>
+            <span class="info-val" id="d-phone">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><span class="en">Member since</span><span class="am">አባልነት ጀምሮ</span></span>
+            <span class="info-val" id="d-joined">—</span>
+          </div>
         </div>
+
         <div class="section-card">
-          <div class="section-title ks-reveal">🧹 Skills & Services</div>
+          <div class="section-title">
+            <span class="en">🧹 Skills & Services</span>
+            <span class="am">🧹 ክህሎቶች እና አገልግሎቶች</span>
+          </div>
           <div class="skills-grid" id="d-skills"></div>
         </div>
       </div>
 
       <div>
         <div class="section-card">
-          <div class="section-title ks-reveal">⭐ Reviews <span id="review-count-badge" style="font-size:12px; color:#888; font-weight:400;"></span></div>
+          <div class="section-title">
+            ⭐ <span class="en">Reviews</span><span class="am">ግምገማዎች</span>
+            <span id="review-count-badge" style="font-size:12px; color:#888; font-weight:400;"></span>
+          </div>
           <div id="d-reviews">
             <div style="text-align:center; padding:24px; color:#aaa;">
               <div style="font-size:32px; margin-bottom:8px;">⭐</div>
-              <div style="font-size:13px;">No reviews yet — be the first to hire and rate!</div>
+              <div style="font-size:13px;">
+                <span class="en">No reviews yet — be the first to hire and rate!</span>
+                <span class="am">እስካሁን ምንም ግምገማ የለም — ይቅጥሩ እና ይገምግሙ!</span>
+              </div>
             </div>
           </div>
         </div>
+
         <div class="section-card" style="background:#1a6b3c;">
-          <div class="section-title ks-reveal" style="color:#fff;">🙏 Worker Rights</div>
-          <div style="font-size:12px; color:rgba(255,255,255,0.85); line-height:1.8;">
-            ✅ Right to 1 day off per week<br>
-            ✅ Salary paid on time monthly<br>
-            ✅ Keeps phone and ID at all times<br>
-            ✅ Zero tolerance for abuse<br>
-            ✅ Can contact Kebet anytime<br>
-            ✅ Can leave if unsafe
+          <div class="section-title" style="color:#fff;">
+            <span class="en">🙏 Worker Rights</span>
+            <span class="am">🙏 የሰራተኛ መብቶች</span>
+          </div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); line-height:2;">
+            <span class="en">
+              ✅ Right to 1 day off per week<br>
+              ✅ Salary paid on time monthly<br>
+              ✅ Keeps phone and ID at all times<br>
+              ✅ Zero tolerance for abuse<br>
+              ✅ Can contact Kebet anytime<br>
+              ✅ Can leave if unsafe
+            </span>
+            <span class="am">
+              ✅ በሳምንት 1 ቀን ዕረፍት የማግኘት መብት<br>
+              ✅ ደሞዝ በወቅቱ መከፈል አለበት<br>
+              ✅ ስልክና መታወቂያ ሁልጊዜ ይዛ ትቆያለች<br>
+              ✅ ጥቃት ለምንም ምክንያት አይፈቀድም<br>
+              ✅ ማንኛውም ጊዜ Kebet ማግኘት ትችላለች<br>
+              ✅ ደህንነቷ ካልተጠበቀ መሄድ ትችላለች
+            </span>
           </div>
         </div>
       </div>
@@ -205,10 +308,19 @@
 
     <div style="background:#fff; border-radius:16px; padding:20px 24px; border:1px solid #eee; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
       <div>
-        <div style="font-size:16px; font-weight:700; color:#111;" id="bottom-name">Ready to hire?</div>
-        <div style="font-size:13px; color:#888; margin-top:2px;"><span class="en">Send a booking request — it only takes 1 minute</span><span class="am">የቦታ ማስያዣ ጥያቄ ይላኩ — 1 ደቂቃ ብቻ ይወስዳል</span></div>
+        <div style="font-size:16px; font-weight:700; color:#111;" id="bottom-name">
+          <span class="en">Ready to hire?</span>
+          <span class="am">ለቅጠር ዝግጁ ነዎት?</span>
+        </div>
+        <div style="font-size:13px; color:#888; margin-top:2px;">
+          <span class="en">Send a booking request — it only takes 1 minute</span>
+          <span class="am">የቦታ ማስያዣ ጥያቄ ይላኩ — 1 ደቂቃ ብቻ ይወስዳል</span>
+        </div>
       </div>
-      <button onclick="openBookModal()" style="background:#1a6b3c; color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;"><span class="en">🏠 Hire Now</span><span class="am">🏠 አሁን ቅጠር</span></button>
+      <button onclick="openBookModal()" style="background:#1a6b3c; color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;">
+        <span class="en">🏠 Hire Now</span>
+        <span class="am">🏠 አሁን ቅጠር</span>
+      </button>
     </div>
 
   </div>
@@ -217,40 +329,112 @@
 <!-- Book Modal -->
 <div class="modal-overlay" id="book-modal">
   <div class="modal-box">
-    <div class="modal-title"><span class="en">📋 Book Worker</span><span class="am">📋 ሰራተኛ ያዝ</span></div>
+    <div class="modal-title">
+      <span class="en">📋 Book Worker</span>
+      <span class="am">📋 ሰራተኛ ያዝ</span>
+    </div>
     <div class="modal-sub" id="modal-sub">—</div>
+
+    <!-- Salary picker -->
     <div class="form-group">
-      <label class="form-label"><span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
-      <input type="date" id="book-start-date" class="form-input" />
-    </div>
-    <div class="form-group">
-      <label class="form-label"><span class="en">Contract Length (months)</span><span class="am">የውል ርዝማኔ (ወራት)</span></label>
-      <select id="book-months" class="form-input">
-        <option value="1">1 month</option>
-        <option value="3" selected>3 months</option>
-        <option value="6">6 months</option>
-        <option value="12">12 months</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label"><span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></label>
-      <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" />
-    </div>
-    <div class="form-group">
-      <label class="form-label"><span class="en">Services needed</span><span class="am">የሚፈለጉ አገልግሎቶች</span></label>
-      <div class="svc-wrap">
-        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
-        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
-        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> Laundry</label>
-        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> Nanny</label>
-        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
+      <label class="form-label">
+        <span class="en">💰 Monthly Salary (ETB)</span>
+        <span class="am">💰 ወርሃዊ ደሞዝ (ብር)</span>
+      </label>
+      <div class="sal-grid">
+        <div class="sal-btn" onclick="pickSalary(2500, this)">
+          <div class="sal-btn-amount">2,500</div>
+          <div class="sal-btn-label">ETB/mo</div>
+        </div>
+        <div class="sal-btn active" onclick="pickSalary(3500, this)">
+          <div class="sal-btn-amount">3,500</div>
+          <div class="sal-btn-label">ETB/mo</div>
+        </div>
+        <div class="sal-btn" onclick="pickSalary(4500, this)">
+          <div class="sal-btn-amount">4,500</div>
+          <div class="sal-btn-label">ETB/mo</div>
+        </div>
+      </div>
+      <div class="sal-custom-row">
+        <input type="number" id="custom-salary-input" placeholder="Custom amount" oninput="setCustomSalary(this.value)" />
+        <span>ETB / <span class="en">month</span><span class="am">ወር</span></span>
+      </div>
+      <div style="font-size:11px; color:#aaa; margin-top:6px;">
+        <span class="en">💡 Average in Addis: 2,500 – 4,500 ETB/month</span>
+        <span class="am">💡 በአዲስ አበባ አማካይ: 2,500 – 4,500 ብር/ወር</span>
       </div>
     </div>
-    <div class="total-box" id="total-box"></div>
+
+    <!-- Duration -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="en">📅 Contract Duration</span>
+        <span class="am">📅 የውል ርዝማኔ</span>
+      </label>
+      <div class="dur-grid">
+        <div class="dur-btn" onclick="pickDuration(1, this)">
+          1 <span class="en">mo</span><span class="am">ወር</span>
+          <small><span class="en">Trial</span><span class="am">ሙከራ</span></small>
+        </div>
+        <div class="dur-btn active" onclick="pickDuration(3, this)">
+          3 <span class="en">mo</span><span class="am">ወር</span>
+          <small><span class="en">Popular</span><span class="am">ተወዳጅ</span></small>
+        </div>
+        <div class="dur-btn" onclick="pickDuration(6, this)">
+          6 <span class="en">mo</span><span class="am">ወር</span>
+          <small>-5%</small>
+        </div>
+        <div class="dur-btn" onclick="pickDuration(12, this)">
+          12 <span class="en">mo</span><span class="am">ወር</span>
+          <small>-10%</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start date -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="en">📆 Start Date</span>
+        <span class="am">📆 የጀምር ቀን</span>
+      </label>
+      <input type="date" id="book-start-date" class="form-input" />
+    </div>
+
+    <!-- Services -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="en">🧹 Services needed</span>
+        <span class="am">🧹 የሚፈለጉ አገልግሎቶች</span>
+      </label>
+      <div class="svc-wrap">
+        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Cleaning</span><span class="am">ጽዳት</span></label>
+        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Cooking</span><span class="am">ምግብ ማብሰል</span></label>
+        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Laundry</span><span class="am">ልብስ ማጠብ</span></label>
+        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Nanny</span><span class="am">ህጻን ጠባቂ</span></label>
+        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> <span class="en">Gardening</span><span class="am">የአትክልት ጥበቃ</span></label>
+      </div>
+    </div>
+
+    <!-- Total summary -->
+    <div class="total-box" id="total-box">
+      <div>
+        <span class="en">Contract Summary</span>
+        <span class="am">የውል ማጠቃለያ</span>
+      </div>
+      <div class="total-big" id="total-big">0 ETB</div>
+      <div id="total-detail" style="font-size:11px; color:#1a6b3c; margin-top:2px; font-weight:400;"></div>
+    </div>
+
     <div class="error-box" id="error-box"></div>
+
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeBookModal()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
-      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()"><span class="en">Confirm Booking ✓</span><span class="am">ቦታ ማስያዣ ያረጋግጡ ✓</span></button>
+      <button class="btn-cancel" onclick="closeBookModal()">
+        <span class="en">Cancel</span><span class="am">ሰርዝ</span>
+      </button>
+      <button class="btn-confirm" id="confirm-btn" onclick="goToPaymentFee()">
+        <span class="en">Next — Review & Pay →</span>
+        <span class="am">ቀጣይ — ክፍያ ይፈጸም →</span>
+      </button>
     </div>
   </div>
 </div>
@@ -258,7 +442,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, addDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -278,14 +462,24 @@
   let currentUser = null;
   let currentOwnerData = null;
 
+  // Expose to global so modal functions can use
+  window._workerData = null;
+  window._workerId = null;
+  window._currentUser = null;
+  window._currentOwnerData = null;
+
   const params = new URLSearchParams(window.location.search);
   workerId = params.get('id');
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
+      window._currentUser = user;
       const snap = await getDoc(doc(db, 'users', user.uid));
-      if (snap.exists()) currentOwnerData = snap.data();
+      if (snap.exists()) {
+        currentOwnerData = snap.data();
+        window._currentOwnerData = snap.data();
+      }
     }
   });
 
@@ -311,6 +505,9 @@
       }
 
       workerData = snap.data();
+      window._workerData = workerData;
+      window._workerId = workerId;
+
       const firstName = workerData.firstName || '';
       const lastName = workerData.lastName || '';
       const fullName = firstName + ' ' + lastName;
@@ -323,6 +520,7 @@
         ? new Date(workerData.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
         : '—';
       const isVerified = workerData.verified === true || workerData.verified === 'true';
+      const workerSalary = workerData.expectedSalary || workerData.salary || null;
 
       document.title = 'Kebet — ' + fullName;
       document.getElementById('p-initials').textContent = initials || '?';
@@ -331,34 +529,56 @@
       document.getElementById('p-loc').textContent = '📍 ' + location + ', Addis Ababa';
       document.getElementById('p-rating-num').textContent = rating > 0 ? rating.toFixed(1) : 'New';
       document.getElementById('p-stars').textContent = starsHtml(rating);
-      document.getElementById('p-review-count').textContent = reviewCount > 0 ? reviewCount + ' review' + (reviewCount > 1 ? 's' : '') : 'No reviews yet';
+      document.getElementById('p-review-count').textContent = reviewCount > 0 ? reviewCount + ' review' + (reviewCount > 1 ? 's' : '') : '';
       document.getElementById('review-count-badge').textContent = reviewCount > 0 ? '(' + reviewCount + ')' : '';
       document.getElementById('d-name').textContent = fullName;
       document.getElementById('d-loc').textContent = location + ', Addis Ababa';
       document.getElementById('d-skill').textContent = skill;
       document.getElementById('d-phone').textContent = workerData.phone ? '📞 Available after booking' : '—';
       document.getElementById('d-joined').textContent = joined;
-      document.getElementById('bottom-name').textContent = 'Hire ' + firstName + ' today';
+
+      // Show worker salary if set
+      if (workerSalary) {
+        document.getElementById('p-salary').textContent = parseInt(workerSalary).toLocaleString();
+        document.getElementById('book-salary-default') && (document.getElementById('book-salary-default').value = workerSalary);
+      }
 
       // Tags
       const tagsEl = document.getElementById('p-tags');
-      let tagsHtml = '<span class="tag tag-gold"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span>';
+      let tagsHtml = '<span class="tag tag-gold">🛏️ Live-in</span>';
       if (isVerified) tagsHtml += '<span class="tag tag-green">✓ Verified</span>';
-      if (rating > 0) tagsHtml += '<span class="tag tag-gold">★ ' + rating.toFixed(1) + ' rating</span>';
+      if (rating > 0) tagsHtml += '<span class="tag tag-gold">★ ' + rating.toFixed(1) + '</span>';
       tagsHtml += '<span class="tag tag-blue">📍 ' + location + '</span>';
-      if (workerData.phone) tagsHtml += '<span class="tag tag-gray">📞 Has phone</span>';
       tagsEl.innerHTML = tagsHtml;
 
       // Skills
       const skillsEl = document.getElementById('d-skills');
-      const skillList = ['Cleaning', 'Cooking', 'Laundry', 'Nanny / Child care', 'Full-time helper', 'Gardening'];
+      const allSkills = ['Cleaning', 'Cooking', 'Laundry', 'Nanny', 'Full-time helper', 'Gardening', 'Ironing', 'Baby care'];
       const workerSkillLower = skill.toLowerCase();
-      skillsEl.innerHTML = skillList
-        .filter(s => workerSkillLower.includes(s.toLowerCase().split('/')[0].trim()) || s.toLowerCase().includes(workerSkillLower))
-        .map(s => `<span class="skill-pill">✓ ${s}</span>`)
-        .join('') || `<span class="skill-pill">✓ ${skill}</span>`;
+      const matched = allSkills.filter(s =>
+        workerSkillLower.includes(s.toLowerCase()) || s.toLowerCase().includes(workerSkillLower.split('/')[0].trim())
+      );
+      skillsEl.innerHTML = (matched.length > 0 ? matched : [skill])
+        .map(s => `<span class="skill-pill">✓ ${s}</span>`).join('');
 
-      // Load reviews from Firestore
+      // Bottom hire section
+      document.getElementById('bottom-name').innerHTML =
+        '<span class="en">Ready to hire ' + firstName + '?</span><span class="am">' + firstName + ' ን ለቅጠር ዝግጁ ነዎት?</span>';
+
+      // Modal subtitle
+      document.getElementById('modal-sub').textContent = fullName + ' · ' + skill + ' · ' + location;
+
+      // Pre-fill salary in modal if worker has expected salary
+      if (workerSalary) {
+        const sal = parseInt(workerSalary);
+        document.querySelectorAll('.sal-btn').forEach(b => b.classList.remove('active'));
+        const customIn = document.getElementById('custom-salary-input');
+        customIn.value = sal;
+        window._selectedSalary = sal;
+        updateModalTotal();
+      }
+
+      // Load reviews
       const reviewsSnap = await getDocs(query(collection(db, 'reviews'), where('workerId', '==', workerId)));
       const reviews = [];
       reviewsSnap.forEach(r => reviews.push(r.data()));
@@ -366,125 +586,165 @@
 
       const reviewsEl = document.getElementById('d-reviews');
       if (reviews.length === 0) {
-        reviewsEl.innerHTML = `
-          <div style="text-align:center; padding:24px; color:#aaa;">
-            <div style="font-size:32px; margin-bottom:8px;">⭐</div>
-            <div style="font-size:13px;">No reviews yet — be the first to hire and rate!</div>
-          </div>`;
+        reviewsEl.innerHTML = `<div style="text-align:center; padding:24px; color:#aaa;"><div style="font-size:32px; margin-bottom:8px;">⭐</div><div style="font-size:13px;"><span class="en">No reviews yet — be the first to hire and rate!</span><span class="am">እስካሁን ምንም ግምገማ የለም!</span></div></div>`;
       } else {
-        let html = '';
-        reviews.forEach(r => {
+        reviewsEl.innerHTML = reviews.map(r => {
           const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-          html += `
-            <div class="review-item ks-reveal">
-              <div class="review-top">
-                <div class="review-av">${r.ownerInitials || '??'}</div>
-                <div>
-                  <div class="review-owner">${r.ownerName || 'House Owner'}</div>
-                  <div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px; color:#888;">${r.rating}/5</span></div>
-                </div>
-                <div class="review-date">${date}</div>
-              </div>
-              ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ''}
-            </div>`;
-        });
-        reviewsEl.innerHTML = html;
+          return `<div class="review-item">
+            <div class="review-top">
+              <div class="review-av">${r.ownerInitials || '??'}</div>
+              <div><div class="review-owner">${r.ownerName || 'House Owner'}</div><div class="review-stars">${starsHtml(r.rating)} <span style="font-size:11px; color:#888;">${r.rating}/5</span></div></div>
+              <div class="review-date">${date}</div>
+            </div>
+            ${r.comment ? `<div class="review-comment">"${r.comment}"</div>` : ''}
+          </div>`;
+        }).join('');
       }
 
       document.getElementById('loading').style.display = 'none';
       document.getElementById('profile-content').style.display = 'block';
 
     } catch (err) {
-      document.getElementById('loading').textContent = '❌ Error loading profile: ' + err.message;
+      document.getElementById('loading').textContent = '❌ Error: ' + err.message;
+    }
+  }
+
+  // ---- MODAL LOGIC ----
+  let _selectedSalary = 3500;
+  let _selectedMonths = 3;
+  window._selectedSalary = _selectedSalary;
+  window._selectedMonths = _selectedMonths;
+
+  window.pickSalary = function(amount, btn) {
+    _selectedSalary = amount;
+    window._selectedSalary = amount;
+    document.getElementById('custom-salary-input').value = '';
+    document.querySelectorAll('.sal-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateModalTotal();
+  }
+
+  window.setCustomSalary = function(val) {
+    const n = parseInt(val);
+    if (n > 0) {
+      _selectedSalary = n;
+      window._selectedSalary = n;
+      document.querySelectorAll('.sal-btn').forEach(b => b.classList.remove('active'));
+      updateModalTotal();
+    }
+  }
+
+  window.pickDuration = function(months, btn) {
+    _selectedMonths = months;
+    window._selectedMonths = months;
+    document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateModalTotal();
+  }
+
+  function updateModalTotal() {
+    const sal = _selectedSalary || 0;
+    const months = _selectedMonths || 1;
+    const discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
+    const total = Math.round(sal * months * discount);
+    const box = document.getElementById('total-box');
+    if (sal > 0) {
+      box.style.display = 'block';
+      document.getElementById('total-big').textContent = total.toLocaleString() + ' ETB';
+      let detail = sal.toLocaleString() + ' × ' + months + ' months';
+      if (discount < 1) detail += ' (−' + Math.round((1 - discount) * 100) + '% discount)';
+      document.getElementById('total-detail').textContent = detail;
+    } else {
+      box.style.display = 'none';
     }
   }
 
   window.openBookModal = function() {
-    if (!currentUser) {
+    if (!window._currentUser) {
       alert('Please sign in first to book a worker.');
       window.location.href = 'signin.html';
       return;
     }
-    if (currentOwnerData?.userType !== 'owner') {
+    if (window._currentOwnerData?.userType !== 'owner') {
       alert('Only house owners can book workers. Please sign in as an owner.');
       return;
     }
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('book-start-date').min = today;
     document.getElementById('book-start-date').value = today;
-    document.getElementById('book-months').value = '3';
-    document.getElementById('book-salary').value = '';
-    document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
-    document.getElementById('total-box').style.display = 'none';
     document.getElementById('error-box').style.display = 'none';
-    document.getElementById('modal-sub').textContent = 'Booking: ' + (workerData?.firstName || '') + ' ' + (workerData?.lastName || '') + ' · ' + (workerData?.skill || '');
+    updateModalTotal();
     document.getElementById('book-modal').classList.add('show');
-    document.getElementById('book-salary').oninput = updateTotal;
-    document.getElementById('book-months').onchange = updateTotal;
   }
 
   window.closeBookModal = function() {
     document.getElementById('book-modal').classList.remove('show');
   }
 
-  function updateTotal() {
-    const sal = parseInt(document.getElementById('book-salary').value) || 0;
-    const months = parseInt(document.getElementById('book-months').value) || 1;
-    const el = document.getElementById('total-box');
-    if (sal > 0) {
-      el.style.display = 'block';
-      el.textContent = '💰 Total: ' + (sal * months).toLocaleString() + ' ETB (' + sal.toLocaleString() + ' × ' + months + ' months)';
-    } else {
-      el.style.display = 'none';
-    }
-  }
-
-  window.confirmBooking = async function() {
+  // ---- KEY FUNCTION: go to payment-fee.html with all params ----
+  window.goToPaymentFee = function() {
     const startDate = document.getElementById('book-start-date').value;
-    const months = parseInt(document.getElementById('book-months').value);
-    const salary = parseInt(document.getElementById('book-salary').value);
+    const salary = window._selectedSalary || 0;
+    const months = window._selectedMonths || 1;
     const services = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
     const errEl = document.getElementById('error-box');
-    const btn = document.getElementById('confirm-btn');
 
     errEl.style.display = 'none';
-    if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
-    if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
-    if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
 
-    btn.textContent = 'Booking...';
-    btn.disabled = true;
-
-    try {
-      const ownerName = ((currentOwnerData?.firstName || '') + ' ' + (currentOwnerData?.lastName || '')).trim();
-      const workerFullName = ((workerData?.firstName || '') + ' ' + (workerData?.lastName || '')).trim();
-
-      await addDoc(collection(db, 'bookings'), {
-        workerId: workerId,
-        workerName: workerFullName,
-        workerRole: workerData?.skill || '',
-        ownerId: currentUser.uid,
-        ownerName: ownerName,
-        ownerLocation: currentOwnerData?.location || '',
-        startDate: startDate,
-        contractMonths: months,
-        monthlySalary: salary,
-        totalAmount: salary * months,
-        services: services,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      });
-
-      closeBookModal();
-      alert('✅ Booking sent to ' + (workerData?.firstName || 'worker') + '! They will be notified.');
-      window.location.href = 'dashboard-owner.html';
-    } catch (err) {
-      errEl.textContent = '❌ Booking failed: ' + err.message;
+    // Validate
+    if (!startDate) {
+      errEl.textContent = '⚠️ Please pick a start date.';
       errEl.style.display = 'block';
-      btn.textContent = 'Confirm Booking ✓';
-      btn.disabled = false;
+      return;
     }
+    if (!salary || salary < 500) {
+      errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (services.length === 0) {
+      errEl.textContent = '⚠️ Please select at least one service.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const wd = window._workerData;
+    const wid = window._workerId;
+    const workerName = ((wd?.firstName || '') + ' ' + (wd?.lastName || '')).trim();
+    const workerRole = wd?.skill || '';
+    const discount = months >= 12 ? 0.90 : months >= 6 ? 0.95 : 1;
+    const totalAmount = Math.round(salary * months * discount);
+
+    // Build URL params and go to payment-fee.html
+    const p = new URLSearchParams({
+      workerId:    wid || '',
+      worker:      workerName,
+      role:        workerRole,
+      salary:      salary,
+      months:      months,
+      total:       totalAmount,
+      startDate:   startDate,
+      services:    services.join(','),
+      ownerId:     window._currentUser?.uid || '',
+      ownerName:   ((window._currentOwnerData?.firstName || '') + ' ' + (window._currentOwnerData?.lastName || '')).trim(),
+      ownerLocation: window._currentOwnerData?.location || '',
+      ownerPhone:  window._currentOwnerData?.phone || '',
+    });
+
+    window.location.href = 'payment-fee.html?' + p.toString();
   }
+
+  // Language toggle
+  window.setLang = function(lang) {
+    localStorage.setItem('kebet_lang', lang);
+    document.body.classList.toggle('lang-am', lang === 'am');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-am').classList.toggle('active', lang === 'am');
+  }
+
+  // Apply saved language on load
+  const savedLang = localStorage.getItem('kebet_lang') || 'en';
+  window.setLang(savedLang);
 
   loadProfile();
 </script>
