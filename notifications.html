@@ -68,7 +68,6 @@
   <script src="kebet-lang.js"></script>
   <link rel="stylesheet" href="kebet-smooth.css"/>
   <script src="kebet-smooth.js"></script>
-  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -239,7 +238,7 @@
         if (!d.data().read) batch.update(doc(db, 'notifications', d.id), { read: true });
       });
       await batch.commit();
-      document.body.style.opacity="0.5"; setTimeout(()=>location.reload(), 200);
+      location.reload();
     } catch(e) { alert('Error: ' + e.message); }
   }
 
@@ -248,12 +247,12 @@
     document.getElementById('settings-label').textContent = 'Settings';
     document.getElementById('sidebar-role').textContent = 'House Owner';
     document.getElementById('sidebar-links').innerHTML = `
-      <div class="sidebar-item" data-page="dashboard-owner.html" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
-      <div class="sidebar-item" data-page="search.html" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
-      <div class="sidebar-item" data-page="dashboard-owner.html" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
-      <div class="sidebar-item" data-page="payments-owner.html" onclick="window.location.href='payments-owner.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
-      <div class="sidebar-item" data-page="reviews.html" onclick="window.location.href='reviews.html'"><span class="sidebar-item-icon">⭐</span> Reviews</div>
-      <div class="sidebar-item" data-page="messages.html" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
+      <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+      <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
+      <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
+      <div class="sidebar-item" onclick="window.location.href='payments-owner.html'"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+      <div class="sidebar-item" onclick="window.location.href='reviews.html'"><span class="sidebar-item-icon">⭐</span> Reviews</div>
+      <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
       <div class="sidebar-item active"><span class="sidebar-item-icon">🔔</span> Notifications</div>`;
   }
 
@@ -262,11 +261,11 @@
     document.getElementById('settings-label').textContent = 'My Profile';
     document.getElementById('sidebar-role').textContent = 'House Worker';
     document.getElementById('sidebar-links').innerHTML = `
-      <div class="sidebar-item" data-page="dashboard-worker.html" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
-      <div class="sidebar-item" data-page="dashboard-worker.html" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
-      <div class="sidebar-item" data-page="payments.html" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
-      <div class="sidebar-item" data-page="my-reviews.html" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
-      <div class="sidebar-item" data-page="messages.html" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
+      <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+      <div class="sidebar-item" onclick="window.location.href='dashboard-worker.html'"><span class="sidebar-item-icon">🏠</span> My Jobs</div>
+      <div class="sidebar-item" onclick="window.location.href='payments.html'"><span class="sidebar-item-icon">💰</span> My Salary</div>
+      <div class="sidebar-item" onclick="window.location.href='my-reviews.html'"><span class="sidebar-item-icon">⭐</span> My Reviews</div>
+      <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
       <div class="sidebar-item active"><span class="sidebar-item-icon">🔔</span> Notifications</div>`;
   }
 

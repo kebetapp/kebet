@@ -1,428 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kebet — Salary Payments</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --green:#1a6b3c; --green-dark:#124d2b; --green-light:#e6f5ed;
-      --gold:#f0a500; --gold-light:#fff8e6;
-      --bg:#f3f4f0; --card:#fff; --border:#ebebeb;
-      --text:#111; --muted:#6b7280;
-      --sidebar-w:256px;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'DM Sans','Segoe UI',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
 
-    /* Sidebar */
-    .sidebar { width:var(--sidebar-w); background:var(--green-dark); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:200; box-shadow:4px 0 24px rgba(0,0,0,.15); }
-    .sb-logo { display:flex; align-items:center; gap:10px; padding:24px 20px 20px; border-bottom:1px solid rgba(255,255,255,.08); }
-    .sb-logo-icon { width:40px; height:40px; background:var(--gold); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-    .sb-logo-en { font-family:'Sora',sans-serif; font-size:18px; font-weight:800; color:#fff; letter-spacing:2px; }
-    .sb-logo-am { font-size:11px; color:var(--gold); }
-    .sb-section { font-size:10px; font-weight:700; letter-spacing:1.5px; color:rgba(255,255,255,.3); padding:20px 20px 6px; }
-    .sb-item { display:flex; align-items:center; gap:12px; padding:11px 20px; cursor:pointer; color:rgba(255,255,255,.6); font-size:14px; font-weight:500; border-left:3px solid transparent; transition:all .18s; text-decoration:none; }
-    .sb-item:hover { background:rgba(255,255,255,.06); color:#fff; }
-    .sb-item.active { background:rgba(240,165,0,.12); color:var(--gold); border-left-color:var(--gold); }
-    .sb-item-icon { font-size:17px; width:22px; text-align:center; }
-    .sb-user { margin-top:auto; padding:16px 20px; border-top:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:10px; }
-    .sb-av { width:38px; height:38px; border-radius:10px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; flex-shrink:0; }
-    .sb-user-name { font-size:13px; font-weight:600; color:#fff; }
-    .sb-user-role { font-size:11px; color:rgba(255,255,255,.4); }
-    .sb-signout { margin-left:auto; background:none; border:none; color:rgba(255,255,255,.3); font-size:18px; cursor:pointer; }
+    .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-section { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 1px; padding: 8px 20px 6px; margin-top: 8px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 500; border-left: 3px solid transparent; transition: all 0.2s; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sidebar-item.active { background: rgba(255,255,255,0.12); color: #fff; border-left-color: #f0a500; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #f0a500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
 
-    /* Main */
-    .main { margin-left:var(--sidebar-w); flex:1; padding:32px 36px; }
-    .page-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
-    .page-title { font-family:'Sora',sans-serif; font-size:24px; font-weight:800; }
-    .page-sub { font-size:14px; color:var(--muted); margin-top:4px; }
-    .lang-toggle { display:flex; background:rgba(0,0,0,.06); border-radius:8px; padding:3px; }
-    .lang-btn { border:none; background:transparent; padding:5px 10px; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer; border-radius:6px; font-family:inherit; }
-    .lang-btn.active { background:#fff; color:var(--green); box-shadow:0 1px 4px rgba(0,0,0,.1); }
+    .main { margin-left: 240px; flex: 1; padding: 32px; }
+    .page-header { margin-bottom: 28px; }
+    .page-title { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #888; }
 
-    /* Stats */
-    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
-    .stat-card { background:var(--card); border-radius:16px; padding:20px; border:1px solid var(--border); }
-    .stat-ico { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:12px; }
-    .ico-g { background:var(--green-light); } .ico-gold { background:var(--gold-light); }
-    .ico-b { background:#eff6ff; } .ico-p { background:#fdf2f8; }
-    .stat-num { font-family:'Sora',sans-serif; font-size:22px; font-weight:800; margin-bottom:2px; }
-    .stat-label { font-size:12px; color:var(--muted); }
-    .stat-hint { font-size:11px; color:var(--green); font-weight:600; margin-top:4px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: 14px; padding: 18px; border: 1px solid #eee; }
+    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
+    .icon-green { background: #e8f5ee; }
+    .icon-gold { background: #fff5e0; }
+    .icon-blue { background: #e8f0ff; }
+    .icon-pink { background: #ffe8f0; }
+    .stat-num { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .stat-label { font-size: 11px; color: #888; }
+    .stat-sub { font-size: 11px; color: #1a6b3c; margin-top: 4px; font-weight: 600; }
 
-    /* Card */
-    .card { background:var(--card); border-radius:18px; border:1px solid var(--border); padding:24px; margin-bottom:20px; }
-    .card-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
-    .card-hd-title { font-family:'Sora',sans-serif; font-size:15px; font-weight:700; }
-    .card-badge { font-size:11px; background:var(--green-light); color:var(--green); padding:4px 10px; border-radius:8px; font-weight:600; }
+    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .card-badge { font-size: 11px; background: #e8f5ee; color: #1a6b3c; padding: 4px 10px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
 
-    /* Worker hero */
-    .worker-hero {
-      background:linear-gradient(135deg,var(--green),var(--green-dark));
-      border-radius:16px; padding:24px; margin-bottom:20px;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .wh-left { display:flex; align-items:center; gap:16px; }
-    .wh-av { width:56px; height:56px; border-radius:14px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; flex-shrink:0; }
-    .wh-label { font-size:12px; color:rgba(255,255,255,.6); margin-bottom:2px; }
-    .wh-name { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:#fff; }
-    .wh-role { font-size:13px; color:rgba(255,255,255,.65); margin-top:2px; }
-    .wh-right { text-align:right; }
-    .wh-sal-label { font-size:11px; color:rgba(255,255,255,.6); margin-bottom:4px; }
-    .wh-sal { font-family:'Sora',sans-serif; font-size:34px; font-weight:800; color:var(--gold); }
-    .wh-sal-sub { font-size:12px; color:rgba(255,255,255,.5); margin-top:2px; }
+    /* Worker summary box */
+    .worker-salary-box { background: linear-gradient(135deg, #1a6b3c, #145530); border-radius: 14px; padding: 22px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .wsb-left { }
+    .wsb-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+    .wsb-worker { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .wsb-role { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .wsb-right { text-align: right; }
+    .wsb-sal-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+    .wsb-sal-amount { font-size: 32px; font-weight: 700; color: #f0a500; }
+    .wsb-sal-period { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
-    /* Salary reminder */
-    .reminder {
-      background:var(--gold-light); border:1.5px solid var(--gold);
-      border-radius:14px; padding:16px 18px; margin-bottom:20px;
-      display:none; gap:12px; align-items:flex-start;
-    }
-    .reminder.show { display:flex; }
-    .reminder-icon { font-size:24px; flex-shrink:0; }
-    .reminder-title { font-size:14px; font-weight:700; color:#92400e; margin-bottom:3px; }
-    .reminder-text { font-size:13px; color:#78350f; line-height:1.6; }
+    /* Payment rows */
+    .pay-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
+    .pay-row:last-child { border-bottom: none; }
+    .pay-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .pay-icon.paid { background: #e8f5ee; }
+    .pay-icon.due { background: #fff5e0; }
+    .pay-icon.upcoming { background: #f0f0f0; }
+    .pay-info { flex: 1; }
+    .pay-month { font-size: 14px; font-weight: 600; color: #111; }
+    .pay-date { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .pay-amount { font-size: 15px; font-weight: 700; color: #1a6b3c; margin-right: 10px; }
+    .pay-status { font-size: 11px; padding: 4px 12px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
+    .s-paid { background: #e8f5ee; color: #1a6b3c; }
+    .s-due { background: #fff5e0; color: #c87800; }
+    .s-upcoming { background: #f0f0f0; color: #888; }
+    .mark-paid-btn { background: #1a6b3c; color: #fff; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .mark-paid-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* ── Payment form ── */
-    .pay-form { background:#f9faf8; border-radius:14px; padding:20px; }
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
-    .fg-full { grid-column:1 / -1; }
-    .f-label { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:7px; }
-    .f-input, .f-select {
-      width:100%; padding:11px 13px; border:1.5px solid var(--border);
-      border-radius:10px; font-size:13px; color:var(--text);
-      background:#fff; outline:none; font-family:inherit; transition:border .15s;
-    }
-    .f-input:focus, .f-select:focus { border-color:var(--green); }
+    /* Add payment form */
+    .add-payment-form { background: #f5f5f0; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
+    .form-group { }
+    .form-label { font-size: 11px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+    .form-input, .form-select { width: 100%; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #111; }
+    .form-input:focus, .form-select:focus { border-color: #1a6b3c; }
+    .add-btn { background: #1a6b3c; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; height: 42px; }
 
-    /* Payment method cards */
-    .pm-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:6px; }
-    .pm-card {
-      border:2px solid var(--border); border-radius:13px; padding:14px;
-      cursor:pointer; transition:all .15s; background:#fff; position:relative;
-    }
-    .pm-card:hover { border-color:var(--green); }
-    .pm-card.active { border-color:var(--green); background:var(--green-light); }
-    .pm-card input[type=radio] { position:absolute; opacity:0; }
-    .pm-icon { font-size:24px; margin-bottom:6px; }
-    .pm-name { font-size:13px; font-weight:700; color:var(--text); }
-    .pm-desc { font-size:11px; color:var(--muted); margin-top:2px; line-height:1.5; }
-    .pm-card.active .pm-name { color:var(--green); }
-    .pm-check {
-      position:absolute; top:10px; right:10px;
-      width:18px; height:18px; border-radius:50%;
-      border:2px solid var(--border); background:#fff;
-      display:flex; align-items:center; justify-content:center;
-      font-size:10px; transition:all .15s;
-    }
-    .pm-card.active .pm-check { border-color:var(--green); background:var(--green); color:#fff; }
+    /* Reminder box */
+    .reminder-box { background: #fff5e0; border: 1px solid #f0d080; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
+    .reminder-icon { font-size: 24px; flex-shrink: 0; }
+    .reminder-title { font-size: 14px; font-weight: 700; color: #c87800; margin-bottom: 4px; }
+    .reminder-text { font-size: 13px; color: #555; line-height: 1.6; }
 
-    /* Payment method detail panel */
-    .pm-detail {
-      background:#fff; border:1.5px solid var(--border);
-      border-radius:12px; padding:16px; margin-top:14px;
-      display:none;
-    }
-    .pm-detail.show { display:block; }
-    .pm-detail-title { font-size:13px; font-weight:700; margin-bottom:10px; color:var(--text); }
-    .pm-step { display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; font-size:13px; color:#374151; }
-    .pm-step-num {
-      width:22px; height:22px; border-radius:50%; background:var(--green);
-      color:#fff; font-size:11px; font-weight:700; flex-shrink:0;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .pm-step-text { line-height:1.5; }
-    .pm-info-box {
-      background:var(--green-light); border-radius:8px;
-      padding:10px 12px; font-size:12px; color:var(--green-dark);
-      margin-top:8px; line-height:1.6;
-    }
+    .empty-state { text-align: center; padding: 40px 20px; }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 600; color: #555; margin-bottom: 8px; }
+    .empty-sub { font-size: 13px; color: #aaa; }
 
-    /* Confirm button */
-    .confirm-pay-btn {
-      width:100%; background:var(--green); color:#fff; border:none;
-      padding:14px; border-radius:12px; font-size:15px; font-weight:700;
-      cursor:pointer; font-family:inherit; margin-top:14px;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      transition:background .15s;
-    }
-    .confirm-pay-btn:hover { background:var(--green-dark); }
-    .confirm-pay-btn:disabled { background:#9ca3af; cursor:not-allowed; }
+    .no-worker-card { background: #fff; border-radius: 16px; padding: 40px; border: 2px dashed #eee; text-align: center; margin-bottom: 20px; }
+    .no-worker-icon { font-size: 48px; margin-bottom: 12px; }
+    .no-worker-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .no-worker-sub { font-size: 14px; color: #888; margin-bottom: 20px; }
+    .find-btn { background: #1a6b3c; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
 
-    /* Payment history */
-    .pay-row { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid #f0f0ec; }
-    .pay-row:last-child { border-bottom:none; }
-    .pay-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-    .pi-cash { background:#e8f5ee; } .pi-telebirr { background:#fff0f0; }
-    .pi-cbe { background:#eff6ff; } .pi-bank { background:#f5f0ff; }
-    .pay-info { flex:1; }
-    .pay-month-label { font-size:14px; font-weight:600; }
-    .pay-meta { font-size:11px; color:var(--muted); margin-top:3px; }
-    .pay-amount { font-family:'Sora',sans-serif; font-size:16px; font-weight:700; color:var(--green); margin-right:10px; }
-    .pay-badge { font-size:11px; padding:4px 12px; border-radius:8px; font-weight:600; white-space:nowrap; }
-    .pb-paid { background:#dcfce7; color:#15803d; }
-    .pb-pending { background:var(--gold-light); color:#92400e; }
+    .loading { text-align: center; padding: 60px; color: #888; }
 
-    /* Toast */
-    .toast {
-      position:fixed; bottom:24px; right:24px;
-      background:var(--green); color:#fff;
-      padding:14px 20px; border-radius:14px; font-size:14px; font-weight:600;
-      display:none; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,.15);
-    }
-    .toast.show { display:block; animation:slideIn .3s ease; }
-    @keyframes slideIn { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    /* Success toast */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1a6b3c; color: #fff; padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: none; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .toast.show { display: block; }
 
-    /* No worker state */
-    .no-worker { text-align:center; padding:48px 24px; }
-    .no-worker-icon { font-size:56px; margin-bottom:16px; }
-    .no-worker-title { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; margin-bottom:8px; }
-    .no-worker-sub { font-size:14px; color:var(--muted); margin-bottom:24px; }
-    .btn-primary { background:var(--green); color:#fff; border:none; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
-
-    .loading { text-align:center; padding:80px; color:var(--muted); font-size:15px; }
-
-    @media(max-width:900px) {
-      .sidebar { display:none; }
-      .main { margin-left:0; padding:20px; }
-      .stats-grid { grid-template-columns:1fr 1fr; }
-      .pm-grid { grid-template-columns:1fr 1fr; }
-      .form-grid { grid-template-columns:1fr; }
-      .worker-hero { flex-direction:column; gap:16px; text-align:left; }
-      .wh-right { text-align:left; }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
+  <link rel="stylesheet" href="kebet-smooth.css"/>
+  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
-<!-- Sidebar -->
 <div class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-icon">🏠</div>
-    <div><div class="sb-logo-en">KEBET</div><div class="sb-logo-am">ከቤት</div></div>
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div class="sb-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
-  <a class="sb-item" href="dashboard-owner.html"><span class="sb-item-icon">📊</span> <span class="en">Dashboard</span><span class="am">ዳሽቦርድ</span></a>
-  <a class="sb-item" href="search.html"><span class="sb-item-icon">🔍</span> <span class="en">Find Workers</span><span class="am">ሰራተኛ ፈልግ</span></a>
-  <a class="sb-item active" href="payments-owner.html"><span class="sb-item-icon">💰</span> <span class="en">Salary Payments</span><span class="am">ደሞዝ ክፍያ</span></a>
-  <a class="sb-item" href="messages.html"><span class="sb-item-icon">💬</span> <span class="en">Messages</span><span class="am">መልዕክቶች</span></a>
-  <a class="sb-item" href="reviews.html"><span class="sb-item-icon">⭐</span> <span class="en">Reviews</span><span class="am">ግምገማዎች</span></a>
-  <div class="sb-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
-  <a class="sb-item" href="edit-profile.html"><span class="sb-item-icon">👤</span> <span class="en">My Profile</span><span class="am">መገለጫ</span></a>
-  <a class="sb-item" href="settings.html"><span class="sb-item-icon">⚙️</span> <span class="en">Settings</span><span class="am">ቅንብሮች</span></a>
-  <div class="sb-user">
-    <div class="sb-av" id="sidebar-av">?</div>
+  <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
+  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
+  <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
+  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sb-user-name" id="sidebar-name">Loading...</div>
-      <div class="sb-user-role"><span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></div>
+      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+      <div class="sidebar-user-role"><span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></div>
     </div>
-    <button class="sb-signout" id="signout-btn">⏻</button>
+    <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
 </div>
 
-<!-- Main -->
 <div class="main">
-  <div class="loading" id="loading">Loading...</div>
+  <div id="loading" class="loading">⏳ Loading salary payments...</div>
   <div id="main-content" style="display:none;">
 
-    <div class="page-hd">
+    <div class="page-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">💰 Salary Payments</div>
+      <div class="page-sub" id="page-sub">Track and record your worker's monthly salary</div>
+    </div>
+
+    <!-- Salary due reminder -->
+    <div class="reminder-box" id="reminder-box" style="display:none;">
+      <div class="reminder-icon">⚠️</div>
       <div>
-        <div class="page-title">💰 <span class="en">Salary Payments</span><span class="am">ደሞዝ ክፍያ</span></div>
-        <div class="page-sub"><span class="en">Pay your worker directly using your preferred method</span><span class="am">በሚፈልጉት ዘዴ ለሰራተኛዎ ይክፈሉ</span></div>
-      </div>
-      <div class="lang-toggle">
-        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-        <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+        <div class="reminder-title">Salary payment due soon!</div>
+        <div class="reminder-text" id="reminder-text">Your worker's salary is due at the end of this month. Please pay on time — it is their right!</div>
       </div>
     </div>
 
     <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-ico ico-g">💰</div>
+    <div class="stats-row">
+      <div class="stat-card ks-reveal">
+        <div class="stat-icon icon-green">💰</div>
         <div class="stat-num" id="stat-salary">—</div>
-        <div class="stat-label"><span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></div>
-        <div class="stat-hint" id="stat-worker-hint"></div>
+        <div class="stat-label">Monthly salary (ETB)</div>
+        <div class="stat-sub">Agreed amount</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-ico ico-gold">✅</div>
-        <div class="stat-num" id="stat-paid-count">0</div>
-        <div class="stat-label"><span class="en">Payments Made</span><span class="am">ክፍያዎች</span></div>
+      <div class="stat-card ks-reveal">
+        <div class="stat-icon icon-gold">✅</div>
+        <div class="stat-num" id="stat-paid">0</div>
+        <div class="stat-label">Months paid</div>
+        <div class="stat-sub" id="stat-total-paid">Total: 0 ETB</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-ico ico-b">📅</div>
-        <div class="stat-num" id="stat-next-pay">—</div>
-        <div class="stat-label"><span class="en">Next Payment Due</span><span class="am">ቀጣይ ክፍያ</span></div>
+      <div class="stat-card ks-reveal">
+        <div class="stat-icon icon-blue">📅</div>
+        <div class="stat-num" id="stat-next">—</div>
+        <div class="stat-label">Next payment due</div>
+        <div class="stat-sub">End of month</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-ico ico-p">📊</div>
-        <div class="stat-num" id="stat-total-paid">0</div>
-        <div class="stat-label"><span class="en">Total Paid (ETB)</span><span class="am">ጠቅላላ ተከፍሏል (ብር)</span></div>
-      </div>
-    </div>
-
-    <!-- Salary reminder -->
-    <div class="reminder" id="reminder">
-      <div class="reminder-icon">⏰</div>
-      <div>
-        <div class="reminder-title"><span class="en">Salary Due Soon!</span><span class="am">ደሞዝ ዘግይቷል!</span></div>
-        <div class="reminder-text" id="reminder-text"></div>
+      <div class="stat-card ks-reveal">
+        <div class="stat-icon icon-pink">🛏️</div>
+        <div class="stat-num" id="stat-worker-name">—</div>
+        <div class="stat-label">Your worker</div>
+        <div class="stat-sub" id="stat-worker-role">—</div>
       </div>
     </div>
 
-    <div id="worker-section">
-      <!-- Worker hero — filled by JS -->
+    <!-- Worker salary box -->
+    <div class="card ks-reveal" id="worker-card">
+      <div class="card-title">
+        🛏️ Your Current Worker
+        <span class="card-badge" id="worker-badge">Active</span>
+      </div>
+      <div class="worker-salary-box">
+        <div class="wsb-left">
+          <div class="wsb-label">Live-in worker · የቤት ሰራተኛ</div>
+          <div class="wsb-worker" id="wsb-worker-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
+          <div class="wsb-role" id="wsb-worker-role">—</div>
+        </div>
+        <div class="wsb-right">
+          <div class="wsb-sal-label">Monthly salary agreed</div>
+          <div class="wsb-sal-amount" id="wsb-salary">—</div>
+          <div class="wsb-sal-period">ETB / month</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Pay now card -->
-    <div class="card" id="pay-now-card" style="display:none;">
-      <div class="card-hd">
-        <div class="card-hd-title">💳 <span class="en">Record a Salary Payment</span><span class="am">የደሞዝ ክፍያ ይመዝግቡ</span></div>
-        <div class="card-badge"><span class="en">Direct to worker</span><span class="am">ለሰራተኛ በቀጥታ</span></div>
-      </div>
-
-      <div class="pay-form">
-        <div class="form-grid">
-          <div>
-            <label class="f-label"><span class="en">Month / Period</span><span class="am">ወር / ወቅት</span></label>
-            <select class="f-select" id="pay-month">
-              <option value="">Select month...</option>
-              <option>January 2025</option><option>February 2025</option>
-              <option>March 2025</option><option>April 2025</option>
-              <option>May 2025</option><option>June 2025</option>
-              <option>July 2025</option><option>August 2025</option>
-              <option>September 2025</option><option>October 2025</option>
-              <option>November 2025</option><option>December 2025</option>
-              <option>January 2026</option><option>February 2026</option>
-              <option>March 2026</option><option>April 2026</option>
-              <option>May 2026</option><option>June 2026</option>
+    <!-- Add new payment -->
+    <div class="card ks-reveal">
+      <div class="card-title">➕ Record a Salary Payment</div>
+      <div class="add-payment-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label"><span class="en">Month</span><span class="am">ወር</span></label>
+            <select class="form-select" id="pay-month">
+              <option value="January 2025">January 2025</option>
+              <option value="February 2025">February 2025</option>
+              <option value="March 2025">March 2025</option>
+              <option value="April 2025">April 2025</option>
+              <option value="May 2025" selected>May 2025</option>
+              <option value="June 2025">June 2025</option>
+              <option value="July 2025">July 2025</option>
+              <option value="August 2025">August 2025</option>
+              <option value="September 2025">September 2025</option>
+              <option value="October 2025">October 2025</option>
+              <option value="November 2025">November 2025</option>
+              <option value="December 2025">December 2025</option>
             </select>
           </div>
-          <div>
-            <label class="f-label"><span class="en">Amount (ETB)</span><span class="am">መጠን (ብር)</span></label>
-            <input type="number" class="f-input" id="pay-amount" placeholder="3500" min="100"/>
+          <div class="form-group">
+            <label class="form-label">Amount (ETB)</label>
+            <input type="number" class="form-input" id="pay-amount" placeholder="3500" />
           </div>
-          <div>
-            <label class="f-label"><span class="en">Date Paid</span><span class="am">ክፍያ ቀን</span></label>
-            <input type="date" class="f-input" id="pay-date"/>
+          <div class="form-group">
+            <label class="form-label">Date paid</label>
+            <input type="date" class="form-input" id="pay-date" />
           </div>
-          <div>
-            <label class="f-label"><span class="en">Notes (optional)</span><span class="am">ማስታወሻ (አማራጭ)</span></label>
-            <input type="text" class="f-input" id="pay-note" placeholder="e.g. Bonus included"/>
-          </div>
+          <button class="add-btn" onclick="recordPayment()">✅ Mark Paid</button>
         </div>
-
-        <!-- Payment method -->
-        <label class="f-label" style="margin-bottom:10px;">
-          💳 <span class="en">Payment Method Used</span><span class="am">የተጠቀሙት የክፍያ ዘዴ</span>
-        </label>
-        <div class="pm-grid" id="pm-grid">
-
-          <div class="pm-card active" onclick="selectMethod(this,'telebirr')">
-            <input type="radio" name="pm" value="telebirr" checked/>
-            <div class="pm-check">✓</div>
-            <div class="pm-icon">📱</div>
-            <div class="pm-name">Telebirr</div>
-            <div class="pm-desc"><span class="en">Ethio Telecom mobile money. Instant transfer.</span><span class="am">የኢቲዮ ቴሌኮም ሞባይል ገንዘብ</span></div>
-          </div>
-
-          <div class="pm-card" onclick="selectMethod(this,'cbebirr')">
-            <input type="radio" name="pm" value="cbebirr"/>
-            <div class="pm-check">✓</div>
-            <div class="pm-icon">🏦</div>
-            <div class="pm-name">CBE Birr</div>
-            <div class="pm-desc"><span class="en">Commercial Bank of Ethiopia mobile wallet.</span><span class="am">የኢትዮጵያ ንግድ ባንክ ሞባይል</span></div>
-          </div>
-
-          <div class="pm-card" onclick="selectMethod(this,'bank')">
-            <input type="radio" name="pm" value="bank"/>
-            <div class="pm-check">✓</div>
-            <div class="pm-icon">🏛️</div>
-            <div class="pm-name"><span class="en">Bank Transfer</span><span class="am">የባንክ ዝውውር</span></div>
-            <div class="pm-desc"><span class="en">CBE, Awash, Dashen, Abyssinia, etc.</span><span class="am">CBE፣ አዋሽ፣ ዳሸን፣ አቢሲኒያ፣ ወዘተ</span></div>
-          </div>
-
-          <div class="pm-card" onclick="selectMethod(this,'cash')">
-            <input type="radio" name="pm" value="cash"/>
-            <div class="pm-check">✓</div>
-            <div class="pm-icon">💵</div>
-            <div class="pm-name"><span class="en">Cash</span><span class="am">ጥሬ ገንዘብ</span></div>
-            <div class="pm-desc"><span class="en">Physical cash given directly to worker.</span><span class="am">ለሰራተኛ በቀጥታ የተሰጠ ጥሬ ገንዘብ</span></div>
-          </div>
-
-        </div>
-
-        <!-- Method detail panels -->
-        <div class="pm-detail show" id="detail-telebirr">
-          <div class="pm-detail-title">📱 <span class="en">How to pay via Telebirr</span><span class="am">በቴሌብር ክፍያ ዘዴ</span></div>
-          <div class="pm-step"><div class="pm-step-num">1</div><div class="pm-step-text"><span class="en">Open <strong>Telebirr</strong> app on your phone</span><span class="am"><strong>ቴሌብር</strong> አፕ ይክፈቱ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-text"><span class="en">Tap <strong>"Send Money"</strong> and enter the worker's phone number</span><span class="am"><strong>"ገንዘብ ላክ"</strong> ይጫኑ እና የሰራተኛ ስልክ ያስገቡ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-text"><span class="en">Enter the salary amount and confirm with your PIN</span><span class="am">የደሞዝ መጠን ያስገቡ እና በ PIN ያረጋግጡ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-text"><span class="en">Screenshot the confirmation and record it below</span><span class="am">ማረጋገጫ ቅጽበት ያንሱ እና ከዚህ ያስቀምጡ</span></div></div>
-          <div class="pm-info-box">📞 <span class="en">Telebirr helpline: <strong>*127#</strong> or call <strong>+251 11 515 9090</strong></span><span class="am">ቴሌብር: <strong>*127#</strong> ወይም <strong>+251 11 515 9090</strong></span></div>
-        </div>
-
-        <div class="pm-detail" id="detail-cbebirr">
-          <div class="pm-detail-title">🏦 <span class="en">How to pay via CBE Birr</span><span class="am">በCBE ብር ክፍያ ዘዴ</span></div>
-          <div class="pm-step"><div class="pm-step-num">1</div><div class="pm-step-text"><span class="en">Open <strong>CBE Birr</strong> app or dial <strong>*847#</strong></span><span class="am"><strong>CBE ብር</strong> አፕ ይክፈቱ ወይም <strong>*847#</strong> ይደውሉ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-text"><span class="en">Select <strong>"Transfer"</strong> → <strong>"To Mobile"</strong></span><span class="am"><strong>"ዝውውር"</strong> → <strong>"ወደ ሞባይል"</strong> ይምረጡ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-text"><span class="en">Enter worker's phone number and the salary amount</span><span class="am">የሰራተኛ ስልክ ቁጥር እና ደሞዝ ያስገቡ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">4</div><div class="pm-step-text"><span class="en">Confirm and save the transaction reference number</span><span class="am">ያረጋግጡ እና የምዝገባ ቁጥሩን ያስቀምጡ</span></div></div>
-          <div class="pm-info-box">📞 <span class="en">CBE Birr helpline: <strong>*847#</strong> or <strong>8397</strong></span><span class="am">CBE ብር: <strong>*847#</strong> ወይም <strong>8397</strong></span></div>
-        </div>
-
-        <div class="pm-detail" id="detail-bank">
-          <div class="pm-detail-title">🏛️ <span class="en">How to pay via Bank Transfer</span><span class="am">በባንክ ዝውውር ክፍያ</span></div>
-          <div class="pm-step"><div class="pm-step-num">1</div><div class="pm-step-text"><span class="en">Visit your bank branch or use online banking / mobile app</span><span class="am">ባንክ ቅርንጫፍ ይሂዱ ወይም ኦንላይን ባንኪንግ ይጠቀሙ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-text"><span class="en">Get the worker's <strong>account number and bank name</strong> first</span><span class="am">የሰራተኛ <strong>አካውንት ቁጥር እና ባንክ ስም</strong> ያግኙ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-text"><span class="en">Transfer the salary and keep the transaction slip / receipt</span><span class="am">ደሞዝ ይዛወሩ እና ደረሰኝ ያስቀምጡ</span></div></div>
-          <div class="pm-info-box">🏦 <span class="en">Major banks: CBE, Awash, Dashen, Abyssinia, Hibret, Zemen, Nib</span><span class="am">ዋና ባንኮች: CBE፣ አዋሽ፣ ዳሸን፣ አቢሲኒያ፣ ሂብረት፣ ዘመን፣ ኒብ</span></div>
-        </div>
-
-        <div class="pm-detail" id="detail-cash">
-          <div class="pm-detail-title">💵 <span class="en">Paying in Cash</span><span class="am">በጥሬ ገንዘብ ክፍያ</span></div>
-          <div class="pm-step"><div class="pm-step-num">1</div><div class="pm-step-text"><span class="en">Count the exact salary amount in ETB</span><span class="am">ትክክለኛ ደሞዝ መጠን ይቁጠሩ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">2</div><div class="pm-step-text"><span class="en">Hand it to the worker personally and get a signature or acknowledgement</span><span class="am">ለሰራተኛ ግለሰባዊ ያስረክቡ እና ፊርማ ያግኙ</span></div></div>
-          <div class="pm-step"><div class="pm-step-num">3</div><div class="pm-step-text"><span class="en">Record the payment below for your own tracking</span><span class="am">ለፍለጋዎ ክፍያ ይቁጠሩ</span></div></div>
-          <div class="pm-info-box">💡 <span class="en">Tip: Always keep a written record of cash payments signed by both parties.</span><span class="am">ጠቃሚ ምክር: ሁልጊዜ በሁለቱ ወገኖች የተፈረመ የጥሬ ገንዘብ ክፍያ ሰነድ ያስቀምጡ።</span></div>
-        </div>
-
-        <!-- Record button -->
-        <button class="confirm-pay-btn" id="record-btn" onclick="recordPayment()">
-          ✅ <span class="en">Record This Payment</span><span class="am">ይህን ክፍያ ይቁጠሩ</span>
-        </button>
       </div>
     </div>
 
     <!-- Payment history -->
-    <div class="card">
-      <div class="card-hd">
-        <div class="card-hd-title">📜 <span class="en">Payment History</span><span class="am">የክፍያ ታሪክ</span></div>
-        <div class="card-badge" id="history-badge"><span class="en">0 payments</span><span class="am">0 ክፍያዎች</span></div>
+    <div class="card ks-reveal">
+      <div class="card-title">
+        📋 Payment History
+        <span class="card-badge" id="history-badge">0 payments</span>
       </div>
       <div id="payments-list">
-        <div style="text-align:center; padding:32px; color:var(--muted); font-size:14px;">
-          <div style="font-size:40px; margin-bottom:12px;">📭</div>
-          <span class="en">No payments recorded yet</span><span class="am">እስካሁን ምንም ክፍያ አልተቀዳም</span>
+        <div class="empty-state">
+          <div class="empty-icon">💰</div>
+          <div class="empty-title">No payments recorded yet</div>
+          <div class="empty-sub">Use the form above to record salary payments for your worker</div>
         </div>
       </div>
     </div>
 
-  </div><!-- /main-content -->
+  </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast">✅ Payment recorded successfully!</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import {
-    getFirestore, doc, getDoc, collection,
-    query, where, getDocs, addDoc
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -439,208 +284,183 @@
 
   let currentUser = null;
   let activeBooking = null;
-  let selectedMethod = 'telebirr';
-
-  // Language
-  window.setLang = function(l) {
-    document.querySelectorAll('.en').forEach(e => e.style.display = l==='en' ? '' : 'none');
-    document.querySelectorAll('.am').forEach(e => e.style.display = l==='am' ? '' : 'none');
-    document.getElementById('btn-en').classList.toggle('active', l==='en');
-    document.getElementById('btn-am').classList.toggle('active', l==='am');
-  };
-
-  // Payment method selection
-  window.selectMethod = function(card, method) {
-    selectedMethod = method;
-    document.querySelectorAll('.pm-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
-    document.querySelectorAll('.pm-detail').forEach(d => d.classList.remove('show'));
-    document.getElementById('detail-' + method).classList.add('show');
-  };
+  let monthlySalary = 0;
 
   // Set today's date as default
-  document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('pay-date').value = today;
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'signin.html'; return; }
+
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
+
+    const data = userDoc.data();
+
+    // Only owners can access this page
+    if (data.userType !== 'owner') {
+      window.location.href = 'payments.html';
+      return;
+    }
+
     currentUser = user;
+    const firstName = data.firstName || '';
+    const lastName = data.lastName || '';
+    const fullName = firstName + ' ' + lastName;
+    const initials = (firstName[0] || '') + (lastName[0] || '');
 
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (!snap.exists()) { window.location.href = 'signin.html'; return; }
-    const userData = snap.data();
-    if (userData.userType !== 'owner') { window.location.href = 'dashboard-worker.html'; return; }
+    document.getElementById('sidebar-name').textContent = fullName;
+    document.getElementById('sidebar-av').textContent = initials;
+    document.getElementById('page-sub').textContent = 'Hello ' + firstName + '! Track your worker salary payments here';
 
-    const fn = userData.firstName || '';
-    const ln = userData.lastName || '';
-    document.getElementById('sidebar-name').textContent = fn + ' ' + ln;
-    document.getElementById('sidebar-av').textContent = (fn[0]||'') + (ln[0]||'');
-
-    // Load active booking
+    // Load active booking for this owner
     try {
-      const bSnap = await getDocs(query(
-        collection(db,'bookings'),
-        where('ownerId','==',user.uid),
-        where('status','==','active')
-      ));
+      const bookingQuery = query(
+        collection(db, 'bookings'),
+        where('ownerId', '==', user.uid)
+      );
+      const bookingSnap = await getDocs(bookingQuery);
 
-      if (!bSnap.empty) {
-        const docs = [];
-        bSnap.forEach(d => docs.push({id:d.id,...d.data()}));
-        docs.sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
-        activeBooking = docs[0];
+      if (!bookingSnap.empty) {
+        const bookings = [];
+        bookingSnap.forEach(d => bookings.push({ id: d.id, ...d.data() }));
+        bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        activeBooking = bookings[0];
 
-        const sal = activeBooking.monthlySalary || 0;
-        const wName = activeBooking.workerName || '—';
-        const wRole = activeBooking.workerRole || '—';
-        const initials = wName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+        monthlySalary = activeBooking.monthlySalary || 3500;
+        const workerName = activeBooking.workerName || '—';
+        const workerRole = activeBooking.workerRole || '—';
 
-        document.getElementById('stat-salary').textContent = sal.toLocaleString();
-        document.getElementById('stat-worker-hint').textContent = wName.split(' ')[0];
-        document.getElementById('pay-amount').value = sal;
+        document.getElementById('stat-salary').textContent = monthlySalary.toLocaleString();
+        document.getElementById('stat-worker-name').textContent = workerName.split(' ')[0];
+        document.getElementById('stat-worker-role').textContent = workerRole;
+        document.getElementById('wsb-worker-name').textContent = workerName;
+        document.getElementById('wsb-worker-role').textContent = workerRole;
+        document.getElementById('wsb-salary').textContent = monthlySalary.toLocaleString();
+        document.getElementById('pay-amount').value = monthlySalary;
+        document.getElementById('worker-badge').textContent = activeBooking.status || 'Active';
 
-        // Worker hero
-        document.getElementById('worker-section').innerHTML = `
-          <div class="worker-hero">
-            <div class="wh-left">
-              <div class="wh-av">${initials}</div>
-              <div>
-                <div class="wh-label"><span class="en">Current Worker</span><span class="am">ወቅታዊ ሰራተኛ</span></div>
-                <div class="wh-name">${wName}</div>
-                <div class="wh-role">${wRole} · 🛏️ Live-in</div>
-              </div>
-            </div>
-            <div class="wh-right">
-              <div class="wh-sal-label"><span class="en">Monthly Salary</span><span class="am">ወርሃዊ ደሞዝ</span></div>
-              <div class="wh-sal">${sal.toLocaleString()}</div>
-              <div class="wh-sal-sub">ETB / <span class="en">month</span><span class="am">ወር</span> · <span class="en">pay worker directly</span><span class="am">ለሰራተኛ በቀጥታ</span></div>
-            </div>
-          </div>`;
-
-        document.getElementById('pay-now-card').style.display = 'block';
-
-        // Reminder
+        // Show salary due reminder
         const now = new Date();
         if (now.getDate() >= 20) {
-          document.getElementById('reminder').classList.add('show');
-          document.getElementById('reminder-text').innerHTML =
-            `<span class="en"><strong>${wName}'s</strong> salary of <strong>${sal.toLocaleString()} ETB</strong> is due at the end of this month. Pay directly via Telebirr, CBE Birr, bank transfer, or cash.</span>` +
-            `<span class="am"><strong>${wName}</strong> ደሞዝ <strong>${sal.toLocaleString()} ብር</strong> በዚህ ወር መጨረሻ ይፈጸም። በቴሌብር፣ CBE ብር ወይም ጥሬ ገንዘብ በቀጥታ ይክፈሉ።</span>`;
+          document.getElementById('reminder-box').style.display = 'flex';
+          document.getElementById('reminder-text').textContent =
+            workerName + '\'s salary of ' + monthlySalary.toLocaleString() + ' ETB is due at the end of this month. Please pay on time!';
         }
 
         // Next payment date
-        const nextPay = new Date(now.getFullYear(), now.getMonth()+1, 0);
-        document.getElementById('stat-next-pay').textContent = nextPay.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        document.getElementById('stat-next').textContent = endOfMonth.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
       } else {
-        document.getElementById('worker-section').innerHTML = `
-          <div class="card">
-            <div class="no-worker">
-              <div class="no-worker-icon">🔍</div>
-              <div class="no-worker-title"><span class="en">No active worker yet</span><span class="am">ንቁ ሰራተኛ የለም</span></div>
-              <div class="no-worker-sub"><span class="en">Hire a worker first to track salary payments here.</span><span class="am">ደሞዝ ለመቁጠር መጀመሪያ ሰራተኛ ይቅጠሩ።</span></div>
-              <button class="btn-primary" onclick="window.location.href='search.html'"><span class="en">Find a Worker →</span><span class="am">ሰራተኛ ፈልግ →</span></button>
-            </div>
+        // No booking yet
+        document.getElementById('worker-card').innerHTML = `
+          <div class="no-worker-card">
+            <div class="no-worker-icon">🔍</div>
+            <div class="no-worker-title">No worker hired yet</div>
+            <div class="no-worker-sub">Hire a worker first to track salary payments</div>
+            <button class="find-btn" onclick="window.location.href='search.html'">Find a Worker →</button>
           </div>`;
       }
-    } catch(err) { console.log('Booking error:', err); }
+    } catch (err) {
+      console.log('Booking load error:', err.message);
+    }
 
+    // Load existing payments
     await loadPayments(user.uid);
+
     document.getElementById('loading').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
   });
 
   async function loadPayments(uid) {
     try {
-      const snap = await getDocs(query(collection(db,'payments'), where('ownerId','==',uid)));
-      if (snap.empty) return;
+      const paymentsQuery = query(
+        collection(db, 'payments'),
+        where('ownerId', '==', uid)
+      );
+      const paymentsSnap = await getDocs(paymentsQuery);
 
-      const payments = [];
-      snap.forEach(d => payments.push({id:d.id,...d.data()}));
-      payments.sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+      if (!paymentsSnap.empty) {
+        let totalPaid = 0;
+        let paidCount = 0;
+        let rows = '';
 
-      let totalPaid = 0;
-      const methodIcons = { telebirr:'📱', cbebirr:'🏦', bank:'🏛️', cash:'💵' };
-      const methodNames = {
-        telebirr:'Telebirr', cbebirr:'CBE Birr',
-        bank:'Bank Transfer', cash:'Cash'
-      };
-      const methodCls = { telebirr:'pi-telebirr', cbebirr:'pi-cbe', bank:'pi-bank', cash:'pi-cash' };
+        const payments = [];
+        paymentsSnap.forEach(d => payments.push({ id: d.id, ...d.data() }));
+        payments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-      let html = '';
-      payments.forEach(p => {
-        const amt = parseInt(p.amount) || 0;
-        totalPaid += amt;
-        const method = p.paymentMethod || 'cash';
-        const icon = methodIcons[method] || '💰';
-        const mName = methodNames[method] || method;
-        const cls = methodCls[method] || 'pi-cash';
-        html += `
-          <div class="pay-row">
-            <div class="pay-icon ${cls}">${icon}</div>
-            <div class="pay-info">
-              <div class="pay-month-label">${p.month || '—'}</div>
-              <div class="pay-meta">
-                ${p.date || '—'} · ${p.workerName || '—'} · ${mName}
-                ${p.note ? ' · ' + p.note : ''}
+        payments.forEach(p => {
+          const amount = parseInt(p.amount) || 0;
+          totalPaid += amount;
+          paidCount++;
+
+          rows += `
+            <div class="pay-row">
+              <div class="pay-icon paid">✅</div>
+              <div class="pay-info">
+                <div class="pay-month">${p.month || '—'}</div>
+                <div class="pay-date">Paid on: ${p.date || '—'} · Worker: ${p.workerName || '—'}</div>
               </div>
-            </div>
-            <div class="pay-amount">${amt.toLocaleString()} ETB</div>
-            <span class="pay-badge pb-paid">✓ <span class="en">Paid</span><span class="am">ተከፍሏል</span></span>
-          </div>`;
-      });
+              <div class="pay-amount">${amount.toLocaleString()} ETB</div>
+              <span class="pay-status s-paid"><span class="en">✓ Paid</span><span class="am">✓ ተከፍሏል</span></span>
+            </div>`;
+        });
 
-      document.getElementById('payments-list').innerHTML = html;
-      document.getElementById('stat-paid-count').textContent = payments.length;
-      document.getElementById('stat-total-paid').textContent = totalPaid.toLocaleString();
-      document.getElementById('history-badge').textContent = payments.length + ' payment' + (payments.length !== 1 ? 's' : '');
-    } catch(err) { console.log('Payments error:', err); }
+        document.getElementById('stat-paid').textContent = paidCount;
+        document.getElementById('stat-total-paid').textContent = 'Total: ' + totalPaid.toLocaleString() + ' ETB';
+        document.getElementById('history-badge').textContent = paidCount + ' payments';
+        document.getElementById('payments-list').innerHTML = rows;
+      }
+    } catch (err) {
+      console.log('Payments load error:', err.message);
+    }
   }
 
   window.recordPayment = async function() {
     if (!currentUser) return;
+
     const month = document.getElementById('pay-month').value;
     const amount = parseInt(document.getElementById('pay-amount').value);
     const date = document.getElementById('pay-date').value;
-    const note = document.getElementById('pay-note').value.trim();
 
-    if (!month || !amount || !date) { alert('Please fill in month, amount, and date.'); return; }
-
-    const btn = document.getElementById('record-btn');
-    btn.disabled = true;
-    btn.innerHTML = '⏳ <span class="en">Saving...</span><span class="am">እየጫነ...</span>';
+    if (!month || !amount || !date) {
+      alert('Please fill in all fields!');
+      return;
+    }
 
     try {
-      await addDoc(collection(db,'payments'), {
+      await addDoc(collection(db, 'payments'), {
         ownerId: currentUser.uid,
         workerId: activeBooking?.workerId || '',
         workerName: activeBooking?.workerName || '—',
-        month, amount, date,
-        paymentMethod: selectedMethod,
-        note: note || '',
+        ownerName: document.getElementById('sidebar-name').textContent,
+        month: month,
+        amount: amount,
+        date: date,
         status: 'paid',
         createdAt: new Date().toISOString()
       });
 
+      // Show toast
       const toast = document.getElementById('toast');
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
+      setTimeout(() => toast.classList.remove('show'), 3000);
 
-      // Reset form
-      document.getElementById('pay-month').value = '';
-      document.getElementById('pay-note').value = '';
-      document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
-
+      // Reload payments
       await loadPayments(currentUser.uid);
-    } catch(err) { alert('Error: ' + err.message); }
 
-    btn.disabled = false;
-    btn.innerHTML = '✅ <span class="en">Record This Payment</span><span class="am">ይህን ክፍያ ይቁጠሩ</span>';
-  };
+    } catch (err) {
+      alert('Error recording payment: ' + err.message);
+    }
+  }
 
   document.getElementById('signout-btn').addEventListener('click', async () => {
     await signOut(auth);
     window.location.href = 'signin.html';
   });
 </script>
+
 </body>
 </html>

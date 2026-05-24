@@ -43,7 +43,6 @@
   <script src="kebet-lang.js"></script>
   <link rel="stylesheet" href="kebet-smooth.css"/>
   <script src="kebet-smooth.js"></script>
-  <script src="kebet-fast.js"></script>
 </head>
 <body>
 
@@ -160,7 +159,8 @@
       return;
     }
 
-    const restoreSignup = KebetFast.btnLoad(btn, 'Creating account...');
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -190,7 +190,8 @@
       }, 1500);
 
     } catch (error) {
-      restoreSignup();
+      btn.textContent = 'Create Account →';
+      btn.disabled = false;
       if (error.code === 'auth/email-already-in-use') {
         errorMsg.textContent = '❌ This email is already registered. Please sign in.';
       } else if (error.code === 'auth/weak-password') {
