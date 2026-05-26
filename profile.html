@@ -246,18 +246,10 @@
       </div>
     </div>
     <div class="total-box" id="total-box" style="display:none;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span>Monthly salary</span><span id="tb-salary">0 ETB</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span>Duration</span><span id="tb-months">1 month</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#c87800;">
-        <span>Kebet service fee (5%)</span><span id="tb-fee">0 ETB</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;border-top:1px solid #d0eedd;padding-top:8px;margin-top:4px;">
-        <span>Total</span><span id="tb-total">0 ETB</span>
-      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Monthly salary</span><span id="tb-salary">0 ETB</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Duration</span><span id="tb-months">1 month</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#c87800;"><span>Kebet service fee (5%)</span><span id="tb-fee">0 ETB</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;border-top:1px solid #d0eedd;padding-top:8px;margin-top:4px;"><span>Total</span><span id="tb-total">0 ETB</span></div>
     </div>
     <div class="error-box" id="error-box"></div>
     <div class="modal-btns">
@@ -464,11 +456,10 @@
     if (sal > 0) {
       const subtotal = sal * months;
       const fee = Math.round(subtotal * 0.05);
-      const total = subtotal + fee;
       document.getElementById('tb-salary').textContent = sal.toLocaleString() + ' ETB';
       document.getElementById('tb-months').textContent = months + (months === 1 ? ' month' : ' months');
       document.getElementById('tb-fee').textContent = fee.toLocaleString() + ' ETB';
-      document.getElementById('tb-total').textContent = total.toLocaleString() + ' ETB';
+      document.getElementById('tb-total').textContent = (subtotal + fee).toLocaleString() + ' ETB';
       el.style.display = 'block';
     } else {
       el.style.display = 'none';
@@ -511,11 +502,10 @@
         createdAt: new Date().toISOString()
       });
 
-      // Auto-create conversation so messaging works immediately
+      // Create conversation immediately so messaging works right away
       try {
         const ids = [currentUser.uid, workerId].sort();
-        const convoId = ids[0] + '_' + ids[1];
-        const convoRef = doc(db, 'conversations', convoId);
+        const convoRef = doc(db, 'conversations', ids[0] + '_' + ids[1]);
         const convoSnap = await getDoc(convoRef);
         if (!convoSnap.exists()) {
           await setDoc(convoRef, {
@@ -525,7 +515,7 @@
             lastMessage: '', lastMessageAt: new Date().toISOString(), createdAt: new Date().toISOString()
           });
         }
-      } catch(ce) { console.warn('Convo create error:', ce.message); }
+      } catch(ce) { console.warn('Convo create:', ce.message); }
 
       closeBookModal();
       alert('✅ Booking sent to ' + (workerData?.firstName || 'worker') + '! They will be notified.');

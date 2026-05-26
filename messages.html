@@ -493,10 +493,9 @@
 
   async function loadConversations() {
     try {
+      // Auto-create conversations from bookings if they don't exist yet
       await ensureConvosFromBookings();
-    } catch(e) { console.warn('ensureConvos error:', e.message); }
 
-    try {
       const q = query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid));
       const snap = await getDocs(q);
       allConvos = [];
@@ -512,20 +511,24 @@
   async function ensureConvosFromBookings() {
     const myName = ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim();
     const userType = currentUserData.userType;
-    const otherType = userType === 'owner' ? 'worker' : 'owner';
     const myField = userType === 'owner' ? 'ownerId' : 'workerId';
     const otherField = userType === 'owner' ? 'workerId' : 'ownerId';
     const otherNameField = userType === 'owner' ? 'workerName' : 'ownerName';
+    const otherType = userType === 'owner' ? 'worker' : 'owner';
 
-    // Fetch all bookings where current user is involved
-    const snap = await getDocs(query(collection(db, 'bookings'), where(myField, '==', currentUser.uid)));
-    if (snap.empty) return;
+    let bookingsSnap;
+    try {
+      bookingsSnap = await getDocs(query(collection(db, 'bookings'), where(myField, '==', currentUser.uid)));
+    } catch(e) {
+      console.warn('Cannot fetch bookings:', e.message);
+      return;
+    }
 
-    for (const bDoc of snap.docs) {
+    for (const bDoc of bookingsSnap.docs) {
       const b = bDoc.data();
       const otherId = b[otherField];
-      const otherName = b[otherNameField] || 'Unknown';
       if (!otherId) continue;
+      const otherName = b[otherNameField] || 'Unknown';
 
       const ids = [currentUser.uid, otherId].sort();
       const convoId = ids[0] + '_' + ids[1];
@@ -534,36 +537,38 @@
       try {
         const convoSnap = await getDoc(convoRef);
         if (!convoSnap.exists()) {
-          // Fetch other user's real name from users collection
-          let resolvedOtherName = otherName;
-          try {
-            const otherUserSnap = await getDoc(doc(db, 'users', otherId));
-            if (otherUserSnap.exists()) {
-              const od = otherUserSnap.data();
-              resolvedOtherName = ((od.firstName||'') + ' ' + (od.lastName||'')).trim() || otherName;
-            }
-          } catch(e) {}
-
           await setDoc(convoRef, {
             participants: [currentUser.uid, otherId],
-            participantNames: { [currentUser.uid]: myName, [otherId]: resolvedOtherName },
+            participantNames: { [currentUser.uid]: myName, [otherId]: otherName },
             participantTypes: { [currentUser.uid]: userType, [otherId]: otherType },
             lastMessage: '',
             lastMessageAt: b.createdAt || new Date().toISOString(),
             createdAt: b.createdAt || new Date().toISOString()
           });
+          console.log('Created conversation:', convoId);
         }
-      } catch(e) { console.warn('Convo create error for', otherId, ':', e.message); }
+      } catch(e) {
+        console.warn('Convo setDoc failed for', convoId, ':', e.message);
+        // If setDoc fails (Firestore rules), add a local placeholder so UI still works
+        const already = allConvos.find(c => c.id === convoId);
+        if (!already) {
+          allConvos.push({
+            id: convoId,
+            participants: [currentUser.uid, otherId],
+            participantNames: { [currentUser.uid]: myName, [otherId]: otherName },
+            participantTypes: { [currentUser.uid]: userType, [otherId]: otherType },
+            lastMessage: '',
+            lastMessageAt: b.createdAt || new Date().toISOString()
+          });
+        }
+      }
     }
   }
 
   function renderConvoList() {
     const list = document.getElementById('convos-list');
     if (allConvos.length === 0) {
-      const emptyMsg = currentUserData?.userType === 'worker'
-        ? 'No conversations yet.<br>Wait for an owner to book you, or check your bookings.'
-        : 'No conversations yet.<br>Book a worker to start chatting!';
-      list.innerHTML = `<div class="no-convos"><div class="no-convos-icon">💬</div><div class="no-convos-text">${emptyMsg}</div></div>`;
+      list.innerHTML = `<div class="no-convos"><div class="no-convos-icon">💬</div><div class="no-convos-text" id="no-convos-text">No conversations yet.</div></div>`;
       return;
     }
     list.innerHTML = allConvos.map(c => {
@@ -723,12 +728,14 @@
           link: 'messages.html?with=' + currentUser.uid, read: false, createdAt: serverTimestamp()
         });
       } catch(e) { console.warn('Notif failed:', e.message); }
-      // Update convo list preview without re-running ensureConvos
-      const updatedSnap = await getDocs(query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid)));
-      allConvos = [];
-      updatedSnap.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
-      allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
-      renderConvoList();
+      // Refresh convo list preview only
+      try {
+        const rSnap = await getDocs(query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid)));
+        allConvos = [];
+        rSnap.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
+        allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
+        renderConvoList();
+      } catch(e) {}
     } catch(err) { alert('Failed to send: ' + err.message); }
     btn.disabled = false;
     input.focus();
@@ -895,11 +902,8 @@
       btn.textContent = '🎉 Confirm Payment';
       closePayPopup();
       document.getElementById('success-overlay').classList.add('open');
-      const updatedSnap2 = await getDocs(query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid)));
-      allConvos = [];
-      updatedSnap2.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
-      allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
-      renderConvoList();
+      await loadConversations();
+
     } catch(err) {
       btn.disabled = false;
       btn.textContent = '🎉 Confirm Payment';
