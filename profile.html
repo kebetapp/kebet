@@ -245,7 +245,20 @@
         <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
       </div>
     </div>
-    <div class="total-box" id="total-box"></div>
+    <div class="total-box" id="total-box" style="display:none;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span>Monthly salary</span><span id="tb-salary">0 ETB</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span>Duration</span><span id="tb-months">1 month</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#c87800;">
+        <span>Kebet service fee (5%)</span><span id="tb-fee">0 ETB</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;border-top:1px solid #d0eedd;padding-top:8px;margin-top:4px;">
+        <span>Total</span><span id="tb-total">0 ETB</span>
+      </div>
+    </div>
     <div class="error-box" id="error-box"></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeBookModal()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
@@ -437,6 +450,7 @@
     document.getElementById('book-modal').classList.add('show');
     document.getElementById('book-salary').oninput = updateTotal;
     document.getElementById('book-months').onchange = updateTotal;
+    document.getElementById('book-months').oninput = updateTotal;
   }
 
   window.closeBookModal = function() {
@@ -448,8 +462,14 @@
     const months = parseInt(document.getElementById('book-months').value) || 1;
     const el = document.getElementById('total-box');
     if (sal > 0) {
+      const subtotal = sal * months;
+      const fee = Math.round(subtotal * 0.05);
+      const total = subtotal + fee;
+      document.getElementById('tb-salary').textContent = sal.toLocaleString() + ' ETB';
+      document.getElementById('tb-months').textContent = months + (months === 1 ? ' month' : ' months');
+      document.getElementById('tb-fee').textContent = fee.toLocaleString() + ' ETB';
+      document.getElementById('tb-total').textContent = total.toLocaleString() + ' ETB';
       el.style.display = 'block';
-      el.textContent = '💰 Total: ' + (sal * months).toLocaleString() + ' ETB (' + sal.toLocaleString() + ' × ' + months + ' months)';
     } else {
       el.style.display = 'none';
     }

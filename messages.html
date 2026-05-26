@@ -235,7 +235,7 @@
       <div class="convos-list" id="convos-list">
         <div class="no-convos">
           <div class="no-convos-icon">💬</div>
-          <div class="no-convos-text">No conversations yet.<br>Book a worker to start chatting!</div>
+          <div class="no-convos-text" id="no-convos-text">No conversations yet.</div>
         </div>
       </div>
     </div>
@@ -519,9 +519,26 @@
 
       for (const bDoc of bookingsSnap.docs) {
         const b = bDoc.data();
-        const otherId = userType === 'owner' ? b.workerId : b.ownerId;
-        const otherName = userType === 'owner' ? (b.workerName || '') : (b.ownerName || '');
+        let otherId = userType === 'owner' ? b.workerId : b.ownerId;
+        let otherName = userType === 'owner' ? (b.workerName || '') : (b.ownerName || '');
         const otherType = userType === 'owner' ? 'worker' : 'owner';
+
+        // If otherId is missing, try to find it from users collection by name
+        if (!otherId && otherName) {
+          try {
+            const nameParts = otherName.trim().split(' ');
+            const fn = nameParts[0] || '';
+            const ln = nameParts.slice(1).join(' ') || '';
+            const usersSnap = await getDocs(query(
+              collection(db, 'users'),
+              where('userType', '==', otherType),
+              where('firstName', '==', fn)
+            ));
+            usersSnap.forEach(ud => {
+              if ((ud.data().lastName || '') === ln) otherId = ud.id;
+            });
+          } catch(e2) { console.warn('Name lookup failed:', e2.message); }
+        }
         if (!otherId) continue;
 
         const ids = [currentUser.uid, otherId].sort();
@@ -548,7 +565,10 @@
   function renderConvoList() {
     const list = document.getElementById('convos-list');
     if (allConvos.length === 0) {
-      list.innerHTML = `<div class="no-convos"><div class="no-convos-icon">💬</div><div class="no-convos-text">No conversations yet.<br>Book a worker to start chatting!</div></div>`;
+      const emptyMsg = currentUserData?.userType === 'worker'
+        ? 'No conversations yet.<br>Wait for an owner to book you, or check your bookings.'
+        : 'No conversations yet.<br>Book a worker to start chatting!';
+      list.innerHTML = `<div class="no-convos"><div class="no-convos-icon">💬</div><div class="no-convos-text">${emptyMsg}</div></div>`;
       return;
     }
     list.innerHTML = allConvos.map(c => {
