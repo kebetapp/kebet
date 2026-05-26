@@ -219,6 +219,63 @@
     .user-name { font-size:13px; font-weight:600; color:var(--text); }
     .user-email { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
 
+    /* ── PAYMENTS PANEL ── */
+    .payment-queue { display:grid; gap:14px; margin-bottom:28px; }
+    .fee-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:20px 22px; display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center;
+      transition:border-color 0.2s; position:relative; overflow:hidden;
+    }
+    .fee-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--yellow); }
+    .fee-card.verified::before { background:var(--green); }
+    .fee-card:hover { border-color:var(--muted2); }
+    .fee-card-left { display:flex; flex-direction:column; gap:6px; }
+    .fee-owner-name { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--text); }
+    .fee-meta { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .fee-meta-item { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
+    .fee-meta-item strong { color:var(--text); }
+    .fee-amount { font-size:20px; font-weight:800; font-family:'Syne',sans-serif; color:var(--yellow); margin-top:4px; }
+    .fee-card.verified .fee-amount { color:var(--green); }
+    .fee-actions { display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+    .verify-btn {
+      background:var(--green); color:#000; border:none; border-radius:10px;
+      padding:12px 22px; font-size:13px; font-weight:700; font-family:'Syne',sans-serif;
+      cursor:pointer; transition:opacity 0.2s; white-space:nowrap; letter-spacing:0.5px;
+    }
+    .verify-btn:hover { opacity:0.85; }
+    .verify-btn:disabled { opacity:0.4; cursor:not-allowed; }
+    .unverify-btn {
+      background:transparent; color:var(--muted); border:1px solid var(--border); border-radius:8px;
+      padding:7px 14px; font-size:11px; font-weight:600; font-family:'DM Mono',monospace;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .unverify-btn:hover { border-color:var(--red); color:var(--red); }
+    .fee-verified-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      background:var(--green-dim); color:var(--green); border:1px solid #00e67640;
+      padding:6px 14px; border-radius:8px; font-size:12px; font-weight:700;
+      font-family:'DM Mono',monospace;
+    }
+    .payments-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
+    .pay-stat {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:16px 18px;
+    }
+    .pay-stat-label { font-size:10px; color:var(--muted); font-family:'DM Mono',monospace; letter-spacing:1px; margin-bottom:8px; }
+    .pay-stat-val { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; }
+    .pay-stat-val.yellow { color:var(--yellow); }
+    .pay-stat-val.green  { color:var(--green);  }
+    .pay-stat-val.blue   { color:var(--blue);   }
+    .payments-empty { text-align:center; padding:60px 20px; color:var(--muted); font-family:'DM Mono',monospace; }
+    .payments-filter { display:flex; gap:8px; margin-bottom:18px; }
+    .pf-btn {
+      padding:7px 16px; border-radius:8px; font-size:12px; font-weight:600;
+      cursor:pointer; border:1px solid var(--border); background:var(--surface2);
+      color:var(--muted); font-family:'DM Mono',monospace; transition:all 0.2s;
+    }
+    .pf-btn.active { background:var(--surface); color:var(--text); border-color:var(--muted2); }
+    .pf-btn:hover { color:var(--text); }
+
     @media(max-width:900px){
       .sidebar{display:none;}
       .main{margin-left:0;}
@@ -272,6 +329,11 @@
   <div class="sb-item" id="nav-messages" onclick="showPanel('messages')">
     <span class="sb-item-icon">💬</span> Messages
     <span class="sb-count" id="cnt-messages">—</span>
+  </div>
+  <div class="sb-section">PAYMENTS</div>
+  <div class="sb-item" id="nav-payments" onclick="showPanel('payments')">
+    <span class="sb-item-icon">📱</span> Verify Fees
+    <span class="sb-count" id="cnt-pending-fees" style="background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">—</span>
   </div>
   <div class="sb-bottom">
     <div class="sb-admin-label" id="admin-email-label">admin</div>
@@ -447,9 +509,36 @@
     </div>
   </div>
 
-</div>
+  <!-- ── PAYMENTS PANEL ── -->
+  <div class="panel" id="panel-payments">
 
-<!-- CONFIRM MODAL -->
+    <div class="payments-stats">
+      <div class="pay-stat">
+        <div class="pay-stat-label">PENDING VERIFICATION</div>
+        <div class="pay-stat-val yellow" id="pay-stat-pending">—</div>
+      </div>
+      <div class="pay-stat">
+        <div class="pay-stat-label">VERIFIED TODAY</div>
+        <div class="pay-stat-val green" id="pay-stat-verified">—</div>
+      </div>
+      <div class="pay-stat">
+        <div class="pay-stat-label">TOTAL FEES COLLECTED</div>
+        <div class="pay-stat-val blue" id="pay-stat-total">—</div>
+      </div>
+    </div>
+
+    <div class="payments-filter">
+      <button class="pf-btn active" id="pf-all"     onclick="filterPayments('all')">All</button>
+      <button class="pf-btn"        id="pf-pending"  onclick="filterPayments('pending')">⏳ Pending</button>
+      <button class="pf-btn"        id="pf-verified" onclick="filterPayments('verified')">✅ Verified</button>
+    </div>
+
+    <div class="payment-queue" id="payment-queue">
+      <div class="payments-empty">⏳ Loading payments...</div>
+    </div>
+  </div>
+
+</div>
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-title" id="modal-title">Confirm Action</div>
@@ -470,7 +559,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, getDocs, getDoc, doc,
-  updateDoc, deleteDoc, query, orderBy, limit, where
+  updateDoc, deleteDoc, query, orderBy, limit, where, collectionGroup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -489,8 +578,9 @@ const db   = getFirestore(app);
 // ── ADMIN EMAILS — add yours here ──
 const ADMIN_EMAILS = ['dagmawiteklu02@gmail.com'];
 
-let allOwners=[], allWorkers=[], allBookings=[], allReviews=[], allConvos=[];
+let allOwners=[], allWorkers=[], allBookings=[], allReviews=[], allConvos=[], allFeePayments=[];
 let modalAction = null;
+let currentPayFilter = 'all';
 
 // ── LOGIN ──
 window.doLogin = async function() {
@@ -534,7 +624,7 @@ onAuthStateChanged(auth, async user => {
 // ── LOAD ALL DATA ──
 window.loadAll = async function() {
   showToast('↻ Refreshing data...', '');
-  await Promise.all([loadUsers(), loadBookings(), loadReviews(), loadConvos()]);
+  await Promise.all([loadUsers(), loadBookings(), loadReviews(), loadConvos(), loadFeePayments()]);
   renderOverview();
   showToast('✓ Data refreshed', 'green');
 };
@@ -603,6 +693,171 @@ async function loadConvos() {
   document.getElementById('cnt-messages').textContent = allConvos.length;
   renderMessages(allConvos);
 }
+
+// ── LOAD FEE PAYMENTS ──
+async function loadFeePayments() {
+  try {
+    const snap = await getDocs(collection(db, 'payments'));
+    allFeePayments = [];
+    snap.forEach(d => {
+      const p = { id: d.id, ...d.data() };
+      // Only booking fees (not salary payments)
+      if (p.type === 'booking_fee' || p.payTo === 'kebet' || p.recipient === 'kebet' || p.isBookingFee) {
+        allFeePayments.push(p);
+      }
+    });
+    // Also check bookings for feePayment sub-data
+    allBookings.forEach(b => {
+      if (b.feePayment) {
+        const exists = allFeePayments.find(fp => fp.bookingId === b.id && fp.type === 'booking_fee');
+        if (!exists) {
+          allFeePayments.push({
+            id: 'booking_fee_' + b.id,
+            bookingId: b.id,
+            ownerName: b.ownerName || '—',
+            ownerId: b.ownerId,
+            workerName: b.workerName || '—',
+            amount: b.bookingFee || b.feeAmount || 500,
+            status: b.feeVerified ? 'verified' : 'pending',
+            verified: b.feeVerified || false,
+            submittedAt: b.feePayment?.submittedAt || b.createdAt,
+            screenshot: b.feePayment?.screenshot || null,
+            source: 'booking'
+          });
+        }
+      }
+    });
+
+    allFeePayments.sort((a,b) => {
+      // Pending first
+      if (a.verified && !b.verified) return 1;
+      if (!a.verified && b.verified) return -1;
+      return new Date(b.submittedAt||0) - new Date(a.submittedAt||0);
+    });
+
+    const pending = allFeePayments.filter(p => !p.verified).length;
+    document.getElementById('cnt-pending-fees').textContent = pending || '✓';
+    if (pending > 0) {
+      document.getElementById('cnt-pending-fees').style.background = 'var(--yellow-dim)';
+      document.getElementById('cnt-pending-fees').style.color = 'var(--yellow)';
+    } else {
+      document.getElementById('cnt-pending-fees').style.background = 'var(--green-dim)';
+      document.getElementById('cnt-pending-fees').style.color = 'var(--green)';
+    }
+    renderFeePayments(allFeePayments);
+  } catch(e) {
+    console.log('Fee load error:', e.message);
+    // Fallback: derive from bookings
+    allFeePayments = allBookings
+      .filter(b => b.ownerId)
+      .map(b => ({
+        id: 'bk_' + b.id,
+        bookingId: b.id,
+        ownerName: b.ownerName || '—',
+        ownerId: b.ownerId,
+        workerName: b.workerName || '—',
+        amount: b.bookingFee || 500,
+        verified: b.feeVerified || false,
+        status: b.feeVerified ? 'verified' : 'pending',
+        submittedAt: b.createdAt,
+        source: 'booking'
+      }));
+    renderFeePayments(allFeePayments);
+  }
+}
+
+function renderFeePayments(list) {
+  const pending  = list.filter(p => !p.verified).length;
+  const verified = list.filter(p => p.verified).length;
+  const total    = list.reduce((s, p) => p.verified ? s + (p.amount||0) : s, 0);
+
+  document.getElementById('pay-stat-pending').textContent  = pending;
+  document.getElementById('pay-stat-verified').textContent = verified;
+  document.getElementById('pay-stat-total').textContent    = total ? total.toLocaleString() + ' ETB' : '0 ETB';
+
+  const container = document.getElementById('payment-queue');
+
+  if (list.length === 0) {
+    container.innerHTML = `<div class="payments-empty">🎉 No fee payments to review</div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(p => {
+    const isVerified = p.verified || p.status === 'verified';
+    const date = p.submittedAt ? fmtDate(p.submittedAt) : '—';
+    const amount = (p.amount || 500).toLocaleString();
+
+    return `
+    <div class="fee-card ${isVerified ? 'verified' : ''}" id="fee-card-${p.id}">
+      <div class="fee-card-left">
+        <div class="fee-owner-name">🏠 ${p.ownerName}</div>
+        <div class="fee-meta">
+          <span class="fee-meta-item">Worker: <strong>${p.workerName}</strong></span>
+          <span class="fee-meta-item">Submitted: <strong>${date}</strong></span>
+          ${p.bookingId ? `<span class="fee-meta-item">Booking ID: <strong>${p.bookingId.slice(0,8)}…</strong></span>` : ''}
+        </div>
+        <div class="fee-amount">${amount} ETB</div>
+      </div>
+      <div class="fee-actions">
+        ${isVerified
+          ? `<div class="fee-verified-badge">✅ VERIFIED</div>
+             <button class="unverify-btn" onclick="setFeeVerified('${p.id}','${p.bookingId||p.id}',false,'${p.ownerName}')">Undo</button>`
+          : `<button class="verify-btn" id="vbtn-${p.id}" onclick="setFeeVerified('${p.id}','${p.bookingId||p.id}',true,'${p.ownerName}')">✓ Mark Verified</button>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.filterPayments = function(filter) {
+  currentPayFilter = filter;
+  ['all','pending','verified'].forEach(f => {
+    document.getElementById('pf-'+f).classList.toggle('active', f === filter);
+  });
+  let filtered = allFeePayments;
+  if (filter === 'pending')  filtered = allFeePayments.filter(p => !p.verified && p.status !== 'verified');
+  if (filter === 'verified') filtered = allFeePayments.filter(p => p.verified  || p.status === 'verified');
+  renderFeePayments(filtered);
+};
+
+window.setFeeVerified = async function(feeId, bookingId, verify, ownerName) {
+  const btn = document.getElementById('vbtn-' + feeId);
+  if (btn) { btn.disabled = true; btn.textContent = verify ? '⏳ Saving…' : 'Saving…'; }
+
+  try {
+    // Update booking document
+    if (bookingId && !bookingId.startsWith('bk_')) {
+      await updateDoc(doc(db, 'bookings', bookingId), { feeVerified: verify });
+    }
+    // Update payments document if it exists separately
+    if (!feeId.startsWith('bk_') && !feeId.startsWith('booking_fee_')) {
+      try { await updateDoc(doc(db, 'payments', feeId), { verified: verify, status: verify ? 'verified' : 'pending' }); } catch(e) {}
+    }
+
+    // Update local state
+    const idx = allFeePayments.findIndex(p => p.id === feeId);
+    if (idx !== -1) {
+      allFeePayments[idx].verified = verify;
+      allFeePayments[idx].status   = verify ? 'verified' : 'pending';
+    }
+    // Also update booking in allBookings
+    const bIdx = allBookings.findIndex(b => b.id === bookingId);
+    if (bIdx !== -1) allBookings[bIdx].feeVerified = verify;
+
+    showToast(verify ? `✓ ${ownerName}'s fee verified — booking activated!` : `✓ Verification removed`, verify ? 'green' : 'red');
+
+    // Re-render with current filter
+    filterPayments(currentPayFilter);
+
+    // Update pending count badge
+    const pending = allFeePayments.filter(p => !p.verified && p.status !== 'verified').length;
+    document.getElementById('cnt-pending-fees').textContent = pending || '✓';
+
+  } catch(err) {
+    showToast('✗ Error: ' + err.message, 'red');
+    if (btn) { btn.disabled = false; btn.textContent = '✓ Mark Verified'; }
+  }
+};
 
 // ── RENDER OVERVIEW ──
 function renderOverview() {
@@ -776,8 +1031,8 @@ window.showPanel = function(name) {
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
-  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', bookings:'Bookings', reviews:'Reviews', messages:'Conversations' };
-  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations' };
+  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', bookings:'Bookings', reviews:'Reviews', messages:'Conversations', payments:'Verify Fee Payments' };
+  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations', payments:'One-click Telebirr fee verification' };
   document.getElementById('panel-title').textContent = titles[name]||name;
   document.getElementById('panel-sub').textContent   = subs[name]||'';
   const showTabs = ['owners','workers'].includes(name);
