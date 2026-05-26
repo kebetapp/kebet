@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kebet — Salary Payments</title>
+  <title>Kebet — Payments</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
 
+    /* ── Sidebar ── */
     .sidebar { width: 240px; background: #1a6b3c; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
     .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
     .sidebar-logo-icon { width: 36px; height: 36px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -24,92 +25,119 @@
     .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
     .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; }
 
-    .main { margin-left: 240px; flex: 1; padding: 32px; }
-    .page-header { margin-bottom: 28px; }
-    .page-title { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 4px; }
-    .page-sub { font-size: 14px; color: #888; }
+    /* ── Main ── */
+    .main { margin-left: 240px; flex: 1; padding: 32px; max-width: 820px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .page-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
 
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    /* ── Stats row ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
     .stat-card { background: #fff; border-radius: 14px; padding: 18px; border: 1px solid #eee; }
-    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
+    .stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 10px; }
     .icon-green { background: #e8f5ee; }
     .icon-gold { background: #fff5e0; }
     .icon-blue { background: #e8f0ff; }
-    .icon-pink { background: #ffe8f0; }
     .stat-num { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 2px; }
     .stat-label { font-size: 11px; color: #888; }
     .stat-sub { font-size: 11px; color: #1a6b3c; margin-top: 4px; font-weight: 600; }
 
-    .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eee; margin-bottom: 20px; }
-    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .card-badge { font-size: 11px; background: #e8f5ee; color: #1a6b3c; padding: 4px 10px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
+    /* ── Cards ── */
+    .card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #eee; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; }
+    .card-badge { font-size: 11px; padding: 4px 10px; border-radius: 8px; font-weight: 600; }
+    .badge-green { background: #e8f5ee; color: #1a6b3c; }
+    .badge-gold { background: #fff5e0; color: #c87800; }
+    .badge-red { background: #fff0f0; color: #cc0000; }
+    .badge-gray { background: #f0f0f0; color: #888; }
 
-    /* Worker summary box */
-    .worker-salary-box { background: linear-gradient(135deg, #1a6b3c, #145530); border-radius: 14px; padding: 22px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
-    .wsb-left { }
-    .wsb-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
-    .wsb-worker { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-    .wsb-role { font-size: 13px; color: rgba(255,255,255,0.6); }
-    .wsb-right { text-align: right; }
-    .wsb-sal-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
-    .wsb-sal-amount { font-size: 32px; font-weight: 700; color: #f0a500; }
-    .wsb-sal-period { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    /* ── Worker hero box ── */
+    .worker-hero { background: linear-gradient(135deg, #1a6b3c, #145530); border-radius: 14px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .wh-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .wh-role { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .wh-right { text-align: right; }
+    .wh-sal-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+    .wh-sal-amount { font-size: 30px; font-weight: 700; color: #f0a500; }
+    .wh-sal-unit { font-size: 12px; color: rgba(255,255,255,0.4); }
 
-    /* Payment rows */
-    .pay-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
+    /* ── Pay tabs ── */
+    .pay-tabs { display: flex; background: #f5f5f0; border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 22px; }
+    .pay-tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 9px; font-size: 13px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.2s; }
+    .pay-tab.active { background: #fff; color: #1a6b3c; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+    /* ── Telebirr payment panel ── */
+    .telebirr-panel { }
+    .telebirr-who { background: #f9f9f7; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .tw-label { font-size: 11px; color: #888; font-weight: 600; margin-bottom: 3px; }
+    .tw-value { font-size: 15px; font-weight: 700; color: #111; }
+    .tw-amount { font-size: 24px; font-weight: 700; color: #1a6b3c; }
+
+    .telebirr-number-box { background: #fffbf0; border: 1.5px solid #f0a500; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .tnb-left { }
+    .tnb-label { font-size: 10px; color: #aaa; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .tnb-number { font-size: 24px; font-weight: 700; color: #c87800; letter-spacing: 3px; }
+    .copy-btn { background: #fff5e0; border: none; color: #c87800; font-size: 12px; font-weight: 700; padding: 9px 16px; border-radius: 8px; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .copy-btn:hover { background: #ffe0a0; }
+
+    .steps-list { margin-bottom: 16px; }
+    .step-row { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
+    .step-row:last-child { border-bottom: none; }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; background: #1a6b3c; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-text { font-size: 13px; color: #444; line-height: 1.5; }
+    .step-text strong { color: #111; }
+
+    /* ── Upload screenshot ── */
+    .upload-area { border: 2px dashed #ddd; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; position: relative; }
+    .upload-area:hover { border-color: #1a6b3c; background: #f5fff8; }
+    .upload-area.has-file { border-color: #1a6b3c; background: #e8f5ee; }
+    .upload-icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-text { font-size: 14px; font-weight: 600; color: #555; margin-bottom: 4px; }
+    .upload-sub { font-size: 12px; color: #aaa; }
+    .upload-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-preview { max-width: 100%; max-height: 200px; border-radius: 10px; margin-top: 10px; display: none; object-fit: contain; }
+
+    /* ── Submit button ── */
+    .submit-pay-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .submit-pay-btn:hover { background: #145530; }
+    .submit-pay-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── Payment history rows ── */
+    .pay-row { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f5f5f0; }
     .pay-row:last-child { border-bottom: none; }
-    .pay-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-    .pay-icon.paid { background: #e8f5ee; }
-    .pay-icon.due { background: #fff5e0; }
-    .pay-icon.upcoming { background: #f0f0f0; }
-    .pay-info { flex: 1; }
-    .pay-month { font-size: 14px; font-weight: 600; color: #111; }
-    .pay-date { font-size: 11px; color: #aaa; margin-top: 2px; }
-    .pay-amount { font-size: 15px; font-weight: 700; color: #1a6b3c; margin-right: 10px; }
-    .pay-status { font-size: 11px; padding: 4px 12px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
-    .s-paid { background: #e8f5ee; color: #1a6b3c; }
-    .s-due { background: #fff5e0; color: #c87800; }
-    .s-upcoming { background: #f0f0f0; color: #888; }
-    .mark-paid-btn { background: #1a6b3c; color: #fff; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .mark-paid-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .pay-icon-box { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .pi-salary { background: #e8f5ee; }
+    .pi-fee { background: #fff5e0; }
+    .pi-pending { background: #fff0f0; }
+    .pay-info { flex: 1; min-width: 0; }
+    .pay-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 2px; }
+    .pay-meta { font-size: 11px; color: #aaa; }
+    .pay-amount-col { font-size: 15px; font-weight: 700; color: #1a6b3c; white-space: nowrap; margin-right: 8px; }
+    .pay-badge { font-size: 11px; padding: 3px 10px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
+    .pb-verified { background: #e8f5ee; color: #1a6b3c; }
+    .pb-pending { background: #fff5e0; color: #c87800; }
 
-    /* Add payment form */
-    .add-payment-form { background: #f5f5f0; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
-    .form-group { }
-    .form-label { font-size: 11px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
-    .form-input, .form-select { width: 100%; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #111; }
-    .form-input:focus, .form-select:focus { border-color: #1a6b3c; }
-    .add-btn { background: #1a6b3c; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; height: 42px; }
+    /* ── Reminder banner ── */
+    .reminder-box { background: #fff5e0; border: 1px solid #f0d080; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: none; gap: 10px; align-items: flex-start; }
+    .reminder-box.show { display: flex; }
 
-    /* Reminder box */
-    .reminder-box { background: #fff5e0; border: 1px solid #f0d080; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
-    .reminder-icon { font-size: 24px; flex-shrink: 0; }
-    .reminder-title { font-size: 14px; font-weight: 700; color: #c87800; margin-bottom: 4px; }
-    .reminder-text { font-size: 13px; color: #555; line-height: 1.6; }
-
-    .empty-state { text-align: center; padding: 40px 20px; }
-    .empty-icon { font-size: 48px; margin-bottom: 12px; }
-    .empty-title { font-size: 16px; font-weight: 600; color: #555; margin-bottom: 8px; }
-    .empty-sub { font-size: 13px; color: #aaa; }
-
-    .no-worker-card { background: #fff; border-radius: 16px; padding: 40px; border: 2px dashed #eee; text-align: center; margin-bottom: 20px; }
-    .no-worker-icon { font-size: 48px; margin-bottom: 12px; }
+    /* ── No worker ── */
+    .no-worker-box { text-align: center; padding: 60px 20px; }
+    .no-worker-icon { font-size: 52px; margin-bottom: 14px; }
     .no-worker-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
     .no-worker-sub { font-size: 14px; color: #888; margin-bottom: 20px; }
-    .find-btn { background: #1a6b3c; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .find-btn { background: #1a6b3c; color: #fff; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1a6b3c; color: #fff; padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .toast.show { display: block; }
 
     .loading { text-align: center; padding: 60px; color: #888; }
-
-    /* Success toast */
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #1a6b3c; color: #fff; padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; display: none; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-    .toast.show { display: block; }
+    .empty-state { text-align: center; padding: 36px 20px; color: #aaa; }
+    .empty-state .empty-icon { font-size: 36px; margin-bottom: 10px; }
 
     @media (max-width: 900px) {
       .sidebar { display: none; }
       .main { margin-left: 0; padding: 20px; }
       .stats-row { grid-template-columns: 1fr 1fr; }
-      .form-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -125,39 +153,43 @@
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
   </div>
-  <div style="padding:8px 20px 0;display:flex;justify-content:center;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
-  <div class="sidebar-section"><span class="en">MENU</span><span class="am">ዋና ምናሌ</span></div>
+  <div style="padding:8px 20px 0;display:flex;justify-content:center;">
+    <div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div>
+  </div>
+  <div class="sidebar-section">MENU</div>
   <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📊</span> Dashboard</div>
   <div class="sidebar-item" onclick="window.location.href='search.html'"><span class="sidebar-item-icon">🔍</span> Find Workers</div>
-  <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> Salary Payments</div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">💬</span> Messages</div>
-  <div class="sidebar-section"><span class="en">ACCOUNT</span><span class="am">መለያ</span></div>
-  <div class="sidebar-item"><span class="sidebar-item-icon">⚙️</span> Settings</div>
+  <div class="sidebar-item" onclick="window.location.href='dashboard-owner.html'"><span class="sidebar-item-icon">📋</span> My Bookings</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">💰</span> Payments</div>
+  <div class="sidebar-item" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-item" onclick="window.location.href='notifications.html'"><span class="sidebar-item-icon">🔔</span> Notifications</div>
+  <div class="sidebar-section">ACCOUNT</div>
+  <div class="sidebar-item" onclick="window.location.href='settings.html'"><span class="sidebar-item-icon">⚙️</span> Settings</div>
   <div class="sidebar-user">
     <div class="sidebar-user-av" id="sidebar-av">?</div>
     <div>
-      <div class="sidebar-user-name" id="sidebar-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
-      <div class="sidebar-user-role"><span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role">House Owner</div>
     </div>
     <button class="signout-btn" id="signout-btn">⏻</button>
   </div>
 </div>
 
 <div class="main">
-  <div id="loading" class="loading">⏳ Loading salary payments...</div>
+  <div id="loading" class="loading">⏳ Loading payments...</div>
   <div id="main-content" style="display:none;">
 
-    <div class="page-header">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="page-title">💰 Salary Payments</div>
-      <div class="page-sub" id="page-sub">Track and record your worker's monthly salary</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div class="page-title">💰 Payments</div>
     </div>
+    <div class="page-sub" id="page-sub">Pay your worker and the Kebet booking fee via Telebirr</div>
 
     <!-- Salary due reminder -->
-    <div class="reminder-box" id="reminder-box" style="display:none;">
-      <div class="reminder-icon">⚠️</div>
+    <div class="reminder-box" id="reminder-box">
+      <span style="font-size:22px;">⚠️</span>
       <div>
-        <div class="reminder-title">Salary payment due soon!</div>
-        <div class="reminder-text" id="reminder-text">Your worker's salary is due at the end of this month. Please pay on time — it is their right!</div>
+        <div style="font-size:14px;font-weight:700;color:#c87800;margin-bottom:3px;">Salary payment due soon!</div>
+        <div style="font-size:13px;color:#555;" id="reminder-text">Your worker's salary is due at the end of this month.</div>
       </div>
     </div>
 
@@ -167,107 +199,178 @@
         <div class="stat-icon icon-green">💰</div>
         <div class="stat-num" id="stat-salary">—</div>
         <div class="stat-label">Monthly salary (ETB)</div>
-        <div class="stat-sub">Agreed amount</div>
+        <div class="stat-sub" id="stat-worker-name-sub">Agreed amount</div>
       </div>
       <div class="stat-card ks-reveal">
         <div class="stat-icon icon-gold">✅</div>
-        <div class="stat-num" id="stat-paid">0</div>
-        <div class="stat-label">Months paid</div>
+        <div class="stat-num" id="stat-paid-count">0</div>
+        <div class="stat-label">Payments sent</div>
         <div class="stat-sub" id="stat-total-paid">Total: 0 ETB</div>
       </div>
       <div class="stat-card ks-reveal">
-        <div class="stat-icon icon-blue">📅</div>
-        <div class="stat-num" id="stat-next">—</div>
-        <div class="stat-label">Next payment due</div>
-        <div class="stat-sub">End of month</div>
-      </div>
-      <div class="stat-card ks-reveal">
-        <div class="stat-icon icon-pink">🛏️</div>
-        <div class="stat-num" id="stat-worker-name">—</div>
-        <div class="stat-label">Your worker</div>
-        <div class="stat-sub" id="stat-worker-role">—</div>
+        <div class="stat-icon icon-blue">📱</div>
+        <div class="stat-num" id="stat-fee-status">Unpaid</div>
+        <div class="stat-label">Booking fee (200 ETB)</div>
+        <div class="stat-sub" id="stat-fee-sub">One-time platform fee</div>
       </div>
     </div>
 
-    <!-- Worker salary box -->
-    <div class="card ks-reveal" id="worker-card">
-      <div class="card-title">
-        🛏️ Your Current Worker
-        <span class="card-badge" id="worker-badge">Active</span>
-      </div>
-      <div class="worker-salary-box">
-        <div class="wsb-left">
-          <div class="wsb-label">Live-in worker · የቤት ሰራተኛ</div>
-          <div class="wsb-worker" id="wsb-worker-name"><span class="en">Loading...</span><span class="am">እየጫነ...</span></div>
-          <div class="wsb-role" id="wsb-worker-role">—</div>
-        </div>
-        <div class="wsb-right">
-          <div class="wsb-sal-label">Monthly salary agreed</div>
-          <div class="wsb-sal-amount" id="wsb-salary">—</div>
-          <div class="wsb-sal-period">ETB / month</div>
+    <!-- No worker state -->
+    <div id="no-worker-section" style="display:none;">
+      <div class="card">
+        <div class="no-worker-box">
+          <div class="no-worker-icon">🔍</div>
+          <div class="no-worker-title">No worker hired yet</div>
+          <div class="no-worker-sub">Hire a worker first to start making payments</div>
+          <button class="find-btn" onclick="window.location.href='search.html'">Find a Worker →</button>
         </div>
       </div>
     </div>
 
-    <!-- Add new payment -->
-    <div class="card ks-reveal">
-      <div class="card-title">➕ Record a Salary Payment</div>
-      <div class="add-payment-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label"><span class="en">Month</span><span class="am">ወር</span></label>
-            <select class="form-select" id="pay-month">
-              <option value="January 2025">January 2025</option>
-              <option value="February 2025">February 2025</option>
-              <option value="March 2025">March 2025</option>
-              <option value="April 2025">April 2025</option>
-              <option value="May 2025" selected>May 2025</option>
-              <option value="June 2025">June 2025</option>
-              <option value="July 2025">July 2025</option>
-              <option value="August 2025">August 2025</option>
-              <option value="September 2025">September 2025</option>
-              <option value="October 2025">October 2025</option>
-              <option value="November 2025">November 2025</option>
-              <option value="December 2025">December 2025</option>
-            </select>
+    <!-- Payment section (shown when worker exists) -->
+    <div id="worker-section" style="display:none;">
+
+      <!-- Worker hero -->
+      <div class="worker-hero ks-reveal">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px;">Your current worker · Live-in</div>
+          <div class="wh-name" id="wh-name">—</div>
+          <div class="wh-role" id="wh-role">—</div>
+        </div>
+        <div class="wh-right">
+          <div class="wh-sal-label">Monthly salary</div>
+          <div class="wh-sal-amount" id="wh-salary">—</div>
+          <div class="wh-sal-unit">ETB / month</div>
+        </div>
+      </div>
+
+      <!-- Pay tabs -->
+      <div class="card ks-reveal">
+        <div class="pay-tabs">
+          <button class="pay-tab active" id="tab-salary" onclick="switchTab('salary')">💵 Pay Worker Salary</button>
+          <button class="pay-tab" id="tab-fee" onclick="switchTab('fee')">📱 Pay Booking Fee</button>
+        </div>
+
+        <!-- ═══ SALARY TAB ═══ -->
+        <div id="panel-salary" class="telebirr-panel">
+          <div class="telebirr-who">
+            <div>
+              <div class="tw-label">SENDING TO WORKER</div>
+              <div class="tw-value" id="pay-to-name">—</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="tw-label">MONTHLY SALARY</div>
+              <div class="tw-amount" id="pay-salary-amount">— ETB</div>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Amount (ETB)</label>
-            <input type="number" class="form-input" id="pay-amount" placeholder="3500" />
+
+          <div class="telebirr-number-box">
+            <div class="tnb-left">
+              <div class="tnb-label">WORKER'S TELEBIRR NUMBER</div>
+              <div class="tnb-number" id="worker-telebirr-num">—</div>
+            </div>
+            <button class="copy-btn" id="copy-salary-btn" onclick="copyNumber('salary')">📋 Copy</button>
           </div>
-          <div class="form-group">
-            <label class="form-label">Date paid</label>
-            <input type="date" class="form-input" id="pay-date" />
+
+          <div class="steps-list">
+            <div class="step-row"><div class="step-num">1</div><div class="step-text">Open <strong>Telebirr</strong> → tap <strong>Send Money</strong></div></div>
+            <div class="step-row"><div class="step-num">2</div><div class="step-text">Enter the worker's number and the exact amount <strong id="step-salary-amt">—</strong></div></div>
+            <div class="step-row"><div class="step-num">3</div><div class="step-text">Complete payment and <strong>take a screenshot</strong> of the confirmation</div></div>
+            <div class="step-row"><div class="step-num">4</div><div class="step-text">Upload the screenshot below and click <strong>Submit</strong> — we'll notify your worker</div></div>
           </div>
-          <button class="add-btn" onclick="recordPayment()">✅ Mark Paid</button>
+
+          <div class="upload-area" id="upload-salary-area">
+            <input type="file" accept="image/*" class="upload-input" id="upload-salary-input" onchange="handleUpload('salary', this)">
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">Upload Telebirr Screenshot</div>
+            <div class="upload-sub">Tap to choose your payment screenshot</div>
+            <img class="upload-preview" id="upload-salary-preview" />
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px;">Month being paid</label>
+            <select id="pay-month-select" style="width:100%;padding:10px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;outline:none;color:#111;background:#fff;"></select>
+          </div>
+
+          <button class="submit-pay-btn" id="submit-salary-btn" onclick="submitPayment('salary')">
+            📤 Submit Salary Payment
+          </button>
+        </div>
+
+        <!-- ═══ FEE TAB ═══ -->
+        <div id="panel-fee" class="telebirr-panel" style="display:none;">
+          <div class="telebirr-who">
+            <div>
+              <div class="tw-label">SENDING TO</div>
+              <div class="tw-value">Kebet Platform</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="tw-label">ONE-TIME BOOKING FEE</div>
+              <div class="tw-amount">200 ETB</div>
+            </div>
+          </div>
+
+          <div id="fee-paid-banner" style="display:none;background:#e8f5ee;border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;">
+            <div style="font-size:28px;margin-bottom:6px;">✅</div>
+            <div style="font-size:15px;font-weight:700;color:#1a6b3c;">Booking fee already paid!</div>
+            <div style="font-size:12px;color:#888;margin-top:4px;">Your 200 ETB booking fee has been verified.</div>
+          </div>
+
+          <div id="fee-pay-section">
+            <div class="telebirr-number-box">
+              <div class="tnb-left">
+                <div class="tnb-label">KEBET TELEBIRR NUMBER</div>
+                <div class="tnb-number">0979 559 549</div>
+              </div>
+              <button class="copy-btn" onclick="copyNumber('fee')">📋 Copy</button>
+            </div>
+
+            <div class="steps-list">
+              <div class="step-row"><div class="step-num">1</div><div class="step-text">Open <strong>Telebirr</strong> → tap <strong>Send Money</strong></div></div>
+              <div class="step-row"><div class="step-num">2</div><div class="step-text">Enter <strong>0979559549</strong> and amount <strong>200 ETB</strong></div></div>
+              <div class="step-row"><div class="step-num">3</div><div class="step-text">Take a screenshot of the confirmation screen</div></div>
+              <div class="step-row"><div class="step-num">4</div><div class="step-text">Upload it below — we'll verify and activate your booking</div></div>
+            </div>
+
+            <div class="upload-area" id="upload-fee-area">
+              <input type="file" accept="image/*" class="upload-input" id="upload-fee-input" onchange="handleUpload('fee', this)">
+              <div class="upload-icon">📸</div>
+              <div class="upload-text">Upload Telebirr Screenshot</div>
+              <div class="upload-sub">Tap to choose your 200 ETB payment screenshot</div>
+              <img class="upload-preview" id="upload-fee-preview" />
+            </div>
+
+            <button class="submit-pay-btn" id="submit-fee-btn" onclick="submitPayment('fee')">
+              📤 Submit Booking Fee Payment
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Payment history -->
-    <div class="card ks-reveal">
-      <div class="card-title">
-        📋 Payment History
-        <span class="card-badge" id="history-badge">0 payments</span>
-      </div>
-      <div id="payments-list">
-        <div class="empty-state">
-          <div class="empty-icon">💰</div>
-          <div class="empty-title">No payments recorded yet</div>
-          <div class="empty-sub">Use the form above to record salary payments for your worker</div>
+      <!-- Payment history -->
+      <div class="card ks-reveal">
+        <div class="card-title">
+          📋 Payment History
+          <span class="card-badge badge-green" id="history-badge">0 payments</span>
+        </div>
+        <div id="payments-list">
+          <div class="empty-state">
+            <div class="empty-icon">💰</div>
+            <div style="font-size:14px;color:#888;">No payments yet. Use the form above to send your first payment.</div>
+          </div>
         </div>
       </div>
-    </div>
 
-  </div>
+    </div><!-- /worker-section -->
+  </div><!-- /main-content -->
 </div>
 
-<div class="toast" id="toast">✅ Payment recorded successfully!</div>
+<div class="toast" id="toast">✅ Payment submitted for verification!</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -282,179 +385,307 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  const KEBET_TELEBIRR = '0979559549';
+  const BOOKING_FEE = 200;
+
   let currentUser = null;
+  let ownerData = null;
   let activeBooking = null;
-  let monthlySalary = 0;
+  let workerData = null;
+  let screenshotBase64 = { salary: null, fee: null };
 
-  // Set today's date as default
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('pay-date').value = today;
+  // ── Tab switching ──
+  window.switchTab = function(tab) {
+    document.getElementById('panel-salary').style.display = tab === 'salary' ? 'block' : 'none';
+    document.getElementById('panel-fee').style.display = tab === 'fee' ? 'block' : 'none';
+    document.getElementById('tab-salary').classList.toggle('active', tab === 'salary');
+    document.getElementById('tab-fee').classList.toggle('active', tab === 'fee');
+  };
 
+  // ── Copy Telebirr number ──
+  window.copyNumber = function(type) {
+    const num = type === 'fee' ? KEBET_TELEBIRR : (workerData?.phone || '');
+    if (!num) { alert('Worker phone number not available.'); return; }
+    navigator.clipboard.writeText(num).then(() => {
+      const btn = type === 'fee'
+        ? document.querySelectorAll('.copy-btn')[1]
+        : document.getElementById('copy-salary-btn');
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  };
+
+  // ── Handle screenshot upload ──
+  window.handleUpload = function(type, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const area = document.getElementById('upload-' + type + '-area');
+    const preview = document.getElementById('upload-' + type + '-preview');
+    area.classList.add('has-file');
+    const reader = new FileReader();
+    reader.onload = e => {
+      screenshotBase64[type] = e.target.result.split(',')[1];
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      area.querySelector('.upload-text').textContent = '✅ Screenshot ready';
+      area.querySelector('.upload-sub').textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── Submit payment ──
+  window.submitPayment = async function(type) {
+    if (!currentUser || !activeBooking) return;
+    const btn = document.getElementById('submit-' + type + '-btn');
+
+    if (type === 'salary') {
+      const month = document.getElementById('pay-month-select').value;
+      if (!month) { alert('Please select the month being paid.'); return; }
+      if (!screenshotBase64.salary) { alert('Please upload the Telebirr screenshot first.'); return; }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Submitting...';
+
+      try {
+        const ownerName = ((ownerData.firstName || '') + ' ' + (ownerData.lastName || '')).trim();
+        await addDoc(collection(db, 'payments'), {
+          type: 'salary',
+          ownerId: currentUser.uid,
+          ownerName: ownerName,
+          ownerEmail: currentUser.email,
+          workerId: activeBooking.workerId,
+          workerName: activeBooking.workerName || '—',
+          bookingId: activeBooking.id,
+          month: month,
+          amount: activeBooking.monthlySalary || 0,
+          screenshot: screenshotBase64.salary,
+          status: 'pending_verification',
+          createdAt: new Date().toISOString()
+        });
+
+        // Notify worker
+        await addDoc(collection(db, 'notifications'), {
+          userId: activeBooking.workerId,
+          type: 'payment',
+          title: '💰 Salary payment received',
+          body: (ownerName) + ' sent your salary for ' + month + ' — ' + (activeBooking.monthlySalary || 0).toLocaleString() + ' ETB (pending verification)',
+          link: 'payments.html',
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+
+        showToast('✅ Salary payment submitted! We will verify within 24hrs.');
+        await loadPaymentHistory(currentUser.uid);
+        btn.disabled = false;
+        btn.textContent = '📤 Submit Salary Payment';
+        screenshotBase64.salary = null;
+        document.getElementById('upload-salary-input').value = '';
+        document.getElementById('upload-salary-area').classList.remove('has-file');
+        document.getElementById('upload-salary-preview').style.display = 'none';
+        document.getElementById('upload-salary-area').querySelector('.upload-text').textContent = 'Upload Telebirr Screenshot';
+        document.getElementById('upload-salary-area').querySelector('.upload-sub').textContent = 'Tap to choose your payment screenshot';
+
+      } catch(err) {
+        btn.disabled = false;
+        btn.textContent = '📤 Submit Salary Payment';
+        alert('Error: ' + err.message);
+      }
+
+    } else {
+      // Booking fee
+      if (!screenshotBase64.fee) { alert('Please upload the Telebirr screenshot first.'); return; }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Submitting...';
+
+      try {
+        const ownerName = ((ownerData.firstName || '') + ' ' + (ownerData.lastName || '')).trim();
+        await addDoc(collection(db, 'payments'), {
+          type: 'booking_fee',
+          ownerId: currentUser.uid,
+          ownerName: ownerName,
+          ownerEmail: currentUser.email,
+          workerId: activeBooking.workerId,
+          workerName: activeBooking.workerName || '—',
+          bookingId: activeBooking.id,
+          amount: BOOKING_FEE,
+          screenshot: screenshotBase64.fee,
+          status: 'pending_verification',
+          createdAt: new Date().toISOString()
+        });
+
+        showToast('✅ Booking fee submitted! We will verify and activate your booking shortly.');
+        await loadPaymentHistory(currentUser.uid);
+        btn.disabled = false;
+        btn.textContent = '📤 Submit Booking Fee Payment';
+        screenshotBase64.fee = null;
+        document.getElementById('upload-fee-input').value = '';
+        document.getElementById('upload-fee-area').classList.remove('has-file');
+        document.getElementById('upload-fee-preview').style.display = 'none';
+        document.getElementById('upload-fee-area').querySelector('.upload-text').textContent = 'Upload Telebirr Screenshot';
+        document.getElementById('upload-fee-area').querySelector('.upload-sub').textContent = 'Tap to choose your 200 ETB payment screenshot';
+
+      } catch(err) {
+        btn.disabled = false;
+        btn.textContent = '📤 Submit Booking Fee Payment';
+        alert('Error: ' + err.message);
+      }
+    }
+  };
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  // ── Load payment history ──
+  async function loadPaymentHistory(uid) {
+    try {
+      const snap = await getDocs(query(collection(db, 'payments'), where('ownerId', '==', uid)));
+      const payments = [];
+      snap.forEach(d => payments.push({ id: d.id, ...d.data() }));
+      payments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      let totalPaid = 0;
+      let feeVerified = false;
+      let html = '';
+
+      payments.forEach(p => {
+        const amt = parseInt(p.amount) || 0;
+        if (p.status === 'verified') {
+          totalPaid += amt;
+          if (p.type === 'booking_fee') feeVerified = true;
+        }
+        const isVerified = p.status === 'verified';
+        const isFee = p.type === 'booking_fee';
+        const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+
+        html += `
+          <div class="pay-row">
+            <div class="pay-icon-box ${isFee ? 'pi-fee' : isVerified ? 'pi-salary' : 'pi-pending'}">
+              ${isFee ? '📱' : isVerified ? '✅' : '⏳'}
+            </div>
+            <div class="pay-info">
+              <div class="pay-title">${isFee ? 'Booking Fee — Kebet' : 'Salary — ' + (p.month || '—')}</div>
+              <div class="pay-meta">To: ${isFee ? 'Kebet Platform' : (p.workerName || '—')} · ${date}</div>
+            </div>
+            <div class="pay-amount-col">${amt.toLocaleString()} ETB</div>
+            <span class="pay-badge ${isVerified ? 'pb-verified' : 'pb-pending'}">
+              ${isVerified ? '✓ Verified' : '⏳ Pending'}
+            </span>
+          </div>`;
+      });
+
+      document.getElementById('stat-paid-count').textContent = payments.length;
+      document.getElementById('stat-total-paid').textContent = 'Total: ' + totalPaid.toLocaleString() + ' ETB';
+      document.getElementById('history-badge').textContent = payments.length + ' payment' + (payments.length !== 1 ? 's' : '');
+      document.getElementById('payments-list').innerHTML = html || `
+        <div class="empty-state"><div class="empty-icon">💰</div><div>No payments yet.</div></div>`;
+
+      // Update fee status stat
+      document.getElementById('stat-fee-status').textContent = feeVerified ? '✅ Paid' : '⏳ Pending';
+      document.getElementById('stat-fee-sub').textContent = feeVerified ? 'Verified by Kebet' : 'Submit payment above';
+
+      // Show/hide fee paid banner
+      if (feeVerified) {
+        document.getElementById('fee-paid-banner').style.display = 'block';
+        document.getElementById('fee-pay-section').style.display = 'none';
+      }
+    } catch(err) {
+      console.log('History load error:', err.message);
+    }
+  }
+
+  // ── Populate month selector ──
+  function populateMonths() {
+    const sel = document.getElementById('pay-month-select');
+    const now = new Date();
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    let opts = '';
+    // Show current month + 2 past months
+    for (let i = 2; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = months[d.getMonth()] + ' ' + d.getFullYear();
+      opts += `<option value="${label}" ${i === 0 ? 'selected' : ''}>${label}</option>`;
+    }
+    sel.innerHTML = opts;
+  }
+
+  // ── Auth ──
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'signin.html'; return; }
 
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
-
-    const data = userDoc.data();
-
-    // Only owners can access this page
-    if (data.userType !== 'owner') {
-      window.location.href = 'payments.html';
-      return;
-    }
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userSnap.exists()) { window.location.href = 'signin.html'; return; }
+    ownerData = userSnap.data();
+    if (ownerData.userType !== 'owner') { window.location.href = 'payments.html'; return; }
 
     currentUser = user;
-    const firstName = data.firstName || '';
-    const lastName = data.lastName || '';
-    const fullName = firstName + ' ' + lastName;
-    const initials = (firstName[0] || '') + (lastName[0] || '');
+    const firstName = ownerData.firstName || '';
+    const lastName = ownerData.lastName || '';
+    document.getElementById('sidebar-name').textContent = firstName + ' ' + lastName;
+    document.getElementById('sidebar-av').textContent = (firstName[0] || '') + (lastName[0] || '');
+    document.getElementById('page-sub').textContent = 'Hello ' + firstName + '! Pay your worker and Kebet fee via Telebirr';
 
-    document.getElementById('sidebar-name').textContent = fullName;
-    document.getElementById('sidebar-av').textContent = initials;
-    document.getElementById('page-sub').textContent = 'Hello ' + firstName + '! Track your worker salary payments here';
+    populateMonths();
 
-    // Load active booking for this owner
+    // Load active booking
     try {
-      const bookingQuery = query(
-        collection(db, 'bookings'),
-        where('ownerId', '==', user.uid)
-      );
-      const bookingSnap = await getDocs(bookingQuery);
-
-      if (!bookingSnap.empty) {
+      const bSnap = await getDocs(query(collection(db, 'bookings'), where('ownerId', '==', user.uid)));
+      if (!bSnap.empty) {
         const bookings = [];
-        bookingSnap.forEach(d => bookings.push({ id: d.id, ...d.data() }));
+        bSnap.forEach(d => bookings.push({ id: d.id, ...d.data() }));
         bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         activeBooking = bookings[0];
 
-        monthlySalary = activeBooking.monthlySalary || 3500;
+        const salary = activeBooking.monthlySalary || 0;
         const workerName = activeBooking.workerName || '—';
         const workerRole = activeBooking.workerRole || '—';
 
-        document.getElementById('stat-salary').textContent = monthlySalary.toLocaleString();
-        document.getElementById('stat-worker-name').textContent = workerName.split(' ')[0];
-        document.getElementById('stat-worker-role').textContent = workerRole;
-        document.getElementById('wsb-worker-name').textContent = workerName;
-        document.getElementById('wsb-worker-role').textContent = workerRole;
-        document.getElementById('wsb-salary').textContent = monthlySalary.toLocaleString();
-        document.getElementById('pay-amount').value = monthlySalary;
-        document.getElementById('worker-badge').textContent = activeBooking.status || 'Active';
+        // Load worker data for phone number
+        try {
+          const wSnap = await getDoc(doc(db, 'users', activeBooking.workerId));
+          if (wSnap.exists()) workerData = wSnap.data();
+        } catch(e) {}
 
-        // Show salary due reminder
-        const now = new Date();
-        if (now.getDate() >= 20) {
-          document.getElementById('reminder-box').style.display = 'flex';
+        const workerPhone = workerData?.phone || '(no phone on file)';
+
+        document.getElementById('stat-salary').textContent = salary.toLocaleString();
+        document.getElementById('stat-worker-name-sub').textContent = workerName.split(' ')[0];
+        document.getElementById('wh-name').textContent = workerName;
+        document.getElementById('wh-role').textContent = workerRole;
+        document.getElementById('wh-salary').textContent = salary.toLocaleString();
+        document.getElementById('pay-to-name').textContent = workerName;
+        document.getElementById('pay-salary-amount').textContent = salary.toLocaleString() + ' ETB';
+        document.getElementById('worker-telebirr-num').textContent = workerPhone;
+        document.getElementById('step-salary-amt').textContent = salary.toLocaleString() + ' ETB';
+
+        // Salary due reminder
+        if (new Date().getDate() >= 20) {
+          document.getElementById('reminder-box').classList.add('show');
           document.getElementById('reminder-text').textContent =
-            workerName + '\'s salary of ' + monthlySalary.toLocaleString() + ' ETB is due at the end of this month. Please pay on time!';
+            workerName + "'s salary of " + salary.toLocaleString() + " ETB is due at the end of this month. Please pay on time!";
         }
 
-        // Next payment date
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        document.getElementById('stat-next').textContent = endOfMonth.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-
+        document.getElementById('worker-section').style.display = 'block';
+        document.getElementById('no-worker-section').style.display = 'none';
       } else {
-        // No booking yet
-        document.getElementById('worker-card').innerHTML = `
-          <div class="no-worker-card">
-            <div class="no-worker-icon">🔍</div>
-            <div class="no-worker-title">No worker hired yet</div>
-            <div class="no-worker-sub">Hire a worker first to track salary payments</div>
-            <button class="find-btn" onclick="window.location.href='search.html'">Find a Worker →</button>
-          </div>`;
+        document.getElementById('no-worker-section').style.display = 'block';
+        document.getElementById('worker-section').style.display = 'none';
       }
-    } catch (err) {
-      console.log('Booking load error:', err.message);
+    } catch(err) {
+      console.log('Booking error:', err.message);
+      document.getElementById('no-worker-section').style.display = 'block';
     }
 
-    // Load existing payments
-    await loadPayments(user.uid);
+    await loadPaymentHistory(user.uid);
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
   });
-
-  async function loadPayments(uid) {
-    try {
-      const paymentsQuery = query(
-        collection(db, 'payments'),
-        where('ownerId', '==', uid)
-      );
-      const paymentsSnap = await getDocs(paymentsQuery);
-
-      if (!paymentsSnap.empty) {
-        let totalPaid = 0;
-        let paidCount = 0;
-        let rows = '';
-
-        const payments = [];
-        paymentsSnap.forEach(d => payments.push({ id: d.id, ...d.data() }));
-        payments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        payments.forEach(p => {
-          const amount = parseInt(p.amount) || 0;
-          totalPaid += amount;
-          paidCount++;
-
-          rows += `
-            <div class="pay-row">
-              <div class="pay-icon paid">✅</div>
-              <div class="pay-info">
-                <div class="pay-month">${p.month || '—'}</div>
-                <div class="pay-date">Paid on: ${p.date || '—'} · Worker: ${p.workerName || '—'}</div>
-              </div>
-              <div class="pay-amount">${amount.toLocaleString()} ETB</div>
-              <span class="pay-status s-paid"><span class="en">✓ Paid</span><span class="am">✓ ተከፍሏል</span></span>
-            </div>`;
-        });
-
-        document.getElementById('stat-paid').textContent = paidCount;
-        document.getElementById('stat-total-paid').textContent = 'Total: ' + totalPaid.toLocaleString() + ' ETB';
-        document.getElementById('history-badge').textContent = paidCount + ' payments';
-        document.getElementById('payments-list').innerHTML = rows;
-      }
-    } catch (err) {
-      console.log('Payments load error:', err.message);
-    }
-  }
-
-  window.recordPayment = async function() {
-    if (!currentUser) return;
-
-    const month = document.getElementById('pay-month').value;
-    const amount = parseInt(document.getElementById('pay-amount').value);
-    const date = document.getElementById('pay-date').value;
-
-    if (!month || !amount || !date) {
-      alert('Please fill in all fields!');
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, 'payments'), {
-        ownerId: currentUser.uid,
-        workerId: activeBooking?.workerId || '',
-        workerName: activeBooking?.workerName || '—',
-        ownerName: document.getElementById('sidebar-name').textContent,
-        month: month,
-        amount: amount,
-        date: date,
-        status: 'paid',
-        createdAt: new Date().toISOString()
-      });
-
-      // Show toast
-      const toast = document.getElementById('toast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-
-      // Reload payments
-      await loadPayments(currentUser.uid);
-
-    } catch (err) {
-      alert('Error recording payment: ' + err.message);
-    }
-  }
 
   document.getElementById('signout-btn').addEventListener('click', async () => {
     await signOut(auth);
