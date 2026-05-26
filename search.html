@@ -213,29 +213,83 @@
       background: #fff;
       border-radius: 24px;
       padding: 32px;
-      max-width: 420px;
+      max-width: 460px;
       width: 90%;
-      max-height: 90vh;
+      max-height: 92vh;
       overflow-y: auto;
     }
     .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px; }
     .modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
     .form-group { margin-bottom: 14px; }
     .form-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
-    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; outline: none; color: #111; }
     .form-input:focus { border-color: #1a6b3c; }
+
+    /* Service chips */
     .svc-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-    .svc-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; }
-    .total-box {
-      background: #e8f5ee;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 13px;
-      color: #1a6b3c;
-      font-weight: 600;
-      margin-bottom: 16px;
+    .svc-chip { position: relative; }
+    .svc-chip input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .svc-chip label {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 20px;
+      border: 1.5px solid #eee; background: #f9f9f7;
+      font-size: 13px; color: #555; cursor: pointer;
+      transition: all 0.18s;
+      user-select: none;
+    }
+    .svc-chip input:checked + label {
+      background: #e8f5ee; border-color: #1a6b3c; color: #1a6b3c; font-weight: 600;
+    }
+
+    /* Fee summary box */
+    .fee-box {
+      background: #f9f9f7;
+      border: 1.5px solid #eee;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
       display: none;
     }
+    .fee-box.visible { display: block; }
+    .fee-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; color: #555; }
+    .fee-row span:last-child { font-weight: 600; color: #111; }
+    .fee-divider { border: none; border-top: 1px solid #eee; margin: 8px 0; }
+    .fee-total { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; color: #111; }
+    .fee-total-amount { color: #1a6b3c; }
+
+    /* Telebirr payment box */
+    .telebirr-box {
+      background: #fffbf0;
+      border: 1.5px solid #f0a500;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .telebirr-header { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+    .telebirr-icon { font-size: 26px; flex-shrink: 0; }
+    .telebirr-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .telebirr-sub { font-size: 12px; color: #888; }
+    .telebirr-number-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1.5px solid #f0a500; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; }
+    .telebirr-label { font-size: 10px; color: #aaa; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .telebirr-number { font-size: 22px; font-weight: 700; color: #c87800; letter-spacing: 2px; }
+    .copy-number-btn { background: #fff5e0; border: none; color: #c87800; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+    .copy-number-btn:hover { background: #ffe5b0; }
+    .telebirr-steps { display: flex; flex-direction: column; gap: 6px; }
+    .telebirr-step { font-size: 12px; color: #555; padding: 5px 0; border-bottom: 1px solid #f5e8c0; line-height: 1.5; }
+    .telebirr-step:last-child { border-bottom: none; }
+
+    .fee-badge {
+      display: inline-block;
+      background: #fff5e0;
+      color: #c87800;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
     .error-box {
       background: #fff0f0;
       border: 1px solid #ffcccc;
@@ -248,7 +302,9 @@
     }
     .modal-btns { display: flex; gap: 10px; }
     .btn-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-confirm { flex: 1; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-confirm { flex: 2; background: #1a6b3c; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-confirm:hover { background: #145530; }
+    .btn-confirm:disabled { background: #aaa; cursor: not-allowed; }
 
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -333,14 +389,16 @@
 <!-- Book Modal -->
 <div class="modal-overlay" id="book-modal">
   <div class="modal-box">
-    <div class="modal-title"><span class="en">📋 Book Worker</span><span class="am">📋 ሰራተኛ ያዝ</span></div>
+    <div class="modal-title">📋 <span class="en">Book Worker</span><span class="am">ሰራተኛ ያዝ</span></div>
     <div class="modal-sub" id="modal-sub">—</div>
+
     <div class="form-group">
-      <label class="form-label"><span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
+      <label class="form-label">📅 <span class="en">Start Date</span><span class="am">የጀምር ቀን</span></label>
       <input type="date" id="book-start-date" class="form-input" />
     </div>
+
     <div class="form-group">
-      <label class="form-label"><span class="en">Contract Length (months)</span><span class="am">የውል ርዝማኔ (ወራት)</span></label>
+      <label class="form-label">📆 <span class="en">Contract Length</span><span class="am">የውል ርዝማኔ</span></label>
       <select id="book-months" class="form-input">
         <option value="1">1 month</option>
         <option value="3" selected>3 months</option>
@@ -348,25 +406,64 @@
         <option value="12">12 months</option>
       </select>
     </div>
+
     <div class="form-group">
-      <label class="form-label"><span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></label>
-      <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" />
+      <label class="form-label">💵 <span class="en">Monthly Salary (ETB)</span><span class="am">ወርሃዊ ደሞዝ (ብር)</span></label>
+      <input type="number" id="book-salary" class="form-input" placeholder="e.g. 3000" min="500" />
     </div>
+
     <div class="form-group">
-      <label class="form-label"><span class="en">Services needed</span><span class="am">የሚፈለጉ አገልግሎቶች</span></label>
+      <label class="form-label">🛠️ <span class="en">Services needed</span><span class="am">የሚፈለጉ አገልግሎቶች</span></label>
       <div class="svc-wrap">
-        <label class="svc-label"><input type="checkbox" value="Cleaning" class="svc-check" style="accent-color:#1a6b3c;"> Cleaning</label>
-        <label class="svc-label"><input type="checkbox" value="Cooking" class="svc-check" style="accent-color:#1a6b3c;"> Cooking</label>
-        <label class="svc-label"><input type="checkbox" value="Laundry" class="svc-check" style="accent-color:#1a6b3c;"> Laundry</label>
-        <label class="svc-label"><input type="checkbox" value="Nanny" class="svc-check" style="accent-color:#1a6b3c;"> Nanny</label>
-        <label class="svc-label"><input type="checkbox" value="Gardening" class="svc-check" style="accent-color:#1a6b3c;"> Gardening</label>
+        <div class="svc-chip"><input type="checkbox" id="svc-cleaning" value="Cleaning" class="svc-check"><label for="svc-cleaning">🧹 Cleaning</label></div>
+        <div class="svc-chip"><input type="checkbox" id="svc-cooking" value="Cooking" class="svc-check"><label for="svc-cooking">🍳 Cooking</label></div>
+        <div class="svc-chip"><input type="checkbox" id="svc-laundry" value="Laundry" class="svc-check"><label for="svc-laundry">👕 Laundry</label></div>
+        <div class="svc-chip"><input type="checkbox" id="svc-nanny" value="Nanny" class="svc-check"><label for="svc-nanny">👶 Nanny</label></div>
+        <div class="svc-chip"><input type="checkbox" id="svc-gardening" value="Gardening" class="svc-check"><label for="svc-gardening">🌿 Gardening</label></div>
       </div>
     </div>
-    <div class="total-box" id="total-box"></div>
+
+    <!-- Salary summary -->
+    <div class="fee-box" id="fee-box">
+      <div class="fee-row">
+        <span>Monthly salary × <span id="fee-months">3</span> months</span>
+        <span id="fee-salary-total">—</span>
+      </div>
+      <hr class="fee-divider" />
+      <div class="fee-total">
+        <span>Worker salary total</span>
+        <span class="fee-total-amount" id="fee-grand-total">—</span>
+      </div>
+    </div>
+
+    <!-- Flat fee Telebirr box — always visible -->
+    <div class="telebirr-box">
+      <div class="telebirr-header">
+        <span class="telebirr-icon">📱</span>
+        <div>
+          <div class="telebirr-title">Kebet Booking Fee — <strong>200 ETB</strong> <span class="fee-badge">ONE-TIME</span></div>
+          <div class="telebirr-sub">Pay via Telebirr before your booking is confirmed</div>
+        </div>
+      </div>
+      <div class="telebirr-number-row">
+        <div>
+          <div class="telebirr-label">Send to Telebirr number</div>
+          <div class="telebirr-number">0979 559 549</div>
+        </div>
+        <button class="copy-number-btn" onclick="copyTelebirr()">📋 Copy</button>
+      </div>
+      <div class="telebirr-steps">
+        <div class="telebirr-step">1. Open Telebirr → <strong>Send Money</strong></div>
+        <div class="telebirr-step">2. Enter <strong>0979559549</strong> and amount <strong>200 ETB</strong></div>
+        <div class="telebirr-step">3. Click <strong>"Confirm Booking"</strong> below — we'll verify your payment</div>
+      </div>
+    </div>
+
     <div class="error-box" id="error-box"></div>
+
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeBookModal()"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
-      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()"><span class="en">Confirm Booking ✓</span><span class="am">ቦታ ማስያዣ ያረጋግጡ ✓</span></button>
+      <button class="btn-confirm" id="confirm-btn" onclick="confirmBooking()">✓ <span class="en">Confirm Booking</span><span class="am">ቦታ ማስያዣ ያረጋግጡ</span></button>
     </div>
   </div>
 </div>
@@ -529,12 +626,12 @@
     document.getElementById('book-months').value = '3';
     document.getElementById('book-salary').value = '';
     document.querySelectorAll('.svc-check').forEach(c => c.checked = false);
-    document.getElementById('total-box').style.display = 'none';
+    document.getElementById('fee-box').classList.remove('visible');
     document.getElementById('error-box').style.display = 'none';
     document.getElementById('modal-sub').textContent = `Booking: ${name} · ${skill} · ${location}`;
     document.getElementById('book-modal').classList.add('show');
-    document.getElementById('book-salary').oninput = updateTotal;
-    document.getElementById('book-months').onchange = updateTotal;
+    document.getElementById('book-salary').oninput = updateFee;
+    document.getElementById('book-months').onchange = updateFee;
   };
 
   window.closeBookModal = function() {
@@ -543,16 +640,29 @@
     selectedWorkerData = null;
   };
 
-  function updateTotal() {
+  const BOOKING_FEE = 200; // flat ETB one-time fee
+  const TELEBIRR_NUMBER = '0979559549';
+
+  window.copyTelebirr = function() {
+    navigator.clipboard.writeText(TELEBIRR_NUMBER).then(() => {
+      const btn = document.querySelector('.copy-number-btn');
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy', 2000);
+    });
+  };
+
+  function updateFee() {
     const sal = parseInt(document.getElementById('book-salary').value) || 0;
     const months = parseInt(document.getElementById('book-months').value) || 1;
-    const el = document.getElementById('total-box');
-    if (sal > 0) {
-      el.style.display = 'block';
-      el.textContent = `💰 Total: ${(sal * months).toLocaleString()} ETB (${sal.toLocaleString()} × ${months} months)`;
-    } else {
-      el.style.display = 'none';
-    }
+    const feeBox = document.getElementById('fee-box');
+
+    if (sal < 500) { feeBox.classList.remove('visible'); return; }
+
+    const salaryTotal = sal * months;
+    document.getElementById('fee-months').textContent = months;
+    document.getElementById('fee-salary-total').textContent = salaryTotal.toLocaleString() + ' ETB';
+    document.getElementById('fee-grand-total').textContent = salaryTotal.toLocaleString() + ' ETB';
+    feeBox.classList.add('visible');
   }
 
   window.confirmBooking = async function() {
@@ -568,7 +678,7 @@
     if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
     if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
 
-    btn.textContent = 'Booking...';
+    btn.innerHTML = '⏳ Booking...';
     btn.disabled = true;
 
     try {
@@ -588,18 +698,20 @@
         contractMonths: months,
         monthlySalary: salary,
         totalAmount: salary * months,
+        bookingFee: BOOKING_FEE,
+        bookingFeePaid: false,
         services: services,
         status: 'pending',
         createdAt: new Date().toISOString()
       });
 
       closeBookModal();
-      alert(`✅ Booking sent to ${workerFullName}! They will be notified.`);
+      alert(`✅ Booking submitted for ${workerFullName}!\n\n📱 Remember to send 200 ETB to Telebirr ${TELEBIRR_NUMBER} to confirm your booking.\n\nYour booking will be activated once payment is verified.`);
       window.location.href = 'dashboard-owner.html';
     } catch (err) {
       errEl.textContent = '❌ Booking failed: ' + err.message;
       errEl.style.display = 'block';
-      btn.textContent = 'Confirm Booking ✓';
+      btn.innerHTML = '✓ Confirm Booking';
       btn.disabled = false;
     }
   };
