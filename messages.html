@@ -493,9 +493,10 @@
 
   async function loadConversations() {
     try {
-      // Auto-create conversations from bookings if they don't exist yet
       await ensureConvosFromBookings();
+    } catch(e) { console.warn('ensureConvos error:', e.message); }
 
+    try {
       const q = query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid));
       const snap = await getDocs(q);
       allConvos = [];
@@ -509,56 +510,50 @@
   }
 
   async function ensureConvosFromBookings() {
-    try {
-      const myName = ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim();
-      const userType = currentUserData.userType;
+    const myName = ((currentUserData.firstName || '') + ' ' + (currentUserData.lastName || '')).trim();
+    const userType = currentUserData.userType;
+    const otherType = userType === 'owner' ? 'worker' : 'owner';
+    const myField = userType === 'owner' ? 'ownerId' : 'workerId';
+    const otherField = userType === 'owner' ? 'workerId' : 'ownerId';
+    const otherNameField = userType === 'owner' ? 'workerName' : 'ownerName';
 
-      // Find all bookings involving the current user
-      const field = userType === 'owner' ? 'ownerId' : 'workerId';
-      const bookingsSnap = await getDocs(query(collection(db, 'bookings'), where(field, '==', currentUser.uid)));
+    // Fetch all bookings where current user is involved
+    const snap = await getDocs(query(collection(db, 'bookings'), where(myField, '==', currentUser.uid)));
+    if (snap.empty) return;
 
-      for (const bDoc of bookingsSnap.docs) {
-        const b = bDoc.data();
-        let otherId = userType === 'owner' ? b.workerId : b.ownerId;
-        let otherName = userType === 'owner' ? (b.workerName || '') : (b.ownerName || '');
-        const otherType = userType === 'owner' ? 'worker' : 'owner';
+    for (const bDoc of snap.docs) {
+      const b = bDoc.data();
+      const otherId = b[otherField];
+      const otherName = b[otherNameField] || 'Unknown';
+      if (!otherId) continue;
 
-        // If otherId is missing, try to find it from users collection by name
-        if (!otherId && otherName) {
-          try {
-            const nameParts = otherName.trim().split(' ');
-            const fn = nameParts[0] || '';
-            const ln = nameParts.slice(1).join(' ') || '';
-            const usersSnap = await getDocs(query(
-              collection(db, 'users'),
-              where('userType', '==', otherType),
-              where('firstName', '==', fn)
-            ));
-            usersSnap.forEach(ud => {
-              if ((ud.data().lastName || '') === ln) otherId = ud.id;
-            });
-          } catch(e2) { console.warn('Name lookup failed:', e2.message); }
-        }
-        if (!otherId) continue;
+      const ids = [currentUser.uid, otherId].sort();
+      const convoId = ids[0] + '_' + ids[1];
+      const convoRef = doc(db, 'conversations', convoId);
 
-        const ids = [currentUser.uid, otherId].sort();
-        const convoId = ids[0] + '_' + ids[1];
-        const convoRef = doc(db, 'conversations', convoId);
+      try {
         const convoSnap = await getDoc(convoRef);
-
         if (!convoSnap.exists()) {
+          // Fetch other user's real name from users collection
+          let resolvedOtherName = otherName;
+          try {
+            const otherUserSnap = await getDoc(doc(db, 'users', otherId));
+            if (otherUserSnap.exists()) {
+              const od = otherUserSnap.data();
+              resolvedOtherName = ((od.firstName||'') + ' ' + (od.lastName||'')).trim() || otherName;
+            }
+          } catch(e) {}
+
           await setDoc(convoRef, {
             participants: [currentUser.uid, otherId],
-            participantNames: { [currentUser.uid]: myName, [otherId]: otherName },
+            participantNames: { [currentUser.uid]: myName, [otherId]: resolvedOtherName },
             participantTypes: { [currentUser.uid]: userType, [otherId]: otherType },
             lastMessage: '',
             lastMessageAt: b.createdAt || new Date().toISOString(),
             createdAt: b.createdAt || new Date().toISOString()
           });
         }
-      }
-    } catch(e) {
-      console.warn('ensureConvosFromBookings error:', e.message);
+      } catch(e) { console.warn('Convo create error for', otherId, ':', e.message); }
     }
   }
 
@@ -728,7 +723,12 @@
           link: 'messages.html?with=' + currentUser.uid, read: false, createdAt: serverTimestamp()
         });
       } catch(e) { console.warn('Notif failed:', e.message); }
-      await loadConversations();
+      // Update convo list preview without re-running ensureConvos
+      const updatedSnap = await getDocs(query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid)));
+      allConvos = [];
+      updatedSnap.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
+      allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
+      renderConvoList();
     } catch(err) { alert('Failed to send: ' + err.message); }
     btn.disabled = false;
     input.focus();
@@ -895,8 +895,11 @@
       btn.textContent = '🎉 Confirm Payment';
       closePayPopup();
       document.getElementById('success-overlay').classList.add('open');
-      await loadConversations();
-
+      const updatedSnap2 = await getDocs(query(collection(db, 'conversations'), where('participants', 'array-contains', currentUser.uid)));
+      allConvos = [];
+      updatedSnap2.forEach(d => allConvos.push({ id: d.id, ...d.data() }));
+      allConvos.sort((a, b) => new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0));
+      renderConvoList();
     } catch(err) {
       btn.disabled = false;
       btn.textContent = '🎉 Confirm Payment';
