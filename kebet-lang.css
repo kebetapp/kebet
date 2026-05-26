@@ -1,33 +1,57 @@
-/* Kebet Language Toggle CSS — works on all pages */
+/* ============================================
+   KEBET — Language Toggle Styles
+   ============================================ */
 
-body.am-mode .en { display: none !important; }
-body.am-mode .am { display: inline !important; }
-body:not(.am-mode) .am { display: none !important; }
-body:not(.am-mode) .en { display: inline !important; }
-.am { display: none; }
+/* Hide Amharic spans by default (English mode) */
+body .am { display: none; }
+body .en { display: inline; }
 
+/* When Amharic mode is active */
+body.lang-am .am { display: inline; }
+body.lang-am .en { display: none; }
+
+/* Language toggle button group */
 .lang-toggle {
   display: inline-flex;
-  align-items: center;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: rgba(255,255,255,0.15);
   border-radius: 20px;
   padding: 3px;
-  margin-left: 12px;
+  gap: 2px;
 }
+
+/* On light backgrounds (auth pages) */
+.right .lang-toggle,
+.form-box .lang-toggle {
+  background: #f0f0f0;
+}
+
 .lang-btn {
-  padding: 5px 13px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 800;
   border: none;
   background: transparent;
-  color: #888;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 16px;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
   font-family: inherit;
-  transition: all 0.2s;
+  letter-spacing: 0.5px;
 }
+
 .lang-btn.active {
+  background: #fff;
+  color: #1a6b3c;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* On light backgrounds */
+.right .lang-btn,
+.form-box .lang-btn {
+  color: #888;
+}
+.right .lang-btn.active,
+.form-box .lang-btn.active {
   background: #1a6b3c;
   color: #fff;
 }
