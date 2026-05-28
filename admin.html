@@ -352,8 +352,8 @@
     <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
   </div>
 
-  <!-- Error banner — shown when Firebase fails -->
-  <div id="error-banner" style="display:none;background:#ff525218;border:1px solid #ff525240;border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:13px;color:var(--red);font-family:'DM Mono',monospace;"></div>
+  <!-- Error banner -->
+  <div id="error-banner" style="display:none;background:#ff525218;border:1px solid #ff525240;border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:12px;color:var(--red);font-family:'DM Mono',monospace;line-height:1.8;"></div>
 
   <!-- TABS (shown for user panels) -->
   <div class="tabs" id="user-tabs" style="display:none;">
@@ -627,46 +627,40 @@ onAuthStateChanged(auth, async user => {
 // ── LOAD ALL DATA ──
 window.loadAll = async function() {
   showToast('↻ Refreshing data...', '');
-  document.getElementById('error-banner').style.display = 'none';
+  const errBanner = document.getElementById('error-banner');
+  if (errBanner) errBanner.style.display = 'none';
   const errors = [];
 
   await Promise.allSettled([
-    loadUsers().catch(e => { errors.push('Users: ' + e.message); }),
-    loadBookings().catch(e => { errors.push('Bookings: ' + e.message); }),
-    loadReviews().catch(e => { errors.push('Reviews: ' + e.message); }),
-    loadConvos().catch(e => { errors.push('Conversations: ' + e.message); })
+    loadUsers().catch(e   => { errors.push('Users: '         + e.message); console.error('loadUsers',    e); }),
+    loadBookings().catch(e => { errors.push('Bookings: '     + e.message); console.error('loadBookings', e); }),
+    loadReviews().catch(e  => { errors.push('Reviews: '      + e.message); console.error('loadReviews',  e); }),
+    loadConvos().catch(e   => { errors.push('Conversations: '+ e.message); console.error('loadConvos',   e); })
   ]);
 
-  await loadFeePayments().catch(e => { errors.push('Payments: ' + e.message); });
+  await loadFeePayments().catch(e => { errors.push('Payments: ' + e.message); console.error('loadFeePayments', e); });
 
   renderOverview();
 
-  if (errors.length > 0) {
-    const banner = document.getElementById('error-banner');
-    banner.innerHTML = '⚠ Firebase errors (check Firestore Rules):<br>' + errors.map(e => '• ' + e).join('<br>');
-    banner.style.display = 'block';
-    console.error('Admin load errors:', errors);
-    showToast('⚠ Some data failed — see banner', 'red');
+  if (errors.length > 0 && errBanner) {
+    errBanner.innerHTML = '⚠ Firestore error (update Security Rules to allow admin read):<br>' + errors.map(e => '• ' + e).join('<br>');
+    errBanner.style.display = 'block';
+    showToast('⚠ Some data failed — see error banner', 'red');
   } else {
     showToast('✓ Data refreshed', 'green');
   }
 };
 
 async function loadUsers() {
-  try {
-    const snap = await getDocs(collection(db, 'users'));
-    allOwners=[]; allWorkers=[];
-    snap.forEach(d => {
-      const u = { id:d.id, ...d.data() };
-      if (u.userType==='owner') allOwners.push(u);
-      else allWorkers.push(u);
-    });
-    allOwners.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
-    allWorkers.sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  } catch(e) {
-    console.warn('loadUsers error:', e.message);
-    allOwners=[]; allWorkers=[];
-  }
+  const snap = await getDocs(collection(db, 'users'));
+  allOwners=[]; allWorkers=[];
+  snap.forEach(d => {
+    const u = { id:d.id, ...d.data() };
+    if (u.userType==='owner') allOwners.push(u);
+    else allWorkers.push(u);
+  });
+  allOwners.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  allWorkers.sort((a,b)=> new Date(b.createdAt||0)-new Date(a.createdAt||0));
   document.getElementById('cnt-owners').textContent  = allOwners.length;
   document.getElementById('cnt-workers').textContent = allWorkers.length;
   document.getElementById('stat-owners').textContent  = allOwners.length;
@@ -676,63 +670,48 @@ async function loadUsers() {
 }
 
 async function loadBookings() {
-  try {
-    const snap = await getDocs(collection(db, 'bookings'));
-    allBookings=[];
-    snap.forEach(d => allBookings.push({ id:d.id, ...d.data() }));
-    allBookings.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  } catch(e) {
-    console.warn('loadBookings error:', e.message);
-    allBookings=[];
-  }
-  document.getElementById('cnt-bookings').textContent = allBookings.length;
+  const snap = await getDocs(collection(db, 'bookings'));
+  allBookings=[];
+  snap.forEach(d => allBookings.push({ id:d.id, ...d.data() }));
+  allBookings.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  document.getElementById('cnt-bookings').textContent  = allBookings.length;
   document.getElementById('stat-bookings').textContent = allBookings.length;
   renderBookings(allBookings);
 }
 
 async function loadReviews() {
-  try {
-    const snap = await getDocs(collection(db, 'reviews'));
-    allReviews=[];
-    snap.forEach(d => allReviews.push({ id:d.id, ...d.data() }));
-    allReviews.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  } catch(e) {
-    console.warn('loadReviews error:', e.message);
-    allReviews=[];
-  }
-  document.getElementById('cnt-reviews').textContent = allReviews.length;
+  const snap = await getDocs(collection(db, 'reviews'));
+  allReviews=[];
+  snap.forEach(d => allReviews.push({ id:d.id, ...d.data() }));
+  allReviews.sort((a,b) => new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  document.getElementById('cnt-reviews').textContent  = allReviews.length;
   document.getElementById('stat-reviews').textContent = allReviews.length;
   renderReviews(allReviews);
 }
 
 async function loadConvos() {
-  try {
-    const snap = await getDocs(collection(db, 'conversations'));
-    allConvos = [];
-    const convoDocs = [];
-    snap.forEach(d => convoDocs.push({ id:d.id, ...d.data() }));
+  const snap = await getDocs(collection(db, 'conversations'));
+  allConvos = [];
+  const convoDocs = [];
+  snap.forEach(d => convoDocs.push({ id:d.id, ...d.data() }));
 
-    await Promise.all(convoDocs.map(async c => {
-      try {
-        const msgSnap = await getDocs(collection(db, 'conversations', c.id, 'messages'));
-        c.messageCount = msgSnap.size;
-        const names = c.participantNames || {};
-        const types = c.participantTypes || {};
-        c.participantList = Object.entries(names).map(([uid, name]) => ({
-          uid, name, type: types[uid] || 'unknown'
-        }));
-      } catch(e) {
-        c.messageCount = 0;
-        c.participantList = [];
-      }
-      allConvos.push(c);
-    }));
+  await Promise.all(convoDocs.map(async c => {
+    try {
+      const msgSnap = await getDocs(collection(db, 'conversations', c.id, 'messages'));
+      c.messageCount = msgSnap.size;
+      const names = c.participantNames || {};
+      const types = c.participantTypes || {};
+      c.participantList = Object.entries(names).map(([uid, name]) => ({
+        uid, name, type: types[uid] || 'unknown'
+      }));
+    } catch(e) {
+      c.messageCount = 0;
+      c.participantList = [];
+    }
+    allConvos.push(c);
+  }));
 
-    allConvos.sort((a,b) => new Date(b.lastMessageAt||0)-new Date(a.lastMessageAt||0));
-  } catch(e) {
-    console.warn('loadConvos error:', e.message);
-    allConvos=[];
-  }
+  allConvos.sort((a,b) => new Date(b.lastMessageAt||0)-new Date(a.lastMessageAt||0));
   document.getElementById('cnt-messages').textContent = allConvos.length;
   renderMessages(allConvos);
 }
@@ -764,12 +743,13 @@ async function loadFeePayments() {
             bookingId: b.id,
             ownerName: b.ownerName || '—',
             ownerId: b.ownerId,
+            ownerPhone: b.ownerPhone || null,
+            transactionId: b.transactionId || null,
             workerName: b.workerName || '—',
             amount: b.bookingFee || b.feeAmount || 500,
             status: isVerified ? 'verified' : 'pending',
             verified: isVerified,
             submittedAt: b.feePayment?.submittedAt || b.feeSubmittedAt || b.createdAt,
-            screenshot: b.feePayment?.screenshot || b.feeReceipt || b.paymentScreenshot || null,
             source: 'booking'
           });
         }
@@ -834,6 +814,8 @@ function renderFeePayments(list) {
     const isVerified = p.verified || p.status === 'verified';
     const date = p.submittedAt ? fmtDate(p.submittedAt) : '—';
     const amount = (p.amount || 500).toLocaleString();
+    const txnId = p.transactionId || p.txnId || null;
+    const phone = p.ownerPhone || p.senderPhone || null;
 
     return `
     <div class="fee-card ${isVerified ? 'verified' : ''}" id="fee-card-${p.id}">
@@ -842,7 +824,18 @@ function renderFeePayments(list) {
         <div class="fee-meta">
           <span class="fee-meta-item">Worker: <strong>${p.workerName}</strong></span>
           <span class="fee-meta-item">Submitted: <strong>${date}</strong></span>
-          ${p.bookingId ? `<span class="fee-meta-item">Booking ID: <strong>${p.bookingId.slice(0,8)}…</strong></span>` : ''}
+          ${p.bookingId ? `<span class="fee-meta-item">Booking: <strong>${p.bookingId.slice(0,8)}…</strong></span>` : ''}
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">
+          <div>
+            <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:3px;">SENDER PHONE</div>
+            <div style="font-size:13px;font-weight:600;color:${phone ? 'var(--blue)' : 'var(--muted)'};font-family:'DM Mono',monospace;">${phone || '—'}</div>
+          </div>
+          <div style="width:1px;background:var(--border);"></div>
+          <div>
+            <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:3px;">TRANSACTION ID</div>
+            <div style="font-size:13px;font-weight:600;color:${txnId ? 'var(--yellow)' : 'var(--muted)'};font-family:'DM Mono',monospace;letter-spacing:1px;">${txnId || '—'}</div>
+          </div>
         </div>
         <div class="fee-amount">${amount} ETB</div>
       </div>
@@ -994,7 +987,7 @@ function renderBookings(list) {
       <tr>
         <td class="user-name">${b.workerName||'—'}</td>
         <td class="user-name">${b.ownerName||'—'}</td>
-        <td class="td-mono">${b.salary ? 'ETB '+b.salary : '—'}</td>
+        <td class="td-mono">${b.monthlySalary ? b.monthlySalary.toLocaleString() + ' ETB/mo' : (b.salary ? b.salary.toLocaleString() + ' ETB/mo' : '—')}</td>
         <td>${statusBadge(b.status)}</td>
         <td class="td-mono">${fmtDate(b.createdAt)}</td>
         <td><button class="action-btn btn-danger" onclick="deleteBooking('${b.id}')">Delete</button></td>
