@@ -455,7 +455,20 @@
       <div class="telebirr-steps">
         <div class="telebirr-step">1. Open Telebirr → <strong>Send Money</strong></div>
         <div class="telebirr-step">2. Enter <strong>0979559549</strong> and amount <strong>200 ETB</strong></div>
-        <div class="telebirr-step">3. Click <strong>"Confirm Booking"</strong> below — we'll verify your payment</div>
+        <div class="telebirr-step">3. After sending, Telebirr gives you a <strong>Transaction ID</strong> — paste it below</div>
+        <div class="telebirr-step">4. Click <strong>"Confirm Booking"</strong> — we'll verify and activate your booking</div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#888;display:block;margin-bottom:5px;letter-spacing:0.5px;">YOUR TELEBIRR PHONE NUMBER</label>
+          <input type="tel" id="book-fee-phone" placeholder="e.g. 0912 345 678" style="width:100%;padding:10px 13px;border:1.5px solid #e0d0a0;border-radius:9px;font-size:14px;outline:none;color:#111;background:#fffdf5;transition:border-color 0.2s;" onfocus="this.style.borderColor='#f0a500'" onblur="this.style.borderColor='#e0d0a0'" />
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#888;display:block;margin-bottom:5px;letter-spacing:0.5px;">TELEBIRR TRANSACTION ID</label>
+          <input type="text" id="book-fee-txn" placeholder="e.g. TXN123456789" style="width:100%;padding:10px 13px;border:1.5px solid #e0d0a0;border-radius:9px;font-size:14px;outline:none;color:#c87800;background:#fffdf5;font-family:monospace;letter-spacing:1px;transition:border-color 0.2s;" onfocus="this.style.borderColor='#f0a500'" onblur="this.style.borderColor='#e0d0a0'" />
+          <div style="font-size:11px;color:#bbb;margin-top:4px;">Shown on the Telebirr confirmation screen after sending</div>
+        </div>
       </div>
     </div>
 
@@ -636,6 +649,9 @@
 
   window.closeBookModal = function() {
     document.getElementById('book-modal').classList.remove('show');
+    document.getElementById('book-fee-phone').value = '';
+    document.getElementById('book-fee-txn').value = '';
+    document.getElementById('error-box').style.display = 'none';
     selectedWorkerId = null;
     selectedWorkerData = null;
   };
@@ -670,6 +686,8 @@
     const months = parseInt(document.getElementById('book-months').value);
     const salary = parseInt(document.getElementById('book-salary').value);
     const services = [...document.querySelectorAll('.svc-check:checked')].map(c => c.value);
+    const feePhone = document.getElementById('book-fee-phone').value.trim();
+    const feeTxnId = document.getElementById('book-fee-txn').value.trim();
     const errEl = document.getElementById('error-box');
     const btn = document.getElementById('confirm-btn');
 
@@ -677,6 +695,8 @@
     if (!startDate) { errEl.textContent = '⚠️ Please pick a start date.'; errEl.style.display = 'block'; return; }
     if (!salary || salary < 500) { errEl.textContent = '⚠️ Please enter a valid monthly salary (min 500 ETB).'; errEl.style.display = 'block'; return; }
     if (services.length === 0) { errEl.textContent = '⚠️ Please select at least one service.'; errEl.style.display = 'block'; return; }
+    if (!feePhone) { errEl.textContent = '⚠️ Please enter your Telebirr phone number.'; errEl.style.display = 'block'; return; }
+    if (!feeTxnId) { errEl.textContent = '⚠️ Please enter the Telebirr Transaction ID after sending payment.'; errEl.style.display = 'block'; return; }
 
     btn.innerHTML = '⏳ Booking...';
     btn.disabled = true;
@@ -694,19 +714,35 @@
         ownerId: currentUser.uid,
         ownerName: ownerName,
         ownerLocation: currentOwnerData?.location || '',
+        ownerPhone: feePhone,
+        transactionId: feeTxnId,
         startDate: startDate,
         contractMonths: months,
         monthlySalary: salary,
         totalAmount: salary * months,
         bookingFee: BOOKING_FEE,
         bookingFeePaid: false,
+        feeStatus: 'pending_verification',
         services: services,
         status: 'pending',
         createdAt: new Date().toISOString()
       });
 
+      // Also create a payments record so admin panel picks it up
+      await addDoc(collection(db, 'payments'), {
+        type: 'booking_fee',
+        ownerId: currentUser.uid,
+        ownerName: ownerName,
+        ownerPhone: feePhone,
+        transactionId: feeTxnId,
+        workerName: workerFullName,
+        amount: BOOKING_FEE,
+        status: 'pending_verification',
+        createdAt: new Date().toISOString()
+      });
+
       closeBookModal();
-      alert(`✅ Booking submitted for ${workerFullName}!\n\n📱 Remember to send 200 ETB to Telebirr ${TELEBIRR_NUMBER} to confirm your booking.\n\nYour booking will be activated once payment is verified.`);
+      alert(`✅ Booking submitted for ${workerFullName}!\n\nYour payment will be verified shortly and your booking activated.\n\nTransaction ID: ${feeTxnId}`);
       window.location.href = 'dashboard-owner.html';
     } catch (err) {
       errEl.textContent = '❌ Booking failed: ' + err.message;

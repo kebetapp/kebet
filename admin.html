@@ -723,6 +723,8 @@ async function loadFeePayments() {
             bookingId: b.id,
             ownerName: b.ownerName || '—',
             ownerId: b.ownerId,
+            ownerPhone: b.ownerPhone || null,
+            transactionId: b.transactionId || null,
             workerName: b.workerName || '—',
             amount: b.bookingFee || b.feeAmount || 500,
             status: isVerified ? 'verified' : 'pending',
