@@ -793,6 +793,8 @@ function renderFeePayments(list) {
     const isVerified = p.verified || p.status === 'verified';
     const date = p.submittedAt ? fmtDate(p.submittedAt) : '—';
     const amount = (p.amount || 500).toLocaleString();
+    const txnId = p.transactionId || p.txnId || null;
+    const phone = p.ownerPhone || p.senderPhone || null;
 
     return `
     <div class="fee-card ${isVerified ? 'verified' : ''}" id="fee-card-${p.id}">
@@ -801,7 +803,18 @@ function renderFeePayments(list) {
         <div class="fee-meta">
           <span class="fee-meta-item">Worker: <strong>${p.workerName}</strong></span>
           <span class="fee-meta-item">Submitted: <strong>${date}</strong></span>
-          ${p.bookingId ? `<span class="fee-meta-item">Booking ID: <strong>${p.bookingId.slice(0,8)}…</strong></span>` : ''}
+          ${p.bookingId ? `<span class="fee-meta-item">Booking: <strong>${p.bookingId.slice(0,8)}…</strong></span>` : ''}
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">
+          <div>
+            <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:3px;">SENDER PHONE</div>
+            <div style="font-size:13px;font-weight:600;color:${phone ? 'var(--blue)' : 'var(--muted)'};font-family:'DM Mono',monospace;">${phone || '—'}</div>
+          </div>
+          <div style="width:1px;background:var(--border);"></div>
+          <div>
+            <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:3px;">TRANSACTION ID</div>
+            <div style="font-size:13px;font-weight:600;color:${txnId ? 'var(--yellow)' : 'var(--muted)'};font-family:'DM Mono',monospace;letter-spacing:1px;">${txnId || '—'}</div>
+          </div>
         </div>
         <div class="fee-amount">${amount} ETB</div>
       </div>

@@ -275,16 +275,18 @@
           <div class="steps-list">
             <div class="step-row"><div class="step-num">1</div><div class="step-text">Open <strong>Telebirr</strong> → tap <strong>Send Money</strong></div></div>
             <div class="step-row"><div class="step-num">2</div><div class="step-text">Enter the worker's number and the exact amount <strong id="step-salary-amt">—</strong></div></div>
-            <div class="step-row"><div class="step-num">3</div><div class="step-text">Complete payment and <strong>take a screenshot</strong> of the confirmation</div></div>
-            <div class="step-row"><div class="step-num">4</div><div class="step-text">Upload the screenshot below and click <strong>Submit</strong> — we'll notify your worker</div></div>
+            <div class="step-row"><div class="step-num">3</div><div class="step-text">Complete the payment — Telebirr will show a <strong>Transaction ID</strong></div></div>
+            <div class="step-row"><div class="step-num">4</div><div class="step-text">Enter your phone number and the Transaction ID below, then click <strong>Submit</strong></div></div>
           </div>
 
-          <div class="upload-area" id="upload-salary-area">
-            <input type="file" accept="image/*" class="upload-input" id="upload-salary-input" onchange="handleUpload('salary', this)">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">Upload Telebirr Screenshot</div>
-            <div class="upload-sub">Tap to choose your payment screenshot</div>
-            <img class="upload-preview" id="upload-salary-preview" />
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px;">Your Telebirr Phone Number</label>
+            <input type="tel" id="salary-phone" placeholder="e.g. 0912345678" style="width:100%;padding:11px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;outline:none;color:#111;background:#fff;transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px;">Telebirr Transaction ID</label>
+            <input type="text" id="salary-txn-id" placeholder="e.g. TXN123456789" style="width:100%;padding:11px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;outline:none;color:#111;background:#fff;font-family:monospace;letter-spacing:1px;transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+            <div style="font-size:11px;color:#aaa;margin-top:5px;">Found in your Telebirr app under transaction history or the confirmation screen</div>
           </div>
 
           <div style="margin-bottom:14px;">
@@ -328,16 +330,18 @@
             <div class="steps-list">
               <div class="step-row"><div class="step-num">1</div><div class="step-text">Open <strong>Telebirr</strong> → tap <strong>Send Money</strong></div></div>
               <div class="step-row"><div class="step-num">2</div><div class="step-text">Enter <strong>0979559549</strong> and amount <strong>200 ETB</strong></div></div>
-              <div class="step-row"><div class="step-num">3</div><div class="step-text">Take a screenshot of the confirmation screen</div></div>
-              <div class="step-row"><div class="step-num">4</div><div class="step-text">Upload it below — we'll verify and activate your booking</div></div>
+              <div class="step-row"><div class="step-num">3</div><div class="step-text">Complete the payment — Telebirr will show a <strong>Transaction ID</strong></div></div>
+              <div class="step-row"><div class="step-num">4</div><div class="step-text">Enter your phone number and the Transaction ID below — we'll verify and activate your booking</div></div>
             </div>
 
-            <div class="upload-area" id="upload-fee-area">
-              <input type="file" accept="image/*" class="upload-input" id="upload-fee-input" onchange="handleUpload('fee', this)">
-              <div class="upload-icon">📸</div>
-              <div class="upload-text">Upload Telebirr Screenshot</div>
-              <div class="upload-sub">Tap to choose your 200 ETB payment screenshot</div>
-              <img class="upload-preview" id="upload-fee-preview" />
+            <div style="margin-bottom:14px;">
+              <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px;">Your Telebirr Phone Number</label>
+              <input type="tel" id="fee-phone" placeholder="e.g. 0912345678" style="width:100%;padding:11px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;outline:none;color:#111;background:#fff;transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+            </div>
+            <div style="margin-bottom:14px;">
+              <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px;">Telebirr Transaction ID</label>
+              <input type="text" id="fee-txn-id" placeholder="e.g. TXN123456789" style="width:100%;padding:11px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;outline:none;color:#111;background:#fff;font-family:monospace;letter-spacing:1px;transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+              <div style="font-size:11px;color:#aaa;margin-top:5px;">Found in your Telebirr app under transaction history or the confirmation screen</div>
             </div>
 
             <button class="submit-pay-btn" id="submit-fee-btn" onclick="submitPayment('fee')">
@@ -441,8 +445,11 @@
 
     if (type === 'salary') {
       const month = document.getElementById('pay-month-select').value;
+      const phone = document.getElementById('salary-phone').value.trim();
+      const txnId = document.getElementById('salary-txn-id').value.trim();
       if (!month) { alert('Please select the month being paid.'); return; }
-      if (!screenshotBase64.salary) { alert('Please upload the Telebirr screenshot first.'); return; }
+      if (!phone) { alert('Please enter your Telebirr phone number.'); return; }
+      if (!txnId) { alert('Please enter the Telebirr Transaction ID.'); return; }
 
       btn.disabled = true;
       btn.textContent = '⏳ Submitting...';
@@ -454,12 +461,13 @@
           ownerId: currentUser.uid,
           ownerName: ownerName,
           ownerEmail: currentUser.email,
+          ownerPhone: phone,
+          transactionId: txnId,
           workerId: activeBooking.workerId,
           workerName: activeBooking.workerName || '—',
           bookingId: activeBooking.id,
           month: month,
           amount: activeBooking.monthlySalary || 0,
-          screenshot: screenshotBase64.salary,
           status: 'pending_verification',
           createdAt: new Date().toISOString()
         });
@@ -479,12 +487,8 @@
         await loadPaymentHistory(currentUser.uid);
         btn.disabled = false;
         btn.textContent = '📤 Submit Salary Payment';
-        screenshotBase64.salary = null;
-        document.getElementById('upload-salary-input').value = '';
-        document.getElementById('upload-salary-area').classList.remove('has-file');
-        document.getElementById('upload-salary-preview').style.display = 'none';
-        document.getElementById('upload-salary-area').querySelector('.upload-text').textContent = 'Upload Telebirr Screenshot';
-        document.getElementById('upload-salary-area').querySelector('.upload-sub').textContent = 'Tap to choose your payment screenshot';
+        document.getElementById('salary-phone').value = '';
+        document.getElementById('salary-txn-id').value = '';
 
       } catch(err) {
         btn.disabled = false;
@@ -494,7 +498,10 @@
 
     } else {
       // Booking fee
-      if (!screenshotBase64.fee) { alert('Please upload the Telebirr screenshot first.'); return; }
+      const feePhone = document.getElementById('fee-phone').value.trim();
+      const feeTxnId = document.getElementById('fee-txn-id').value.trim();
+      if (!feePhone) { alert('Please enter your Telebirr phone number.'); return; }
+      if (!feeTxnId) { alert('Please enter the Telebirr Transaction ID.'); return; }
 
       btn.disabled = true;
       btn.textContent = '⏳ Submitting...';
@@ -506,11 +513,12 @@
           ownerId: currentUser.uid,
           ownerName: ownerName,
           ownerEmail: currentUser.email,
+          ownerPhone: feePhone,
+          transactionId: feeTxnId,
           workerId: activeBooking.workerId,
           workerName: activeBooking.workerName || '—',
           bookingId: activeBooking.id,
           amount: BOOKING_FEE,
-          screenshot: screenshotBase64.fee,
           status: 'pending_verification',
           createdAt: new Date().toISOString()
         });
@@ -519,12 +527,8 @@
         await loadPaymentHistory(currentUser.uid);
         btn.disabled = false;
         btn.textContent = '📤 Submit Booking Fee Payment';
-        screenshotBase64.fee = null;
-        document.getElementById('upload-fee-input').value = '';
-        document.getElementById('upload-fee-area').classList.remove('has-file');
-        document.getElementById('upload-fee-preview').style.display = 'none';
-        document.getElementById('upload-fee-area').querySelector('.upload-text').textContent = 'Upload Telebirr Screenshot';
-        document.getElementById('upload-fee-area').querySelector('.upload-sub').textContent = 'Tap to choose your 200 ETB payment screenshot';
+        document.getElementById('fee-phone').value = '';
+        document.getElementById('fee-txn-id').value = '';
 
       } catch(err) {
         btn.disabled = false;
