@@ -624,7 +624,9 @@ onAuthStateChanged(auth, async user => {
 // ── LOAD ALL DATA ──
 window.loadAll = async function() {
   showToast('↻ Refreshing data...', '');
-  await Promise.all([loadUsers(), loadBookings(), loadReviews(), loadConvos(), loadFeePayments()]);
+  // loadBookings must finish before loadFeePayments so allBookings is populated
+  await Promise.all([loadUsers(), loadBookings(), loadReviews(), loadConvos()]);
+  await loadFeePayments();
   renderOverview();
   showToast('✓ Data refreshed', 'green');
 };
@@ -701,16 +703,21 @@ async function loadFeePayments() {
     allFeePayments = [];
     snap.forEach(d => {
       const p = { id: d.id, ...d.data() };
-      // Only booking fees (not salary payments)
-      if (p.type === 'booking_fee' || p.payTo === 'kebet' || p.recipient === 'kebet' || p.isBookingFee) {
+      // Exclude only clear salary/worker payments; accept everything else
+      const isSalary = p.type === 'salary' || p.type === 'worker_payment' || p.payTo === 'worker';
+      if (!isSalary) {
         allFeePayments.push(p);
       }
     });
-    // Also check bookings for feePayment sub-data
+    // Check bookings for ANY fee-related data (many possible field names)
     allBookings.forEach(b => {
-      if (b.feePayment) {
-        const exists = allFeePayments.find(fp => fp.bookingId === b.id && fp.type === 'booking_fee');
+      const hasFeeData = b.feePayment || b.feeStatus || b.feeSubmitted ||
+                         b.feePaid || b.feeReceipt || b.paymentScreenshot ||
+                         b.bookingFeeStatus || b.feeAmount || b.bookingFee;
+      if (hasFeeData) {
+        const exists = allFeePayments.find(fp => fp.bookingId === b.id);
         if (!exists) {
+          const isVerified = b.feeVerified || b.feeStatus === 'verified' || b.feeStatus === 'approved';
           allFeePayments.push({
             id: 'booking_fee_' + b.id,
             bookingId: b.id,
@@ -718,10 +725,10 @@ async function loadFeePayments() {
             ownerId: b.ownerId,
             workerName: b.workerName || '—',
             amount: b.bookingFee || b.feeAmount || 500,
-            status: b.feeVerified ? 'verified' : 'pending',
-            verified: b.feeVerified || false,
-            submittedAt: b.feePayment?.submittedAt || b.createdAt,
-            screenshot: b.feePayment?.screenshot || null,
+            status: isVerified ? 'verified' : 'pending',
+            verified: isVerified,
+            submittedAt: b.feePayment?.submittedAt || b.feeSubmittedAt || b.createdAt,
+            screenshot: b.feePayment?.screenshot || b.feeReceipt || b.paymentScreenshot || null,
             source: 'booking'
           });
         }
