@@ -180,6 +180,27 @@
     .why-title-am { font-size: 12px; color: #1a6b3c; font-weight: 700; margin-bottom: 10px; display: none; }
     .why-desc { font-size: 13px; color: #777; line-height: 1.7; }
 
+    /* FEE COMPARISON */
+    .fee-section { padding: 100px 0; background: #fff; }
+    .fee-inner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
+    .fee-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 680px; margin: 0 auto; }
+    .fee-card { border-radius: 24px; padding: 36px 28px; text-align: center; position: relative; transition: all 0.4s; }
+    .fee-card.kebet { background: #fff; border: 2.5px solid #1a6b3c; box-shadow: 0 12px 40px rgba(26,107,60,0.12); }
+    .fee-card.agency { background: #fafafa; border: 1.5px solid #f0f0f0; margin-top: 18px; }
+    .fee-card.kebet:hover { transform: translateY(-6px); box-shadow: 0 20px 56px rgba(26,107,60,0.18); }
+    .fee-card.agency:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.07); }
+    .fee-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg,#1a6b3c,#2d8a56); color: #fff; font-size: 11px; font-weight: 800; padding: 5px 20px; border-radius: 20px; white-space: nowrap; box-shadow: 0 4px 14px rgba(26,107,60,0.3); letter-spacing: 0.5px; }
+    .fee-name { font-size: 14px; color: #aaa; font-weight: 600; margin-bottom: 10px; margin-top: 6px; }
+    .fee-amount { font-size: 56px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+    .fee-amount.green { color: #1a6b3c; }
+    .fee-amount.red { color: #e63946; }
+    .fee-period { font-size: 13px; color: #bbb; margin-bottom: 24px; margin-top: 4px; font-weight: 500; }
+    .fee-list { display: flex; flex-direction: column; gap: 11px; text-align: left; }
+    .fee-list-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+    .fee-list-item.good { color: #333; }
+    .fee-list-item.bad { color: #bbb; }
+    .fee-savings { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg,#e8f5ee,#d0f0e0); color: #1a6b3c; font-size: 15px; font-weight: 800; padding: 14px 32px; border-radius: 28px; border: 1.5px solid rgba(26,107,60,0.15); }
+
     /* CTA */
     .cta-section { background: linear-gradient(135deg, #062c18, #0d4a28, #1a6b3c); background-size: 300% 300%; animation: gradient-shift 8s ease infinite; padding: 100px 40px; text-align: center; position: relative; overflow: hidden; }
     .cta-section::before { content:''; position:absolute; inset:0; opacity:0.3; }
@@ -228,7 +249,6 @@
     body:not(.am-mode) .en { display: block !important; }
     .am { display: none; }
 
-    /* hide am subtitle in how cards by default */
     .how-title-am { display: none; }
     body.am-mode .how-title-am { display: block; }
     body.am-mode .how-title { display: none; }
@@ -246,12 +266,15 @@
       .trust-item { padding: 14px 18px; font-size: 12px; }
       .section { padding: 70px 24px; }
       .how-grid, .workers-grid, .testi-grid, .why-grid { grid-template-columns: 1fr; }
-      .workers-inner, .why-inner { padding: 0 24px; }
+      .workers-inner, .why-inner, .fee-inner { padding: 0 24px; }
       .testi-section { padding: 70px 24px; }
       .contact-bar { gap: 28px; padding: 28px 24px; }
       .cta-section h2 { font-size: 32px; }
       .float-label { display: none; }
       .float-btn { padding: 13px 16px; }
+      .fee-grid { grid-template-columns: 1fr; max-width: 360px; }
+      .fee-card.agency { margin-top: 0; }
+      .fee-amount { font-size: 44px; }
     }
   </style>
 </head>
@@ -269,11 +292,11 @@
   <div class="nav-links">
     <a href="#how"><span class="en">How it works</span><span class="am">እንዴት ይሰራል</span></a>
     <a href="#workers"><span class="en">Workers</span><span class="am">ሰራተኞች</span></a>
+    <a href="#pricing"><span class="en">Pricing</span><span class="am">ዋጋ</span></a>
     <a href="#why"><span class="en">Why Kebet</span><span class="am">ለምን ከቤት</span></a>
     <a href="#contact"><span class="en">Contact</span><span class="am">አግኙን</span></a>
   </div>
   <div class="nav-btns">
-    <!-- Language Toggle -->
     <div class="lang-toggle">
       <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
       <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
@@ -342,7 +365,7 @@
   <div class="trust-item"><span class="trust-icon">💬</span><span class="en">Direct Chat</span><span class="am">ቀጥታ ውይይት</span></div>
   <div class="trust-item"><span class="trust-icon">💳</span><span class="en">Telebirr & CBE Payments</span><span class="am">ቴሌብር እና CBE ክፍያ</span></div>
   <div class="trust-item"><span class="trust-icon">⭐</span><span class="en">Real Reviews</span><span class="am">እውነተኛ ግምገማዎች</span></div>
-  <div class="trust-item"><span class="trust-icon">🆓</span><span class="en">100% Free</span><span class="am">ሙሉ በሙሉ ነጻ</span></div>
+  <div class="trust-item"><span class="trust-icon">💰</span><span class="en">Only 200 ETB</span><span class="am">200 ብር ብቻ</span></div>
 </div>
 
 <!-- HOW IT WORKS -->
@@ -504,13 +527,77 @@
   </div>
 </div>
 
+<!-- FEE COMPARISON -->
+<div class="fee-section" id="pricing">
+  <div class="fee-inner">
+    <div style="text-align:center; margin-bottom:56px;">
+      <div class="section-tag reveal">✦ <span class="en">PRICING</span><span class="am">ዋጋ</span></div>
+      <div class="section-title reveal" style="transition-delay:0.1s;">
+        <span class="en">Why Pay <span class="gold">10x More?</span></span>
+        <span class="am">ለምን <span class="gold">10 እጥፍ</span> ይከፍላሉ?</span>
+      </div>
+      <div class="section-am reveal" style="transition-delay:0.2s;">
+        <span class="en">Kebet charges a small one-time fee — agencies charge 10x more with no transparency</span>
+        <span class="am">ከቤት አነስተኛ አንድ ጊዜ ይከፍላሉ — ደላሎች 10 እጥፍ ያለ ምንም ግልጽነት ይጠይቃሉ</span>
+      </div>
+    </div>
+
+    <div class="fee-grid">
+      <!-- KEBET CARD -->
+      <div class="fee-card kebet reveal" style="transition-delay:0.1s;">
+        <div class="fee-badge">✦ <span class="en">RECOMMENDED</span><span class="am">የሚመከር</span></div>
+        <div class="fee-name">Kebet · ከቤት</div>
+        <div class="fee-amount green">200</div>
+        <div class="fee-period"><span class="en">ETB · one-time fee</span><span class="am">ብር · አንድ ጊዜ ብቻ</span></div>
+        <div class="fee-list">
+          <div class="fee-list-item good">✅ <span class="en">ID-verified workers</span><span class="am">መታወቂያ የተረጋገጡ ሰራተኞች</span></div>
+          <div class="fee-list-item good">✅ <span class="en">Direct chat — no middleman</span><span class="am">ቀጥታ ውይይት — ደላላ የለም</span></div>
+          <div class="fee-list-item good">✅ <span class="en">No monthly subscription</span><span class="am">ወርሃዊ ክፍያ የለም</span></div>
+          <div class="fee-list-item good">✅ <span class="en">Telebirr & CBE payments</span><span class="am">ቴሌብር እና CBE ክፍያ</span></div>
+          <div class="fee-list-item good">✅ <span class="en">Real reviews & ratings</span><span class="am">እውነተኛ ግምገማዎች</span></div>
+          <div class="fee-list-item good">✅ <span class="en">Hire again for free</span><span class="am">እንደገና ነጻ ቅጠሩ</span></div>
+        </div>
+      </div>
+
+      <!-- AGENCIES CARD -->
+      <div class="fee-card agency reveal" style="transition-delay:0.2s;">
+        <div class="fee-name" style="margin-top:0;"><span class="en">Traditional Agencies</span><span class="am">ባህላዊ ደላሎች</span></div>
+        <div class="fee-amount red">2,000+</div>
+        <div class="fee-period"><span class="en">ETB · per placement</span><span class="am">ብር · በእያንዳንዱ ቅጥር</span></div>
+        <div class="fee-list">
+          <div class="fee-list-item bad">❌ <span class="en">High upfront agent fee</span><span class="am">ከፍተኛ ቅድሚያ ክፍያ</span></div>
+          <div class="fee-list-item bad">❌ <span class="en">Middleman controls everything</span><span class="am">ደላላ ሁሉን ነገር ይቆጣጠራል</span></div>
+          <div class="fee-list-item bad">❌ <span class="en">Pay again for each new hire</span><span class="am">ለእያንዳንዱ ቅጥር እንደገና ይከፍላሉ</span></div>
+          <div class="fee-list-item bad">❌ <span class="en">Cash only — no tracking</span><span class="am">ጥሬ ገንዘብ ብቻ — ምንም ክትትል የለም</span></div>
+          <div class="fee-list-item bad">❌ <span class="en">No refund if worker leaves</span><span class="am">ሰራተኛ ቢሄድ ተመላሽ ክፍያ የለም</span></div>
+          <div class="fee-list-item bad">❌ <span class="en">No reviews or transparency</span><span class="am">ምንም ግምገማ ወይም ግልጽነት የለም</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="text-align:center; margin-top:40px; transition-delay:0.3s;">
+      <div class="fee-savings">
+        💰 <span class="en">Save up to <strong>1,800 ETB</strong> compared to traditional agencies</span>
+        <span class="am">ከባህላዊ ደላሎች ጋር ሲነጻጸር እስከ <strong>1,800 ብር</strong> ይቆጥቡ</span>
+      </div>
+    </div>
+
+    <div class="reveal" style="text-align:center; margin-top:28px; transition-delay:0.4s;">
+      <button class="btn-primary" style="padding:16px 40px; font-size:15px; border-radius:28px;" onclick="window.location.href='search.html'">
+        <span class="en">🔍 Get Started for 200 ETB →</span>
+        <span class="am">🔍 በ200 ብር ጀምሩ →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- WHY KEBET -->
 <div class="why-section" id="why">
   <div class="why-inner">
     <div style="text-align:center; margin-bottom:56px;">
       <div class="section-tag reveal">✦ <span class="en">WHY KEBET</span><span class="am">ለምን ከቤት</span></div>
-      <div class="section-title reveal" style="transition-delay:0.1s;"><span class="en">Safe, Simple & <span class="green">Free</span></span><span class="am">ደህንነቱ ተጠብቆ — ቀላል — <span class="green">ነጻ</span></span></div>
-      <div class="section-am reveal" style="transition-delay:0.2s;"><span class="en">ደህንነቱ ተጠብቆ — ቀላል — ነጻ</span><span class="am">Safe, Simple and completely Free</span></div>
+      <div class="section-title reveal" style="transition-delay:0.1s;"><span class="en">Safe, Simple & <span class="green">Affordable</span></span><span class="am">ደህንነቱ ተጠብቆ — ቀላል — <span class="green">ተመጣጣኝ</span></span></div>
+      <div class="section-am reveal" style="transition-delay:0.2s;"><span class="en">ደህንነቱ ተጠብቆ — ቀላል — ተመጣጣኝ ዋጋ</span><span class="am">Safe, Simple and affordable for every family</span></div>
     </div>
     <div class="why-grid">
       <div class="why-card reveal" style="transition-delay:0.1s;">
@@ -523,7 +610,7 @@
         <div class="why-icon-wrap">💬</div>
         <div class="why-title">Direct Chat — No Middleman</div>
         <div class="why-title-am">ቀጥታ ውይይት — ደላላ የለም</div>
-        <div class="why-desc"><span class="en">Talk directly with workers. Agree on salary in real-time. No agent fees, no commissions ever.</span><span class="am">ከሰራተኞች ቀጥታ ይነጋገሩ። ደሞዝ ይወስኑ። ምንም ዓይነት ክፍያ የለም።</span></div>
+        <div class="why-desc"><span class="en">Talk directly with workers. Agree on salary in real-time. No agent fees, no commissions ever.</span><span class="am">ከሰራተኞች ቀጥታ ይነጋገሩ። ደሞዝ ይወስኑ። ምንም ዓይነት ተጨማሪ ክፍያ የለም።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.2s;">
         <div class="why-icon-wrap">💳</div>
@@ -532,10 +619,10 @@
         <div class="why-desc"><span class="en">Send salary through Ethiopia's most trusted systems. Track every payment in your dashboard.</span><span class="am">በኢትዮጵያ በጣም ታማኝ ስርዓቶች ደሞዝ ይላኩ። እያንዳንዱ ክፍያ ይከታተሉ።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.25s;">
-        <div class="why-icon-wrap">🆓</div>
-        <div class="why-title">Completely Free</div>
-        <div class="why-title-am">ሙሉ በሙሉ ነጻ</div>
-        <div class="why-desc"><span class="en">No hidden fees. No subscription. No commission. Kebet is 100% free for everyone — always.</span><span class="am">ምንም ደብቅ ክፍያ የለም። ምንም ደንብ የለም። ከቤት ለሁሉም ሙሉ በሙሉ ነጻ ነው።</span></div>
+        <div class="why-icon-wrap">💰</div>
+        <div class="why-title">Only 200 ETB One-Time</div>
+        <div class="why-title-am">200 ብር ብቻ — አንድ ጊዜ</div>
+        <div class="why-desc"><span class="en">Just 200 ETB one-time to access all verified workers. No monthly fee. No hidden charges. Ever.</span><span class="am">ሁሉም የተረጋገጡ ሰራተኞችን ለማግኘት 200 ብር አንድ ጊዜ ብቻ። ምንም ወርሃዊ ክፍያ የለም።</span></div>
       </div>
       <div class="why-card reveal" style="transition-delay:0.3s;">
         <div class="why-icon-wrap">⭐</div>
@@ -558,13 +645,13 @@
   <div class="cta-content reveal">
     <h2><span class="en">Ready to Find Your <span class="gold">Perfect Worker?</span></span><span class="am">ፍጹም <span class="gold">ሰራተኛ</span> ለማግኘት ዝግጁ ነዎት?</span></h2>
     <p><span class="en">Join hundreds of Addis Ababa families using Kebet today</span><span class="am">ዛሬ ከቤትን እየተጠቀሙ ካሉ በመቶዎች የሚቆጠሩ ቤተሰቦች ጋር ይቀላቀሉ</span></p>
-    <div class="cta-am"><span class="en">ዛሬ ይጀምሩ — ሙሉ በሙሉ ነጻ!</span><span class="am">Start today — completely free!</span></div>
+    <div class="cta-am"><span class="en">ዛሬ ይጀምሩ — 200 ብር ብቻ!</span><span class="am">Start today — only 200 ETB!</span></div>
     <div class="cta-btns">
       <button class="hero-btn-main" onclick="window.location.href='search.html'">
         <span class="en">🔍 Find Workers Now</span><span class="am">🔍 ሰራተኛ ፈልግ</span>
       </button>
       <button class="hero-btn-sec" onclick="window.location.href='signup.html'">
-        <span class="en">📝 Create Free Account</span><span class="am">📝 ነጻ መለያ ፍጠር</span>
+        <span class="en">📝 Create Account — 200 ETB</span><span class="am">📝 መለያ ፍጠር — 200 ብር</span>
       </button>
     </div>
   </div>
@@ -603,7 +690,8 @@
     <a href="search.html"><span class="en">Find Workers</span><span class="am">ሰራተኛ ፈልግ</span></a>
     <a href="signup.html"><span class="en">Register as Worker</span><span class="am">እንደ ሰራተኛ ተመዝገብ</span></a>
     <a href="signin.html"><span class="en">Sign In</span><span class="am">ግባ</span></a>
-    <a href="https://t.me/kebetappp" target="_blank">Telegram</div></a>
+    <a href="#pricing"><span class="en">Pricing</span><span class="am">ዋጋ</span></a>
+    <a href="https://t.me/kebetappp" target="_blank">Telegram</a>
     <a href="tel:0979559549"><span class="en">Call Us</span><span class="am">ይደውሉ</span></a>
   </div>
   <div class="footer-copy">© 2026 Kebet · ከቤት — <span class="en">All rights reserved · Addis Ababa, Ethiopia</span><span class="am">መብቱ በሕግ የተጠበቀ · አዲስ አበባ, ኢትዮጵያ</span></div>
@@ -626,7 +714,6 @@
   function setLang(lang) {
     currentLang = lang;
     localStorage.setItem('kebet-lang', lang);
-
     if (lang === 'am') {
       document.body.classList.add('am-mode');
       document.getElementById('btn-am').classList.add('active');
@@ -640,22 +727,19 @@
     }
   }
 
-  // Apply saved language on load
-  window.addEventListener('DOMContentLoaded', () => {
-    setLang(currentLang);
-  });
+  window.addEventListener('DOMContentLoaded', () => { setLang(currentLang); });
 
   // ── Typing Effect ──
   const phrasesEN = [
     "Verified cleaners, nannies & cooks in Addis Ababa.",
     "Chat directly. Agree on salary. Hire safely.",
     "Pay via Telebirr or CBE Birr — fast & safe.",
-    "100% Free. No agent fees. No commissions."
+    "Only 200 ETB one-time. No agent fees ever."
   ];
   const phrasesAM = [
     "ሰራተኛ ፈልጉ — ያነጋግሩ — ይቅጠሩ።",
     "ቴሌብር ወይም CBE ይክፈሉ — ፈጣን እና ደህንነቱ ተጠብቆ።",
-    "ሙሉ በሙሉ ነጻ — ምንም ደላላ የለም።",
+    "200 ብር ብቻ — ምንም ደላላ የለም።",
     "የተረጋገጡ ሰራተኞች — ዛሬ ይቅጠሩ።"
   ];
 
