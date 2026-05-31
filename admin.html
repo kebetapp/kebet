@@ -335,6 +335,10 @@
     <span class="sb-item-icon">📱</span> Verify Fees
     <span class="sb-count" id="cnt-pending-fees" style="background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">—</span>
   </div>
+  <div class="sb-item" id="nav-idverify" onclick="showPanel('idverify')">
+    <span class="sb-item-icon">🪪</span> ID Verify
+    <span class="sb-count" id="cnt-id-pending" style="background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">—</span>
+  </div>
   <div class="sb-bottom">
     <div class="sb-admin-label" id="admin-email-label">admin</div>
     <button class="sb-signout" onclick="doSignout()">⏻ Sign out</button>
@@ -449,10 +453,10 @@
       </div>
       <table>
         <thead><tr>
-          <th>WORKER</th><th>SKILLS</th><th>RATING</th><th>STATUS</th><th>ACTION</th>
+          <th>WORKER</th><th>SKILLS</th><th>RATING</th><th>ID STATUS</th><th>STATUS</th><th>ACTION</th>
         </tr></thead>
         <tbody id="workers-body">
-          <tr><td colspan="5" class="table-loading">⏳ Loading...</td></tr>
+          <tr><td colspan="6" class="table-loading">⏳ Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -538,6 +542,36 @@
 
     <div class="payment-queue" id="payment-queue">
       <div class="payments-empty">⏳ Loading payments...</div>
+    </div>
+  </div>
+
+  <!-- ── ID VERIFICATION PANEL ── -->
+  <div class="panel" id="panel-idverify">
+    <div class="payments-stats">
+      <div class="pay-stat">
+        <div class="pay-stat-label">PENDING REVIEW</div>
+        <div class="pay-stat-val yellow" id="id-stat-pending">—</div>
+      </div>
+      <div class="pay-stat">
+        <div class="pay-stat-label">VERIFIED WORKERS</div>
+        <div class="pay-stat-val green" id="id-stat-verified">—</div>
+      </div>
+      <div class="pay-stat">
+        <div class="pay-stat-label">REJECTED</div>
+        <div class="pay-stat-val" style="color:var(--red)" id="id-stat-rejected">—</div>
+      </div>
+    </div>
+
+    <div class="payments-filter">
+      <button class="pf-btn active" id="idf-all"      onclick="filterIDPanel('all')">All</button>
+      <button class="pf-btn"        id="idf-pending"   onclick="filterIDPanel('pending')">⏳ Pending</button>
+      <button class="pf-btn"        id="idf-verified"  onclick="filterIDPanel('verified')">✅ Verified</button>
+      <button class="pf-btn"        id="idf-rejected"  onclick="filterIDPanel('rejected')">❌ Rejected</button>
+      <button class="pf-btn"        id="idf-none"      onclick="filterIDPanel('none')">Not Submitted</button>
+    </div>
+
+    <div class="payment-queue" id="id-queue">
+      <div class="payments-empty">⏳ Loading...</div>
     </div>
   </div>
 
@@ -639,6 +673,7 @@ window.loadAll = async function() {
   ]);
 
   await loadFeePayments().catch(e => { errors.push('Payments: ' + e.message); console.error('loadFeePayments', e); });
+  await loadIDVerifications().catch(e => { errors.push('ID Verify: ' + e.message); console.error('loadIDVerifications', e); });
 
   renderOverview();
 
@@ -955,10 +990,17 @@ function renderOwners(list) {
 // ── RENDER WORKERS ──
 function renderWorkers(list) {
   document.getElementById('workers-body').innerHTML = list.length === 0
-    ? `<tr><td colspan="5" class="table-empty">No workers found</td></tr>`
+    ? `<tr><td colspan="6" class="table-empty">No workers found</td></tr>`
     : list.map(u => {
-        const skills = Array.isArray(u.skills) ? u.skills.slice(0,2).join(', ') : (u.skills||'—');
+        const skills = Array.isArray(u.skills) ? u.skills.slice(0,2).join(', ') : (u.skills||u.skill||'—');
         const rating = u.averageRating ? '★ '+Number(u.averageRating).toFixed(1) : '—';
+        const idv = u.idVerification;
+        let idBadge;
+        if (!idv)                            idBadge = `<span class="badge badge-grey">Not submitted</span>`;
+        else if (idv.status==='pending')     idBadge = `<span class="badge badge-yellow">⏳ Pending</span>`;
+        else if (idv.status==='verified')    idBadge = `<span class="badge badge-green">✅ Verified</span>`;
+        else if (idv.status==='rejected')    idBadge = `<span class="badge badge-red">❌ Rejected</span>`;
+        else                                 idBadge = `<span class="badge badge-grey">—</span>`;
         return `
         <tr>
           <td><div class="user-cell">
@@ -968,6 +1010,7 @@ function renderWorkers(list) {
           </div></td>
           <td class="td-mono">${skills}</td>
           <td class="td-mono">${rating}</td>
+          <td>${idBadge}</td>
           <td><span class="badge ${u.disabled?'badge-red':'badge-green'}">${u.disabled?'Disabled':'Active'}</span></td>
           <td>
             ${u.disabled
@@ -979,7 +1022,99 @@ function renderWorkers(list) {
       }).join('');
 }
 
-// ── RENDER BOOKINGS ──
+// ── ID VERIFICATION PANEL ──
+let allIDWorkers = [];
+
+async function loadIDVerifications() {
+  const snap = await getDocs(query(collection(db,'users'), where('userType','==','worker')));
+  allIDWorkers = [];
+  snap.forEach(d => allIDWorkers.push({ id: d.id, ...d.data() }));
+  renderIDQueue(allIDWorkers, 'all');
+  // update sidebar count
+  const pending = allIDWorkers.filter(w => w.idVerification?.status === 'pending').length;
+  document.getElementById('cnt-id-pending').textContent = pending || '0';
+  // stats
+  document.getElementById('id-stat-pending').textContent  = allIDWorkers.filter(w => w.idVerification?.status==='pending').length;
+  document.getElementById('id-stat-verified').textContent = allIDWorkers.filter(w => w.idVerification?.status==='verified').length;
+  document.getElementById('id-stat-rejected').textContent = allIDWorkers.filter(w => w.idVerification?.status==='rejected').length;
+}
+
+window.filterIDPanel = function(filter) {
+  ['all','pending','verified','rejected','none'].forEach(f =>
+    document.getElementById('idf-'+f).classList.toggle('active', f===filter)
+  );
+  let list;
+  if (filter==='none')     list = allIDWorkers.filter(w => !w.idVerification);
+  else if (filter==='all') list = allIDWorkers;
+  else                     list = allIDWorkers.filter(w => w.idVerification?.status===filter);
+  renderIDQueue(list, filter);
+};
+
+function renderIDQueue(list, filter) {
+  const el = document.getElementById('id-queue');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="payments-empty">No workers in this category</div>`;
+    return;
+  }
+  el.innerHTML = list.map(w => {
+    const idv = w.idVerification;
+    const statusColors = { pending:'var(--yellow)', verified:'var(--green)', rejected:'var(--red)' };
+    const barColor = idv ? (statusColors[idv.status]||'var(--muted)') : 'var(--muted2)';
+    return `
+    <div class="fee-card ${idv?.status==='verified'?'verified':''}" style="--bar:${barColor}">
+      <style>.fee-card { --bar: var(--yellow); } .fee-card::before { background: var(--bar) !important; }</style>
+      <div class="fee-card-left">
+        <div class="fee-owner-name">${w.firstName||''} ${w.lastName||''}</div>
+        <div class="fee-meta">
+          <span class="fee-meta-item">📧 <strong>${w.email||'—'}</strong></span>
+          <span class="fee-meta-item">📱 <strong>${w.phone||'—'}</strong></span>
+          <span class="fee-meta-item">📍 <strong>${w.location||'—'}</strong></span>
+          ${idv ? `<span class="fee-meta-item">🪪 <strong>${idv.idType||'—'}</strong></span>` : ''}
+        </div>
+        ${idv ? `
+          <div class="fee-meta" style="margin-top:4px">
+            <span class="fee-meta-item">🔢 ID: <strong>${idv.idNumber||'—'}</strong></span>
+            <span class="fee-meta-item">👤 Name: <strong>${idv.idFullName||'—'}</strong></span>
+            <span class="fee-meta-item">🎂 DOB: <strong>${idv.idDob||'—'}</strong></span>
+            <span class="fee-meta-item">📅 Submitted: <strong>${idv.submittedAt ? new Date(idv.submittedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</strong></span>
+          </div>` : `<div style="margin-top:6px;font-size:12px;color:var(--muted)">No ID submitted yet</div>`}
+      </div>
+      <div class="fee-actions">
+        ${!idv ? '' : idv.status==='verified'
+          ? `<div class="fee-verified-badge">✅ Verified</div>
+             <button class="unverify-btn" onclick="setIDStatus('${w.id}','rejected')">Revoke</button>`
+          : `<button class="verify-btn" onclick="setIDStatus('${w.id}','verified')">✅ Approve</button>
+             ${idv.status!=='rejected' ? `<button class="unverify-btn" onclick="setIDStatus('${w.id}','rejected')">❌ Reject</button>` : `<button class="unverify-btn" onclick="setIDStatus('${w.id}','pending')">↩ Reset</button>`}`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.setIDStatus = async function(uid, status) {
+  const worker = allIDWorkers.find(w => w.id === uid);
+  const name = worker ? `${worker.firstName} ${worker.lastName}` : 'this worker';
+  const labels = { verified:'Approve', rejected:'Reject', pending:'Reset' };
+  openModal(
+    `${labels[status]} ID for ${name}?`,
+    status==='verified' ? 'This will mark the worker as ID-verified. A verified badge will appear on their profile.' :
+    status==='rejected' ? 'This will reject their ID. The worker will be prompted to resubmit.' :
+    'This will reset their status back to pending.',
+    async () => {
+      await updateDoc(doc(db,'users',uid), {
+        'idVerification.status': status,
+        'idVerification.reviewedAt': new Date().toISOString(),
+        isVerified: status === 'verified'
+      });
+      showToast(status==='verified' ? `✓ ${name} ID verified` : status==='rejected' ? `✓ ${name} ID rejected` : `✓ Reset to pending`, status==='verified'?'green':'red');
+      await loadIDVerifications();
+      await loadUsers();
+    },
+    labels[status]
+  );
+};
+
+
 function renderBookings(list) {
   document.getElementById('bookings-body').innerHTML = list.length === 0
     ? `<tr><td colspan="6" class="table-empty">No bookings found</td></tr>`
@@ -1072,13 +1207,14 @@ window.showPanel = function(name) {
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
-  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', bookings:'Bookings', reviews:'Reviews', messages:'Conversations', payments:'Verify Fee Payments' };
-  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations', payments:'One-click Telebirr fee verification' };
+  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', bookings:'Bookings', reviews:'Reviews', messages:'Conversations', payments:'Verify Fee Payments', idverify:'ID Verification' };
+  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations', payments:'One-click Telebirr fee verification', idverify:'Review and approve worker ID submissions' };
   document.getElementById('panel-title').textContent = titles[name]||name;
   document.getElementById('panel-sub').textContent   = subs[name]||'';
   const showTabs = ['owners','workers'].includes(name);
   document.getElementById('user-tabs').style.display = showTabs ? 'flex' : 'none';
   if (showTabs) filterUsers('all');
+  if (name === 'idverify') loadIDVerifications();
 };
 
 // ── ACTIONS ──

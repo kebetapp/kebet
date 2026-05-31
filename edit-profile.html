@@ -171,6 +171,51 @@
       <div class="success-msg" id="pw-success-msg">✅ Password updated!</div>
       <button class="save-btn" id="pw-btn" onclick="changePassword()">🔒 Update Password</button>
     </div>
+
+    <!-- ID VERIFICATION — workers only -->
+    <div class="form-card" id="id-verify-card" style="display:none;">
+      <div class="section-title ks-reveal">🪪 ID Verification</div>
+
+      <!-- Status banner -->
+      <div id="id-status-banner" style="display:none; padding:12px 16px; border-radius:10px; font-size:13px; font-weight:600; margin-bottom:18px;"></div>
+
+      <p style="font-size:13px; color:#888; margin-bottom:18px; line-height:1.7;">
+        Submit your ID details below. Our admin team will review and verify your identity — usually within 24 hours.
+        A verified badge <span style="color:#1a6b3c; font-weight:700;">✅ Verified</span> will appear on your profile.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">ID Type</label>
+        <select id="id-type" class="form-input">
+          <option value="">Select ID type</option>
+          <option value="kebele">Kebele ID</option>
+          <option value="national">National ID (Fayda)</option>
+          <option value="passport">Passport</option>
+          <option value="driving">Driving Licence</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ID Number</label>
+        <input type="text" id="id-number" class="form-input" placeholder="e.g. 12345678" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full name as it appears on ID</label>
+        <input type="text" id="id-fullname" class="form-input" placeholder="Your full legal name" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Date of Birth (on ID)</label>
+        <input type="date" id="id-dob" class="form-input" />
+      </div>
+
+      <div class="error-msg" id="id-error-msg"></div>
+      <div class="success-msg" id="id-success-msg"></div>
+
+      <button class="save-btn" id="id-submit-btn" onclick="submitID()">🪪 Submit for Verification</button>
+    </div>
+
   </div>
 </div>
 
@@ -194,6 +239,58 @@
 
   let currentUser = null;
   let userType = null;
+
+  window.submitID = async function() {
+    const idType    = document.getElementById('id-type').value;
+    const idNumber  = document.getElementById('id-number').value.trim();
+    const idName    = document.getElementById('id-fullname').value.trim();
+    const idDob     = document.getElementById('id-dob').value;
+    const errEl     = document.getElementById('id-error-msg');
+    const sucEl     = document.getElementById('id-success-msg');
+    const btn       = document.getElementById('id-submit-btn');
+
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!idType)   { errEl.textContent = '⚠️ Please select an ID type.';        errEl.style.display = 'block'; return; }
+    if (!idNumber) { errEl.textContent = '⚠️ Please enter your ID number.';     errEl.style.display = 'block'; return; }
+    if (!idName)   { errEl.textContent = '⚠️ Please enter your name on the ID.'; errEl.style.display = 'block'; return; }
+    if (!idDob)    { errEl.textContent = '⚠️ Please enter your date of birth.';  errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        idVerification: {
+          idType, idNumber, idFullName: idName, idDob,
+          status: 'pending',
+          submittedAt: new Date().toISOString()
+        }
+      });
+      sucEl.textContent = '✅ Submitted! Our team will review within 24 hours.';
+      sucEl.style.display = 'block';
+      showIDStatusBanner({ status: 'pending' });
+    } catch (err) {
+      errEl.textContent = '❌ Error: ' + err.message;
+      errEl.style.display = 'block';
+    }
+    btn.textContent = '🪪 Submit for Verification';
+    btn.disabled = false;
+  }
+
+  function showIDStatusBanner(idVerification) {
+    const banner = document.getElementById('id-status-banner');
+    if (!idVerification) { banner.style.display = 'none'; return; }
+    const map = {
+      pending:  { bg:'#fffbea', border:'#f0a500', color:'#a07000', text:"⏳ Pending — Your ID is under review. We'll update you within 24 hours." },
+      verified: { bg:'#e8f5ee', border:'#1a6b3c', color:'#1a6b3c', text:'✅ Verified — Your identity has been confirmed.' },
+      rejected: { bg:'#fff0f0', border:'#cc0000', color:'#cc0000', text:'❌ Rejected — Please re-check your details and resubmit.' }
+    };
+    const s = map[idVerification.status] || map.pending;
+    banner.style.cssText = `display:block;background:${s.bg};border:1px solid ${s.border};color:${s.color};padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:18px;`;
+    banner.textContent = s.text;
+  }
 
   function setupSidebar(type) {
     userType = type;
@@ -220,6 +317,7 @@
       document.getElementById('nav-help').style.display = 'flex';
       document.getElementById('nav-help').onclick = () => window.location.href = 'help.html';
       document.getElementById('skill-group').style.display = 'block';
+      document.getElementById('id-verify-card').style.display = 'block';
       document.getElementById('sidebar-role').textContent = 'House Worker';
     }
   }
@@ -321,6 +419,20 @@
     document.getElementById('phone').value = data.phone || '';
     document.getElementById('location').value = data.location || '';
     if (data.skill) document.getElementById('skill').value = data.skill;
+
+    // Load ID verification data if worker
+    if (data.userType === 'worker' && data.idVerification) {
+      const idv = data.idVerification;
+      document.getElementById('id-type').value     = idv.idType     || '';
+      document.getElementById('id-number').value   = idv.idNumber   || '';
+      document.getElementById('id-fullname').value = idv.idFullName || '';
+      document.getElementById('id-dob').value      = idv.idDob      || '';
+      showIDStatusBanner(idv);
+      if (idv.status === 'verified') {
+        document.getElementById('id-submit-btn').textContent = '✅ Already Verified';
+        document.getElementById('id-submit-btn').disabled = true;
+      }
+    }
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('page-content').style.display = 'block';
