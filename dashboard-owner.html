@@ -273,7 +273,7 @@
     };
   }
 
-  function renderBookings(bookings) {
+  function renderBookings(bookings, workerMap = {}) {
     const list = document.getElementById('bookings-list');
     if (bookings.length === 0) {
       list.innerHTML = `<div class="card"><div class="no-bookings"><div class="no-bookings-icon">🔍</div><div class="no-bookings-title"><span class="en">No bookings yet</span><span class="am">እስካሁን ቦታ ማስያዣ የለም</span></div><div class="no-bookings-sub"><span class="en">Find a trusted live-in worker for your home today</span><span class="am">ዛሬ ለቤትዎ ታማኝ የቤት ሰራተኛ ያግኙ</span></div><button class="btn-sm-green" onclick="window.location.href='search.html'"><span class="en">Browse Workers →</span><span class="am">ሰራተኞች ይፈልጉ →</span></button></div></div>`;
@@ -301,11 +301,13 @@
            <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">End</button>`
         : '';
       const services = data.services ? data.services.join(' · ') : '—';
+      const workerVerified = (workerMap[data.workerId]?.isVerified === true);
+      const verifiedBadge = workerVerified ? '<span style="background:#e8f5ee;color:#1a6b3c;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin-left:6px;">✅ ID Verified</span>' : '';
       html += `
         <div class="booking-card">
           <div class="booking-av">${initials}</div>
           <div class="booking-info">
-            <div class="booking-name">${data.workerName || '—'}</div>
+            <div class="booking-name">${data.workerName || '—'}${verifiedBadge}</div>
             <div class="booking-role">${data.workerRole || '—'} · 🛏️ Live-in</div>
             <div class="booking-meta">
               <span class="booking-meta-item">📅 Start: ${startDate}</span>
@@ -364,7 +366,18 @@
     const bookings = [];
     snap.forEach(d => bookings.push(d));
     bookings.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt));
-    renderBookings(bookings);
+
+    // Fetch worker isVerified status
+    const workerMap = {};
+    const workerIds = [...new Set(bookings.map(b => b.data().workerId).filter(Boolean))];
+    await Promise.all(workerIds.map(async wid => {
+      try {
+        const wSnap = await getDoc(doc(db, 'users', wid));
+        if (wSnap.exists()) workerMap[wid] = wSnap.data();
+      } catch(e) {}
+    }));
+
+    renderBookings(bookings, workerMap);
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
   });

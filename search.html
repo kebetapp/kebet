@@ -583,7 +583,7 @@
                   : rating >= 3 ? '★★★☆☆'
                   : rating > 0  ? '★★☆☆☆'
                   : '☆☆☆☆☆';
-      const isVerified = w.verified === true || w.verified === 'true';
+      const isVerified = w.isVerified === true || w.verified === true || w.verified === 'true';
       const joined = w.createdAt
         ? new Date(w.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
         : '';

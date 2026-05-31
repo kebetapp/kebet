@@ -147,6 +147,9 @@
       <button class="edit-btn" onclick="window.location.href='edit-profile.html'"><span class="en">✏️ Edit My Profile</span><span class="am">✏️ መገለጫዬን አርትዕ</span></button>
     </div>
 
+    <!-- ID Verification Banner -->
+    <div id="id-banner" style="display:none; border-radius:14px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;"></div>
+
     <div class="stats-row">
       <div class="stat-card ks-reveal"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label"><span class="en">Your name</span><span class="am">ስምዎ</span></div></div>
       <div class="stat-card ks-reveal"><div class="stat-icon icon-gold">🏠</div><div class="stat-num" id="stat-jobs">0</div><div class="stat-label"><span class="en">Job offers</span><span class="am">የስራ ቅናሾች</span></div></div>
@@ -364,6 +367,23 @@
     document.getElementById('progress-bar').style.width = progress + '%';
     document.getElementById('progress-label').textContent = progress + '% complete';
     if (data.skill) { document.getElementById('profile-skill').innerHTML = `<span class="skill-tag">🧹 ${data.skill}</span>`; }
+
+    // ID verification banner
+    const idv = data.idVerification;
+    const banner = document.getElementById('id-banner');
+    if (data.isVerified) {
+      banner.style.cssText = 'display:flex;background:#e8f5ee;border:1px solid #b2dfc6;border-radius:14px;padding:16px 20px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;';
+      banner.innerHTML = `<div><div style="font-size:14px;font-weight:700;color:#1a6b3c;">✅ ID Verified</div><div style="font-size:12px;color:#555;margin-top:2px;">Your identity is confirmed. A verified badge appears on your profile.</div></div>`;
+    } else if (idv?.status === 'pending') {
+      banner.style.cssText = 'display:flex;background:#fffbea;border:1px solid #f0d080;border-radius:14px;padding:16px 20px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;';
+      banner.innerHTML = `<div><div style="font-size:14px;font-weight:700;color:#a07000;">⏳ ID Under Review</div><div style="font-size:12px;color:#555;margin-top:2px;">Your ID details have been submitted. Our team will review within 24 hours.</div></div>`;
+    } else if (idv?.status === 'rejected') {
+      banner.style.cssText = 'display:flex;background:#fff0f0;border:1px solid #ffcccc;border-radius:14px;padding:16px 20px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;';
+      banner.innerHTML = `<div><div style="font-size:14px;font-weight:700;color:#cc2222;">❌ ID Rejected</div><div style="font-size:12px;color:#555;margin-top:2px;">Please update your ID details and resubmit.</div></div><button onclick="window.location.href='edit-profile.html'" style="background:#cc2222;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Resubmit →</button>`;
+    } else {
+      banner.style.cssText = 'display:flex;background:#f5f5f0;border:1px solid #ddd;border-radius:14px;padding:16px 20px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;';
+      banner.innerHTML = `<div><div style="font-size:14px;font-weight:700;color:#555;">🪪 Get ID Verified</div><div style="font-size:12px;color:#888;margin-top:2px;">Verified workers get more bookings. Submit your ID to get a verified badge.</div></div><button onclick="window.location.href='edit-profile.html'" style="background:#1a6b3c;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Verify Now →</button>`;
+    }
     const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false)));
     if (notifSnap.size > 0) { document.getElementById('notif-badge').textContent = notifSnap.size; document.getElementById('notif-badge').style.display = 'inline'; }
     const q = query(collection(db, 'bookings'), where('workerId', '==', user.uid));

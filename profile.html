@@ -171,6 +171,7 @@
           <div class="info-row"><span class="info-label"><span class="en">Work type</span><span class="am">የስራ አይነት</span></span><span class="info-val"><span class="en">🛏️ Live-in</span><span class="am">🛏️ ቤት ውስጥ ሆኖ</span></span></div>
           <div class="info-row"><span class="info-label"><span class="en">Phone</span><span class="am">ስልክ</span></span><span class="info-val" id="d-phone">—</span></div>
           <div class="info-row"><span class="info-label"><span class="en">Member since</span><span class="am">አባልነት ጀምሮ</span></span><span class="info-val" id="d-joined">—</span></div>
+          <div class="info-row"><span class="info-label"><span class="en">ID Verified</span><span class="am">መታወቂያ ተረጋግጧ</span></span><span class="info-val" id="d-id-status">—</span></div>
         </div>
         <div class="section-card">
           <div class="section-title ks-reveal">🧹 Skills & Services</div>
@@ -336,7 +337,7 @@
       const joined = workerData.createdAt
         ? new Date(workerData.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
         : '—';
-      const isVerified = workerData.verified === true || workerData.verified === 'true';
+      const isVerified = workerData.isVerified === true || workerData.verified === true || workerData.verified === 'true';
 
       document.title = 'Kebet — ' + fullName;
       document.getElementById('p-initials').textContent = initials || '?';
@@ -353,6 +354,14 @@
       document.getElementById('d-phone').textContent = workerData.phone ? '📞 Available after booking' : '—';
       document.getElementById('d-joined').textContent = joined;
       document.getElementById('bottom-name').textContent = 'Hire ' + firstName + ' today';
+
+      // ID verification status
+      const idStatusEl = document.getElementById('d-id-status');
+      if (isVerified) {
+        idStatusEl.innerHTML = '<span style="color:#1a6b3c; font-weight:700;">✅ Verified</span>';
+      } else {
+        idStatusEl.innerHTML = '<span style="color:#aaa;">Not yet verified</span>';
+      }
 
       // Tags
       const tagsEl = document.getElementById('p-tags');
