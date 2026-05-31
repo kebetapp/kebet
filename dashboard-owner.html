@@ -228,7 +228,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, onSnapshot, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -296,6 +296,7 @@
            <button class="btn-sm-red" onclick="cancelBooking('${b.id}')"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>`
         : status === 'active'
         ? `<button class="btn-sm-green" onclick="window.location.href='payments-owner.html'">💰 Salary</button>
+           <button class="btn-sm-outline" onclick="window.location.href='contract.html?id=${b.id}'">📄 Contract</button>
            <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.workerId}'">💬 Message</button>
            <button class="btn-sm-outline" onclick="window.location.href='reviews.html'">⭐ Review</button>
            <button class="btn-sm-red" onclick="cancelBooking('${b.id}')">End</button>`
@@ -361,25 +362,25 @@
     document.getElementById('stat-location').textContent = data.location || '—';
     const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false)));
     if (notifSnap.size > 0) { document.getElementById('notif-badge').textContent = notifSnap.size; document.getElementById('notif-badge').style.display = 'inline'; }
+    // Feature 5: Real-time onSnapshot listener
     const q = query(collection(db, 'bookings'), where('ownerId', '==', user.uid));
-    const snap = await getDocs(q);
-    const bookings = [];
-    snap.forEach(d => bookings.push(d));
-    bookings.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt));
-
-    // Fetch worker isVerified status
-    const workerMap = {};
-    const workerIds = [...new Set(bookings.map(b => b.data().workerId).filter(Boolean))];
-    await Promise.all(workerIds.map(async wid => {
-      try {
-        const wSnap = await getDoc(doc(db, 'users', wid));
-        if (wSnap.exists()) workerMap[wid] = wSnap.data();
-      } catch(e) {}
-    }));
-
-    renderBookings(bookings, workerMap);
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
+
+    onSnapshot(q, async (snap) => {
+      const bookings = [];
+      snap.forEach(d => bookings.push(d));
+      bookings.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt));
+      const workerMap = {};
+      const workerIds = [...new Set(bookings.map(b => b.data().workerId).filter(Boolean))];
+      await Promise.all(workerIds.map(async wid => {
+        try {
+          const wSnap = await getDoc(doc(db, 'users', wid));
+          if (wSnap.exists()) workerMap[wid] = wSnap.data();
+        } catch(e) {}
+      }));
+      renderBookings(bookings, workerMap);
+    });
   });
 
   document.getElementById('signout-btn').addEventListener('click', async () => {

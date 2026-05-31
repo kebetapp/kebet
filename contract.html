@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kebet — Employment Contract</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f5f5f0; color: #111; display: flex; min-height: 100vh; }
+
+    /* ── Sidebar (same as other pages) ── */
+    .sidebar { width: 240px; background: #111; display: flex; flex-direction: column; padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+    .sidebar-logo-icon { width: 36px; height: 36px; background: #1a6b3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .sidebar-logo-text { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .sidebar-logo-am { font-size: 11px; color: #f0a500; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .sidebar-item.active { background: rgba(26,107,60,0.3); color: #fff; border-left-color: #1a6b3c; }
+    .sidebar-item-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-user { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+    .sidebar-user-av { width: 36px; height: 36px; border-radius: 10px; background: #fde8c8; color: #c87800; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .sidebar-user-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .sidebar-user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .signout-btn { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.3); font-size: 18px; cursor: pointer; }
+
+    /* ── Main ── */
+    .main { margin-left: 240px; flex: 1; padding: 32px; max-width: 880px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #111; }
+    .page-sub { font-size: 14px; color: #888; margin-top: 2px; }
+    .header-btns { display: flex; gap: 10px; align-items: center; }
+
+    /* ── Contract document ── */
+    .contract-doc {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    .contract-header {
+      background: linear-gradient(135deg, #1a6b3c 0%, #145530 100%);
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .contract-logo { display: flex; align-items: center; gap: 12px; }
+    .contract-logo-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .contract-logo-text { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: 3px; }
+    .contract-logo-am { font-size: 12px; color: #f0a500; }
+    .contract-badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 10px 18px; text-align: center; }
+    .contract-badge-label { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 1px; margin-bottom: 2px; }
+    .contract-badge-status { font-size: 13px; font-weight: 700; color: #fff; }
+    .contract-badge-status.active { color: #7dff9f; }
+
+    .contract-body { padding: 36px 40px; }
+    .contract-title { font-size: 18px; font-weight: 800; color: #111; text-align: center; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .contract-title-am { font-size: 14px; color: #888; text-align: center; margin-bottom: 28px; }
+    .contract-meta { display: flex; justify-content: space-between; font-size: 12px; color: #aaa; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 2px solid #f5f5f0; flex-wrap: wrap; gap: 8px; }
+    .contract-meta span { background: #f5f5f0; padding: 4px 12px; border-radius: 20px; }
+
+    .parties-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+    .party-box { background: #f9f9f6; border-radius: 14px; padding: 20px; border: 1px solid #eee; }
+    .party-label { font-size: 10px; font-weight: 700; color: #aaa; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .party-name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .party-detail { font-size: 12px; color: #888; margin-bottom: 3px; }
+
+    .contract-section { margin-bottom: 28px; }
+    .section-label { font-size: 11px; font-weight: 700; color: #1a6b3c; letter-spacing: 1.5px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #e8f5ee; }
+    .terms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .term-item { background: #f9f9f6; border-radius: 12px; padding: 16px; border: 1px solid #eee; }
+    .term-icon { font-size: 20px; margin-bottom: 8px; }
+    .term-label { font-size: 10px; color: #aaa; font-weight: 600; letter-spacing: 0.8px; margin-bottom: 4px; }
+    .term-value { font-size: 15px; font-weight: 700; color: #111; }
+    .term-value.green { color: #1a6b3c; }
+    .services-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .service-tag { background: #e8f5ee; color: #1a6b3c; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; }
+
+    .clause { font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 12px; padding-left: 16px; border-left: 3px solid #e8f5ee; }
+    .clause strong { color: #111; }
+
+    .signature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px; padding-top: 28px; border-top: 2px dashed #eee; }
+    .sig-box { text-align: center; }
+    .sig-line { height: 48px; border-bottom: 2px solid #111; margin-bottom: 10px; position: relative; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
+    .sig-accepted { font-size: 22px; color: #1a6b3c; font-style: italic; font-weight: 700; }
+    .sig-name { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .sig-role { font-size: 11px; color: #aaa; }
+    .sig-date { font-size: 11px; color: #888; margin-top: 4px; }
+
+    .contract-footer { background: #f9f9f6; padding: 20px 40px; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-note { font-size: 12px; color: #aaa; }
+    .contract-id { font-size: 11px; color: #ccc; font-family: monospace; }
+
+    /* ── Action bar ── */
+    .action-bar { background: #fff; border-radius: 16px; padding: 20px 24px; border: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .action-bar-info { font-size: 14px; color: #555; }
+    .action-bar-info strong { color: #111; }
+    .action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-green { background: #1a6b3c; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-outline { background: #fff; color: #1a6b3c; border: 1.5px solid #1a6b3c; padding: 9px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-outline:hover { background: #f0faf5; }
+    .btn-grey { background: #f0f0f0; color: #555; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+    /* Status badges */
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 20px; }
+    .status-active { background: #e8f5ee; color: #1a6b3c; }
+    .status-pending { background: #fff5e0; color: #c87800; }
+    .status-cancelled { background: #fff0f0; color: #cc2222; }
+
+    .loading { text-align: center; padding: 80px; color: #888; font-size: 16px; }
+    .error-state { text-align: center; padding: 80px; }
+    .error-icon { font-size: 56px; margin-bottom: 16px; }
+    .error-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .error-sub { font-size: 14px; color: #888; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+      .parties-grid, .signature-row { grid-template-columns: 1fr; }
+      .terms-grid { grid-template-columns: 1fr 1fr; }
+      .contract-body { padding: 24px 20px; }
+      .contract-header { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 500px) { .terms-grid { grid-template-columns: 1fr; } }
+
+    @media print {
+      .sidebar, .action-bar, .header-btns, .signout-btn { display: none !important; }
+      .main { margin-left: 0; padding: 0; }
+      .contract-doc { box-shadow: none; border: none; }
+      body { background: #fff; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="kebet-lang.css"/>
+  <script src="kebet-lang.js"></script>
+</head>
+<body>
+
+<!-- Sidebar — shown for owners; hidden for workers since sidebar color differs -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🏠</div>
+    <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
+  </div>
+  <div class="sidebar-item" id="nav-dashboard"><span class="sidebar-item-icon">📊</span> Dashboard</div>
+  <div class="sidebar-item active"><span class="sidebar-item-icon">📄</span> Contract</div>
+  <div class="sidebar-item" id="nav-payments"><span class="sidebar-item-icon">💰</span> Payments</div>
+  <div class="sidebar-item" id="nav-messages" onclick="window.location.href='messages.html'"><span class="sidebar-item-icon">💬</span> Messages</div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-av" id="sidebar-av">?</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebar-name">Loading…</div>
+      <div class="sidebar-user-role" id="sidebar-role">—</div>
+    </div>
+    <button class="signout-btn" id="signout-btn">⏻</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading" class="loading">⏳ Loading contract…</div>
+
+  <div id="error-state" class="error-state" style="display:none;">
+    <div class="error-icon">📄</div>
+    <div class="error-title">Contract not found</div>
+    <div class="error-sub">This booking may not exist or you don't have access to it.</div>
+    <br>
+    <button class="btn-green" onclick="history.back()">← Go Back</button>
+  </div>
+
+  <div id="page-content" style="display:none;">
+    <div class="page-header">
+      <div>
+        <div class="page-title">📄 <span class="en">Employment Contract</span><span class="am">የቅጥር ውል</span></div>
+        <div class="page-sub"><span class="en">Official agreement between house owner and worker</span><span class="am">የቤት ባለቤት እና ሰራተኛ መካከል ኦፊሴላዊ ስምምነት</span></div>
+      </div>
+      <div class="header-btns">
+        <div class="lang-toggle">
+          <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+          <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+        </div>
+        <button class="btn-outline" onclick="window.print()">🖨️ Print</button>
+        <button class="btn-grey" onclick="history.back()">← Back</button>
+      </div>
+    </div>
+
+    <!-- CONTRACT DOCUMENT -->
+    <div class="contract-doc">
+      <div class="contract-header">
+        <div class="contract-logo">
+          <div class="contract-logo-icon">🏠</div>
+          <div>
+            <div class="contract-logo-text">KEBET</div>
+            <div class="contract-logo-am">ከቤት — Ethiopia's Trusted Home Platform</div>
+          </div>
+        </div>
+        <div class="contract-badge">
+          <div class="contract-badge-label">CONTRACT STATUS</div>
+          <div class="contract-badge-status active" id="contract-status-badge">● ACTIVE</div>
+        </div>
+      </div>
+
+      <div class="contract-body">
+        <div class="contract-title">DOMESTIC EMPLOYMENT AGREEMENT</div>
+        <div class="contract-title-am">የቤት ሰራተኛ ቅጥር ውል — Kebet ከቤት Platform</div>
+        <div class="contract-meta">
+          <span>📋 Contract ID: <strong id="contract-id-display">—</strong></span>
+          <span>📅 Issued: <strong id="contract-issued">—</strong></span>
+          <span>🏙️ Addis Ababa, Ethiopia</span>
+        </div>
+
+        <!-- PARTIES -->
+        <div class="contract-section">
+          <div class="section-label">1. PARTIES TO THIS AGREEMENT</div>
+          <div class="parties-grid">
+            <div class="party-box">
+              <div class="party-label">🏠 EMPLOYER (House Owner)</div>
+              <div class="party-name" id="owner-name">—</div>
+              <div class="party-detail">📞 <span id="owner-phone">—</span></div>
+              <div class="party-detail">📧 <span id="owner-email">—</span></div>
+              <div class="party-detail">📍 <span id="owner-address">—</span></div>
+            </div>
+            <div class="party-box">
+              <div class="party-label">🧹 EMPLOYEE (House Worker)</div>
+              <div class="party-name" id="worker-name">—</div>
+              <div class="party-detail">💼 <span id="worker-role">—</span></div>
+              <div class="party-detail" id="worker-verified-row" style="display:none;">
+                <span style="background:#e8f5ee;color:#1a6b3c;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;">✅ ID Verified Worker</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TERMS -->
+        <div class="contract-section">
+          <div class="section-label">2. CONTRACT TERMS</div>
+          <div class="terms-grid">
+            <div class="term-item">
+              <div class="term-icon">📅</div>
+              <div class="term-label">START DATE</div>
+              <div class="term-value" id="term-start">—</div>
+            </div>
+            <div class="term-item">
+              <div class="term-icon">⏱</div>
+              <div class="term-label">DURATION</div>
+              <div class="term-value" id="term-duration">—</div>
+            </div>
+            <div class="term-item">
+              <div class="term-icon">📅</div>
+              <div class="term-label">END DATE</div>
+              <div class="term-value" id="term-end">—</div>
+            </div>
+            <div class="term-item">
+              <div class="term-icon">💰</div>
+              <div class="term-label">MONTHLY SALARY</div>
+              <div class="term-value green" id="term-salary">—</div>
+            </div>
+            <div class="term-item">
+              <div class="term-icon">💵</div>
+              <div class="term-label">TOTAL VALUE</div>
+              <div class="term-value green" id="term-total">—</div>
+            </div>
+            <div class="term-item">
+              <div class="term-icon">🛏️</div>
+              <div class="term-label">ACCOMMODATION</div>
+              <div class="term-value">Live-in</div>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top:20px;">SERVICES AGREED</div>
+          <div class="services-list" id="services-list">—</div>
+        </div>
+
+        <!-- OBLIGATIONS -->
+        <div class="contract-section">
+          <div class="section-label">3. EMPLOYER OBLIGATIONS</div>
+          <div class="clause"><strong>3.1 Salary Payment:</strong> The Employer agrees to pay the agreed monthly salary of <strong id="clause-salary">—</strong> ETB on or before the last day of each month.</div>
+          <div class="clause"><strong>3.2 Accommodation:</strong> The Employer shall provide a clean, private, and safe room for the Employee to live in at no cost.</div>
+          <div class="clause"><strong>3.3 Food & Meals:</strong> The Employer shall provide three meals per day or a meal allowance as mutually agreed.</div>
+          <div class="clause"><strong>3.4 Medical:</strong> In the event of illness or injury sustained during work, the Employer shall cover basic medical costs.</div>
+          <div class="clause"><strong>3.5 Respect:</strong> The Employer shall treat the Employee with dignity and respect at all times, consistent with Ethiopian Labour Law Proclamation No. 1156/2019.</div>
+        </div>
+
+        <div class="contract-section">
+          <div class="section-label">4. EMPLOYEE OBLIGATIONS</div>
+          <div class="clause"><strong>4.1 Duties:</strong> The Employee shall perform the agreed services diligently and to the best of their ability during regular working hours.</div>
+          <div class="clause"><strong>4.2 Conduct:</strong> The Employee shall behave honestly, maintain confidentiality of the household, and respect the property and privacy of the Employer's family.</div>
+          <div class="clause"><strong>4.3 Notice:</strong> Either party wishing to terminate this contract shall provide a minimum of <strong>14 days' written notice</strong>.</div>
+          <div class="clause"><strong>4.4 Rest:</strong> The Employee is entitled to one full rest day per week and public holidays as recognised by the Federal Democratic Republic of Ethiopia.</div>
+        </div>
+
+        <div class="contract-section">
+          <div class="section-label">5. PLATFORM & DISPUTE RESOLUTION</div>
+          <div class="clause"><strong>5.1</strong> This contract is facilitated by <strong>Kebet (ከቤት)</strong>. Either party may contact Kebet support if a dispute arises.</div>
+          <div class="clause"><strong>5.2</strong> Disputes shall first be resolved through mutual negotiation. If unresolved, either party may escalate to the Kebet Mediation Team via the Help & Rights page.</div>
+          <div class="clause"><strong>5.3</strong> This agreement is governed by <strong>Ethiopian Labour Law Proclamation No. 1156/2019</strong>.</div>
+        </div>
+
+        <!-- SIGNATURES -->
+        <div class="signature-row">
+          <div class="sig-box">
+            <div class="sig-line"><div class="sig-accepted" id="sig-owner">—</div></div>
+            <div class="sig-name" id="sig-owner-name">—</div>
+            <div class="sig-role">Employer (House Owner)</div>
+            <div class="sig-date" id="sig-owner-date">—</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"><div class="sig-accepted" id="sig-worker">—</div></div>
+            <div class="sig-name" id="sig-worker-name">—</div>
+            <div class="sig-role">Employee (House Worker)</div>
+            <div class="sig-date" id="sig-worker-date">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contract-footer">
+        <div class="footer-note">
+          🏠 Kebet ከቤት · Ethiopia's Trusted Home Platform · Addis Ababa
+        </div>
+        <div class="contract-id" id="footer-contract-id">—</div>
+      </div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar">
+      <div class="action-bar-info">
+        <span class="en">Contract between <strong id="action-names">—</strong></span>
+        <span class="am">የ<strong id="action-names-am">—</strong> ውል</span>
+        &nbsp;·&nbsp; <span id="action-status-pill"></span>
+      </div>
+      <div class="action-btns">
+        <button class="btn-outline" onclick="window.print()">🖨️ Print Contract</button>
+        <button class="btn-green" id="nav-back-btn">← Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
+    authDomain: "kebet-6a12b.firebaseapp.com",
+    projectId: "kebet-6a12b",
+    storageBucket: "kebet-6a12b.firebasestorage.app",
+    messagingSenderId: "1098491917554",
+    appId: "1:1098491917554:web:94c535d8f52fd3f4d98c6b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const bookingId = params.get('id');
+
+  function fmt(dateStr) {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function addMonths(dateStr, months) {
+    if (!dateStr || !months) return '—';
+    const d = new Date(dateStr);
+    d.setMonth(d.getMonth() + parseInt(months));
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function set(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'signin.html'; return; }
+
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userSnap.exists()) { window.location.href = 'signin.html'; return; }
+    const userData = userSnap.data();
+    const isOwner = userData.userType === 'owner';
+
+    // Sidebar config
+    const firstName = userData.firstName || '';
+    const lastName = userData.lastName || '';
+    set('sidebar-name', firstName + ' ' + lastName);
+    document.getElementById('sidebar-av').textContent = (firstName[0] || '') + (lastName[0] || '');
+    document.getElementById('sidebar-role').textContent = isOwner ? 'House Owner' : 'House Worker';
+
+    // Adjust sidebar links by role
+    if (isOwner) {
+      document.getElementById('sidebar').style.background = '#1a6b3c';
+      document.getElementById('nav-dashboard').onclick = () => window.location.href = 'dashboard-owner.html';
+      document.getElementById('nav-payments').onclick = () => window.location.href = 'payments-owner.html';
+      document.getElementById('nav-back-btn').onclick = () => window.location.href = 'dashboard-owner.html';
+    } else {
+      document.getElementById('sidebar').style.background = '#111';
+      document.getElementById('nav-dashboard').onclick = () => window.location.href = 'dashboard-worker.html';
+      document.getElementById('nav-payments').onclick = () => window.location.href = 'payments.html';
+      document.getElementById('nav-back-btn').onclick = () => window.location.href = 'dashboard-worker.html';
+    }
+
+    if (!bookingId) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error-state').style.display = 'block';
+      return;
+    }
+
+    // Load booking
+    let bookingData;
+    try {
+      const bSnap = await getDoc(doc(db, 'bookings', bookingId));
+      if (!bSnap.exists()) throw new Error('not found');
+      bookingData = bSnap.data();
+    } catch (e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error-state').style.display = 'block';
+      return;
+    }
+
+    // Access control — only owner or worker of this booking
+    if (bookingData.ownerId !== user.uid && bookingData.workerId !== user.uid) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error-state').style.display = 'block';
+      return;
+    }
+
+    // Fetch worker data for verified badge
+    let workerData = {};
+    try {
+      const wSnap = await getDoc(doc(db, 'users', bookingData.workerId));
+      if (wSnap.exists()) workerData = wSnap.data();
+    } catch(e) {}
+
+    // ── Populate contract ──
+    const contractRef = bookingId.slice(0, 12).toUpperCase();
+    set('contract-id-display', 'KBT-' + contractRef);
+    set('footer-contract-id', 'Ref: KBT-' + contractRef);
+    set('contract-issued', fmt(bookingData.createdAt));
+
+    // Status badge
+    const status = bookingData.status || 'pending';
+    const statusBadge = document.getElementById('contract-status-badge');
+    if (status === 'active') { statusBadge.textContent = '● ACTIVE'; statusBadge.className = 'contract-badge-status active'; }
+    else if (status === 'pending') { statusBadge.textContent = '⏳ PENDING'; statusBadge.style.color = '#f0a500'; }
+    else { statusBadge.textContent = '⬤ ENDED'; statusBadge.style.color = '#aaa'; }
+
+    // Parties
+    set('owner-name', bookingData.ownerName || '—');
+    set('owner-phone', bookingData.ownerPhone || '—');
+    set('owner-email', bookingData.ownerEmail || '—');
+    const addr = [bookingData.ownerLocation, bookingData.ownerWoreda, bookingData.ownerHouseNo, bookingData.ownerLandmark].filter(Boolean).join(', ');
+    set('owner-address', addr || '—');
+    set('worker-name', bookingData.workerName || '—');
+    set('worker-role', bookingData.workerRole || '—');
+    if (workerData.isVerified) {
+      document.getElementById('worker-verified-row').style.display = 'block';
+    }
+
+    // Terms
+    set('term-start', fmt(bookingData.startDate));
+    set('term-duration', (bookingData.contractMonths || '—') + ' month(s)');
+    set('term-end', addMonths(bookingData.startDate, bookingData.contractMonths));
+    set('term-salary', (bookingData.monthlySalary || 0).toLocaleString() + ' ETB');
+    set('term-total', (bookingData.totalAmount || 0).toLocaleString() + ' ETB');
+    set('clause-salary', (bookingData.monthlySalary || 0).toLocaleString());
+
+    // Services
+    const servEl = document.getElementById('services-list');
+    const services = bookingData.services || [];
+    servEl.innerHTML = services.length > 0
+      ? services.map(s => `<span class="service-tag">✓ ${s}</span>`).join('')
+      : '<span style="color:#aaa;font-size:13px;">Not specified</span>';
+
+    // Signatures — shown when accepted
+    const acceptDate = bookingData.acceptedAt || bookingData.createdAt;
+    if (status === 'active' || status === 'cancelled') {
+      set('sig-owner', '✓ ' + (bookingData.ownerName?.split(' ')[0] || 'Owner'));
+      set('sig-worker', '✓ ' + (bookingData.workerName?.split(' ')[0] || 'Worker'));
+      set('sig-owner-date', 'Signed ' + fmt(acceptDate));
+      set('sig-worker-date', 'Signed ' + fmt(acceptDate));
+    } else {
+      document.querySelector('.sig-line:first-of-type .sig-accepted').style.color = '#ccc';
+      set('sig-owner', 'Awaiting…');
+      set('sig-worker', 'Awaiting…');
+      set('sig-owner-date', 'Not yet signed');
+      set('sig-worker-date', 'Not yet signed');
+    }
+    set('sig-owner-name', bookingData.ownerName || '—');
+    set('sig-worker-name', bookingData.workerName || '—');
+
+    // Action bar
+    set('action-names', (bookingData.ownerName || '—') + ' & ' + (bookingData.workerName || '—'));
+    set('action-names-am', (bookingData.ownerName || '—') + ' እና ' + (bookingData.workerName || '—'));
+    const pillHtml = status === 'active'
+      ? '<span class="status-pill status-active">✅ Active</span>'
+      : status === 'pending'
+      ? '<span class="status-pill status-pending">⏳ Pending</span>'
+      : '<span class="status-pill status-cancelled">❌ Ended</span>';
+    document.getElementById('action-status-pill').innerHTML = pillHtml;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('page-content').style.display = 'block';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'signin.html';
+  });
+</script>
+
+</body>
+</html>

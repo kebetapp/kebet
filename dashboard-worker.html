@@ -92,6 +92,22 @@
     .modal-btns { display: flex; gap: 10px; }
     .modal-cancel { flex: 1; background: #f5f5f0; color: #555; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .modal-confirm-red { flex: 1; background: #cc2222; color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* Feature 8 — Availability Toggle */
+    .avail-bar { background: #fff; border-radius: 16px; padding: 18px 22px; border: 1px solid #eee; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .avail-bar-info { display: flex; align-items: center; gap: 12px; }
+    .avail-indicator { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .avail-indicator.available { background: #1a6b3c; box-shadow: 0 0 0 4px rgba(26,107,60,0.15); }
+    .avail-indicator.unavailable { background: #aaa; }
+    .avail-label { font-size: 14px; font-weight: 700; color: #111; }
+    .avail-sub { font-size: 12px; color: #888; margin-top: 1px; }
+    .avail-toggle { position: relative; display: inline-block; width: 52px; height: 28px; }
+    .avail-toggle input { opacity: 0; width: 0; height: 0; }
+    .avail-slider { position: absolute; inset: 0; background: #ddd; border-radius: 28px; cursor: pointer; transition: 0.3s; }
+    .avail-slider::before { content: ''; position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+    input:checked + .avail-slider { background: #1a6b3c; }
+    input:checked + .avail-slider::before { transform: translateX(24px); }
+    .avail-saving { font-size: 11px; color: #888; margin-left: 8px; display: none; }
     @media (max-width: 900px) {
       .sidebar { display: none; }
       .main { margin-left: 0; padding: 20px; }
@@ -150,6 +166,25 @@
     <!-- ID Verification Banner -->
     <div id="id-banner" style="display:none; border-radius:14px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;"></div>
 
+
+    <!-- Feature 8 — Availability Toggle -->
+    <div class="avail-bar ks-reveal">
+      <div class="avail-bar-info">
+        <div class="avail-indicator" id="avail-dot"></div>
+        <div>
+          <div class="avail-label" id="avail-label">Available for hire</div>
+          <div class="avail-sub" id="avail-sub">Owners can find and book you in search</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:12px;color:#888;" id="avail-state-text">ON</span>
+        <label class="avail-toggle">
+          <input type="checkbox" id="avail-checkbox" onchange="toggleAvailability(this.checked)">
+          <span class="avail-slider"></span>
+        </label>
+        <span class="avail-saving" id="avail-saving">Saving...</span>
+      </div>
+    </div>
     <div class="stats-row">
       <div class="stat-card ks-reveal"><div class="stat-icon icon-green">👤</div><div class="stat-num" id="stat-name">—</div><div class="stat-label"><span class="en">Your name</span><span class="am">ስምዎ</span></div></div>
       <div class="stat-card ks-reveal"><div class="stat-icon icon-gold">🏠</div><div class="stat-num" id="stat-jobs">0</div><div class="stat-label"><span class="en">Job offers</span><span class="am">የስራ ቅናሾች</span></div></div>
@@ -293,6 +328,7 @@
           <button class="btn-sm-red" onclick="declineJob('${b.id}')">❌ Decline</button>
         </div>` : status === 'active' ? `
         <div class="job-actions" style="margin-top:10px;">
+          <button class="btn-sm-outline" onclick="window.location.href='contract.html?id=${b.id}'">📄 Contract</button>
           <button class="btn-sm-outline" onclick="window.location.href='messages.html?with=${data.ownerId}'">💬 Message Owner</button>
           <button class="btn-sm-outline" onclick="window.location.href='help.html'">📞 Help & Rights</button>
         </div>` : '';
@@ -325,6 +361,41 @@
     document.getElementById('stat-jobs').textContent = bookings.length;
     document.getElementById('stat-active').textContent = active;
     if (bookings.length > 0) { document.getElementById('jobs-badge').textContent = bookings.length; document.getElementById('jobs-badge').style.display = 'inline'; }
+  }
+
+  // Feature 8 — Availability toggle
+  window.toggleAvailability = async function(isAvailable) {
+    const savingEl = document.getElementById('avail-saving');
+    savingEl.style.display = 'inline';
+    try {
+      const { updateDoc, doc: firestoreDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await updateDoc(firestoreDoc(db, 'users', currentUser.uid), { isAvailable: isAvailable });
+      }
+      updateAvailUI(isAvailable);
+    } catch(e) { console.warn('Avail toggle error:', e); }
+    savingEl.style.display = 'none';
+  };
+
+  function updateAvailUI(isAvailable) {
+    const dot = document.getElementById('avail-dot');
+    const label = document.getElementById('avail-label');
+    const sub = document.getElementById('avail-sub');
+    const stateText = document.getElementById('avail-state-text');
+    const checkbox = document.getElementById('avail-checkbox');
+    if (checkbox) checkbox.checked = isAvailable;
+    if (isAvailable) {
+      dot.className = 'avail-indicator available';
+      label.textContent = 'Available for hire';
+      sub.textContent = 'Owners can find and book you in search';
+      stateText.textContent = 'ON';
+    } else {
+      dot.className = 'avail-indicator unavailable';
+      label.textContent = 'Not available';
+      sub.textContent = 'You are hidden from search results';
+      stateText.textContent = 'OFF';
+    }
   }
 
   window.acceptJob = async function(bookingId, ownerId, ownerName, workerName) {
@@ -364,6 +435,9 @@
     document.getElementById('profile-loc').textContent = '📍 ' + (data.location || '—') + ', Addis Ababa';
     document.getElementById('stat-name').textContent = firstName;
     document.getElementById('stat-skill').textContent = data.skill || '—';
+    // Feature 8: Init availability toggle
+    const isAvailable = data.isAvailable !== false;
+    updateAvailUI(isAvailable);
     document.getElementById('progress-bar').style.width = progress + '%';
     document.getElementById('progress-label').textContent = progress + '% complete';
     if (data.skill) { document.getElementById('profile-skill').innerHTML = `<span class="skill-tag">🧹 ${data.skill}</span>`; }

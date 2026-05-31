@@ -547,7 +547,9 @@
       const matchSearch = !search || fullName.includes(search) || skill.includes(search);
       const matchLocation = !location || loc.includes(location);
       const matchSkill = !currentSkillFilter || skill.toLowerCase().includes(currentSkillFilter.toLowerCase());
-      return matchSearch && matchLocation && matchSkill;
+      // Feature 8: Only show workers who are available (isAvailable !== false means available by default)
+      const matchAvail = w.isAvailable !== false;
+      return matchSearch && matchLocation && matchSkill && matchAvail;
     });
 
     if (sort === 'rating') {

@@ -424,6 +424,18 @@
         createdAt: new Date().toISOString()
       });
 
+      // Feature 2: Send FCM notification to worker via Firestore notifications collection
+      try {
+        await addDoc(collection(db, 'notifications'), {
+          userId: workerId,
+          type: 'booking',
+          title: 'New job offer!',
+          message: (currentUserData?.firstName || 'An owner') + ' wants to hire you. Check your dashboard!',
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+      } catch(e) {}
+
       document.getElementById('modal-sub').textContent =
         'Your booking for ' + workerName + ' has been saved! She will be notified and contact you within 24 hours.\n\nወደ ቤትዎ እንኳን ደህና መጣች! 🏠🇪🇹';
       document.getElementById('modal').classList.add('show');
