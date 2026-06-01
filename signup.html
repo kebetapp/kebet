@@ -36,6 +36,10 @@
     .signin-link a { color: #1a6b3c; font-weight: 600; text-decoration: none; }
     .error-msg { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
     .success-msg { background: #e8f5ee; border: 1px solid #b2dfc6; color: #1a6b3c; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
+    .skill-check-label { display:inline-flex; align-items:center; gap:6px; background:#f5f5f0; border:1.5px solid #eee; border-radius:10px; padding:7px 12px; font-size:12px; font-weight:600; color:#555; cursor:pointer; transition:all 0.2s; }
+    .skill-check-label:hover { border-color:#1a6b3c; background:#e8f5ee; color:#1a6b3c; }
+    .skill-check-label input[type="checkbox"] { accent-color:#1a6b3c; width:14px; height:14px; cursor:pointer; }
+    .skill-check-label:has(input:checked) { background:#e8f5ee; border-color:#1a6b3c; color:#1a6b3c; }
     @media (max-width: 768px) { body { flex-direction: column; } .left { width: 100%; height: auto; padding: 40px 20px; position: relative; } .right { padding: 40px 20px; } }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -90,13 +94,15 @@
       </select>
     </div>
     <div class="form-group" id="skill-group" style="display:none;">
-      <label><span class="en">Your main skill</span><span class="am">ዋና ችሎታዎ</span></label>
-      <select id="skill">
-        <option value="">Select your skill</option>
-        <option>Cleaning</option><option>Cooking</option>
-        <option>Nanny / Child care</option><option>Laundry</option>
-        <option>Full-time helper</option><option>Gardening</option>
-      </select>
+      <label><span class="en">Your skills</span><span class="am">ችሎታዎች</span> <span style="font-weight:400;color:#aaa;font-size:11px;"><span class="en">(select all that apply)</span><span class="am">(ሁሉንም የሚመለከቱ ይምረጡ)</span></span></label>
+      <div id="skill-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;">
+        <label class="skill-check-label"><input type="checkbox" value="Cleaning" class="skill-cb"> <span class="en">🧹 Cleaning</span><span class="am">🧹 ማፅዳት</span></label>
+        <label class="skill-check-label"><input type="checkbox" value="Cooking" class="skill-cb"> <span class="en">🍳 Cooking</span><span class="am">🍳 ምግብ ማብሰል</span></label>
+        <label class="skill-check-label"><input type="checkbox" value="Nanny / Child care" class="skill-cb"> <span class="en">👶 Nanny / Child care</span><span class="am">👶 ልጅ ማሳደግ</span></label>
+        <label class="skill-check-label"><input type="checkbox" value="Laundry" class="skill-cb"> <span class="en">👕 Laundry</span><span class="am">👕 ልብስ ማጠብ</span></label>
+        <label class="skill-check-label"><input type="checkbox" value="Full-time helper" class="skill-cb"> <span class="en">🏠 Full-time helper</span><span class="am">🏠 ሙሉ ጊዜ ረዳት</span></label>
+        <label class="skill-check-label"><input type="checkbox" value="Gardening" class="skill-cb"> <span class="en">🌿 Gardening</span><span class="am">🌿 የአትክልት ስራ</span></label>
+      </div>
     </div>
     <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="ጠንካራ የይለፍ ቃል ይፍጠሩ" /></div>
 
@@ -140,7 +146,7 @@
     const email = document.getElementById('email').value.trim();
     const location = document.getElementById('location').value;
     const password = document.getElementById('password').value;
-    const skill = document.getElementById('skill').value;
+    const skills = Array.from(document.querySelectorAll('.skill-cb:checked')).map(cb => cb.value);
     const errorMsg = document.getElementById('error-msg');
     const successMsg = document.getElementById('success-msg');
     const btn = document.getElementById('signup-btn');
@@ -150,6 +156,11 @@
 
     if (!fname || !lname || !email || !password || !location || !phone) {
       errorMsg.textContent = '⚠️ Please fill in all fields.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    if (userType === 'worker' && skills.length === 0) {
+      errorMsg.textContent = '⚠️ Please select at least one skill.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -173,7 +184,8 @@
         email: email,
         location: location,
         userType: userType,
-        skill: skill || null,
+        skill: skills.length > 0 ? skills : null,
+        skills: skills,
         rating: 0,
         createdAt: new Date().toISOString()
       });
