@@ -95,6 +95,46 @@
     }
     .filter-chip:hover, .filter-chip.active { background: #1a6b3c; color: #fff; border-color: #1a6b3c; }
 
+    .salary-filter-bar {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 10px 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .salary-filter-label { font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; }
+    .salary-range-inputs { display: flex; align-items: center; gap: 8px; }
+    .salary-input {
+      width: 110px;
+      padding: 7px 12px;
+      border: 1.5px solid #eee;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #111;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .salary-input:focus { border-color: #1a6b3c; }
+    .salary-sep { font-size: 13px; color: #aaa; }
+    .salary-clear-btn {
+      background: #f5f5f0;
+      border: none;
+      color: #888;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .salary-clear-btn:hover { background: #eee; }
+    @media (max-width: 768px) {
+      .salary-filter-bar { padding: 10px 20px; }
+      .salary-input { width: 90px; }
+    }
+
     .main { max-width: 1140px; margin: 0 auto; padding: 28px 40px 60px; }
     .results-header {
       display: flex;
@@ -372,7 +412,16 @@
   <button class="filter-chip" onclick="setSkillFilter('Full-time', this)">🏠 Full-time</button>
 </div>
 
-<div class="main">
+<div class="salary-filter-bar">
+  <span class="salary-filter-label">💵 <span class="en">Salary range (ETB/mo):</span><span class="am">ወርሃዊ ደሞዝ (ብር):</span></span>
+  <div class="salary-range-inputs">
+    <input type="number" id="salary-min" class="salary-input" placeholder="Min (e.g. 1500)" min="0" oninput="filterWorkers()" />
+    <span class="salary-sep">—</span>
+    <input type="number" id="salary-max" class="salary-input" placeholder="Max (e.g. 5000)" min="0" oninput="filterWorkers()" />
+  </div>
+  <button class="salary-clear-btn" onclick="clearSalaryFilter()">✕ <span class="en">Clear</span><span class="am">አጽዳ</span></button>
+  <span id="salary-filter-note" style="font-size:12px;color:#1a6b3c;display:none;"></span>
+</div>
   <div class="results-header">
     <div class="results-count" id="results-count">Loading workers...</div>
     <select class="sort-select" id="sort-select" onchange="filterWorkers()">
@@ -526,6 +575,13 @@
     }
   }
 
+  window.clearSalaryFilter = function() {
+    document.getElementById('salary-min').value = '';
+    document.getElementById('salary-max').value = '';
+    document.getElementById('salary-filter-note').style.display = 'none';
+    filterWorkers();
+  };
+
   window.setSkillFilter = function(skill, btn) {
     currentSkillFilter = skill;
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -539,6 +595,18 @@
     const sort = document.getElementById('sort-select').value;
     const grid = document.getElementById('worker-grid');
     const countEl = document.getElementById('results-count');
+    const salMin = parseInt(document.getElementById('salary-min').value) || 0;
+    const salMax = parseInt(document.getElementById('salary-max').value) || Infinity;
+    const noteEl = document.getElementById('salary-filter-note');
+
+    // Show active salary filter note
+    if (salMin > 0 || salMax !== Infinity) {
+      const maxStr = salMax === Infinity ? '∞' : salMax.toLocaleString();
+      noteEl.textContent = `Filtering: ${salMin.toLocaleString()} – ${maxStr} ETB`;
+      noteEl.style.display = 'inline';
+    } else {
+      noteEl.style.display = 'none';
+    }
 
     let filtered = allWorkers.filter(w => {
       const fullName = ((w.firstName || '') + ' ' + (w.lastName || '')).toLowerCase();
@@ -549,7 +617,10 @@
       const matchSkill = !currentSkillFilter || skill.toLowerCase().includes(currentSkillFilter.toLowerCase());
       // Feature 8: Only show workers who are available (isAvailable !== false means available by default)
       const matchAvail = w.isAvailable !== false;
-      return matchSearch && matchLocation && matchSkill && matchAvail;
+      // Salary range filter — uses worker's expectedSalary field if set
+      const workerSalary = parseInt(w.expectedSalary) || 0;
+      const matchSalary = workerSalary === 0 || (workerSalary >= salMin && workerSalary <= salMax);
+      return matchSearch && matchLocation && matchSkill && matchAvail && matchSalary;
     });
 
     if (sort === 'rating') {
@@ -610,7 +681,7 @@
           </div>
           <div class="worker-bottom">
             <div>
-              <div style="font-size:13px; color:#555;">Salary: negotiable</div>
+              <div style="font-size:13px; color:#555;">${w.expectedSalary ? `💵 ~${parseInt(w.expectedSalary).toLocaleString()} ETB/mo` : 'Salary: negotiable'}</div>
               <div class="stars">${rating > 0 ? stars + ' ' + rating.toFixed(1) : '☆ New worker'}</div>
             </div>
             <button class="hire-btn" onclick="event.stopPropagation(); openBookModal('${w.id}', '${safeFullName}', '${skill}', '${location}')">

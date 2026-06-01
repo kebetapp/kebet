@@ -72,7 +72,7 @@
 
     <div class="form-group"><label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label><input type="email" id="email" placeholder="abebe@email.com" /></div>
     <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="የይለፍ ቃልዎ" /></div>
-    <div class="forgot"><a href="#"><span class="en">Forgot password?</span><span class="am">የይለፍ ቃል ረሱ?</span></a></div>
+    <div class="forgot"><a href="#" onclick="showForgotPassword(); return false;"><span class="en">Forgot password?</span><span class="am">የይለፍ ቃል ረሱ?</span></a></div>
 
     <button class="submit-btn" id="signin-btn" onclick="handleSignIn()"><span class="en">Sign In →</span><span class="am">ግባ →</span></button>
 
@@ -147,6 +147,80 @@
       errorMsg.style.display = 'block';
     }
   }
+</script>
+
+<!-- Forgot Password Modal -->
+<div id="forgot-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="font-size:20px;font-weight:700;color:#111;margin-bottom:6px;">🔑 <span class="en">Reset Password</span><span class="am">የይለፍ ቃል ዳግም አቁም</span></div>
+    <div style="font-size:13px;color:#888;margin-bottom:20px;"><span class="en">Enter your email and we'll send you a reset link.</span><span class="am">ኢሜልዎን ያስገቡ፣ የዳግም ማስጀመሪያ ማስፈንጠሪያ እንልክልዎታለን።</span></div>
+    <div id="forgot-error" style="background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;"></div>
+    <div id="forgot-success" style="background:#e8f5ee;border:1px solid #b2dfc6;color:#1a6b3c;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;"></div>
+    <input type="email" id="forgot-email" placeholder="abebe@email.com" style="width:100%;padding:12px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;color:#111;outline:none;margin-bottom:14px;" onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeForgotPassword()" style="flex:1;padding:12px;border:none;background:#f5f5f0;color:#555;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
+      <button id="forgot-btn" onclick="sendReset()" style="flex:2;padding:12px;border:none;background:#1a6b3c;color:#fff;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><span class="en">Send Reset Link →</span><span class="am">ማስፈንጠሪያ ላክ →</span></button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  const auth = getAuth();
+
+  window.showForgotPassword = function() {
+    const emailEl = document.getElementById('email');
+    document.getElementById('forgot-email').value = emailEl?.value || '';
+    document.getElementById('forgot-error').style.display = 'none';
+    document.getElementById('forgot-success').style.display = 'none';
+    const overlay = document.getElementById('forgot-overlay');
+    overlay.style.display = 'flex';
+  };
+
+  window.closeForgotPassword = function() {
+    document.getElementById('forgot-overlay').style.display = 'none';
+  };
+
+  window.sendReset = async function() {
+    const email = document.getElementById('forgot-email').value.trim();
+    const errEl = document.getElementById('forgot-error');
+    const sucEl = document.getElementById('forgot-success');
+    const btn = document.getElementById('forgot-btn');
+
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!email) {
+      errEl.textContent = '⚠️ Please enter your email address.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      sucEl.textContent = '✅ Reset link sent! Check your email inbox (and spam folder).';
+      sucEl.style.display = 'block';
+      btn.textContent = '✓ Sent!';
+      setTimeout(() => closeForgotPassword(), 3000);
+    } catch (err) {
+      btn.textContent = 'Send Reset Link →';
+      btn.disabled = false;
+      if (err.code === 'auth/user-not-found') {
+        errEl.textContent = '❌ No account found with this email.';
+      } else {
+        errEl.textContent = '❌ Error: ' + err.message;
+      }
+      errEl.style.display = 'block';
+    }
+  };
+
+  // Close on backdrop click
+  document.getElementById('forgot-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeForgotPassword();
+  });
 </script>
 
 </body>
