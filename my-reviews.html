@@ -56,7 +56,31 @@
     .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
     @media (max-width: 900px) {
       .sidebar { display: none; }
+      .sidebar.mobile-open { display: flex !important; position: fixed; z-index: 200; width: 260px; box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
       .main { margin-left: 0; padding: 20px; }
+      .mobile-nav { display: flex !important; }
+      .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 199; }
+      .sidebar-overlay.show { display: block; }
+    }
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #111;
+      padding: 14px 20px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 150;
+    }
+    .mobile-nav-logo { display: flex; align-items: center; gap: 8px; }
+    .mobile-nav-logo-icon { width: 32px; height: 32px; background: #1a6b3c; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .mobile-nav-logo-text { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 2px; }
+    .hamburger-btn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 4px; line-height: 1; }
+    @media (min-width: 901px) {
+      .main { padding-top: 32px; }
+    }
+    @media (max-width: 900px) {
+      .main { padding-top: 72px; }
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -67,7 +91,17 @@
 </head>
 <body>
 
-<div class="sidebar">
+<!-- Mobile top nav (visible only on small screens) -->
+<div class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-logo">
+    <div class="mobile-nav-logo-icon">🏠</div>
+    <div class="mobile-nav-logo-text">KEBET</div>
+  </div>
+  <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-icon">🏠</div>
     <div><div class="sidebar-logo-text">KEBET</div><div class="sidebar-logo-am">ከቤት</div></div>
@@ -228,6 +262,22 @@
   document.getElementById('signout-btn').addEventListener('click', async () => {
     await signOut(auth);
     window.location.href = 'signin.html';
+  });
+</script>
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+  // Close sidebar when a nav item is clicked on mobile
+  document.querySelectorAll('.sidebar-item').forEach(el => {
+    el.addEventListener('click', closeSidebar);
   });
 </script>
 
