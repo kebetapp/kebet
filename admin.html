@@ -461,10 +461,10 @@
       </div>
       <table>
         <thead><tr>
-          <th>WORKER</th><th>SKILLS</th><th>RATING</th><th>ID STATUS</th><th>STATUS</th><th>ACTION</th>
+          <th>WORKER</th><th>SKILLS</th><th>RATING</th><th>PIN</th><th>ID STATUS</th><th>STATUS</th><th>ACTION</th>
         </tr></thead>
         <tbody id="workers-body">
-          <tr><td colspan="6" class="table-loading">⏳ Loading...</td></tr>
+          <tr><td colspan="7" class="table-loading">⏳ Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -781,6 +781,7 @@ async function loadUsers() {
   document.getElementById('stat-workers').textContent = allWorkers.length;
   renderOwners(allOwners);
   renderWorkers(allWorkers);
+  syncWorkerCacheForModals();
 }
 
 async function loadBookings() {
@@ -1069,7 +1070,7 @@ function renderOwners(list) {
 // ── RENDER WORKERS ──
 function renderWorkers(list) {
   document.getElementById('workers-body').innerHTML = list.length === 0
-    ? `<tr><td colspan="6" class="table-empty">No workers found</td></tr>`
+    ? `<tr><td colspan="7" class="table-empty">No workers found</td></tr>`
     : list.map(u => {
         const skills = Array.isArray(u.skills) ? u.skills.slice(0,2).join(', ') : (u.skills||u.skill||'—');
         const rating = u.averageRating ? '★ '+Number(u.averageRating).toFixed(1) : '—';
@@ -1080,22 +1081,37 @@ function renderWorkers(list) {
         else if (idv.status==='verified')    idBadge = `<span class="badge badge-green">✅ Verified</span>`;
         else if (idv.status==='rejected')    idBadge = `<span class="badge badge-red">❌ Rejected</span>`;
         else                                 idBadge = `<span class="badge badge-grey">—</span>`;
+
+        // PIN display
+        const pin = u.pin || '';
+        const pinDisplay = pin
+          ? `<span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--yellow);letter-spacing:3px;background:var(--yellow-dim);border:1px solid #ffd74040;padding:3px 10px;border-radius:8px;">${pin}</span>`
+          : `<span style="color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;">No PIN</span>`;
+
+        const safeName = (u.firstName+' '+u.lastName).replace(/'/g,"\\'");
         return `
         <tr>
           <td><div class="user-cell">
             <div class="avatar avatar-worker">${(u.firstName||'?')[0]}${(u.lastName||'')[0]||''}</div>
             <div><div class="user-name">${u.firstName||''} ${u.lastName||''}</div>
-            <div class="user-email">${u.email||''}</div></div>
+            <div class="user-email">${u.phone||u.email||''}</div></div>
           </div></td>
           <td class="td-mono">${skills}</td>
           <td class="td-mono">${rating}</td>
-          <td>${idBadge}</td>
+          <td style="white-space:nowrap;">
+            ${pinDisplay}
+            <button class="action-btn" style="margin-left:6px;background:#1a2a4a;color:var(--blue);border:1px solid #40c4ff40;font-size:10px;" onclick="openResetPin('${u.id}','${safeName}','${pin}')">Reset</button>
+          </td>
+          <td>
+            ${idBadge}
+            <button class="action-btn" style="margin-left:4px;font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);" onclick="openManualID('${u.id}','${safeName}')">🪪 Set ID</button>
+          </td>
           <td><span class="badge ${u.disabled?'badge-red':'badge-green'}">${u.disabled?'Disabled':'Active'}</span></td>
           <td>
             ${u.disabled
-              ? `<button class="action-btn btn-success" onclick="toggleUser('${u.id}',false,'${u.firstName} ${u.lastName}')">Enable</button>`
-              : `<button class="action-btn btn-warn"    onclick="toggleUser('${u.id}',true,'${u.firstName} ${u.lastName}')">Disable</button>`}
-            <button class="action-btn btn-danger" style="margin-left:6px" onclick="deleteUser('${u.id}','${u.firstName} ${u.lastName}')">Delete</button>
+              ? `<button class="action-btn btn-success" onclick="toggleUser('${u.id}',false,'${safeName}')">Enable</button>`
+              : `<button class="action-btn btn-warn"    onclick="toggleUser('${u.id}',true,'${safeName}')">Disable</button>`}
+            <button class="action-btn btn-danger" style="margin-left:6px" onclick="deleteUser('${u.id}','${safeName}')">Delete</button>
           </td>
         </tr>`;
       }).join('');
@@ -1192,6 +1208,91 @@ window.setIDStatus = async function(uid, status) {
     labels[status]
   );
 };
+
+// ── RESET PIN (Firebase) ──
+window.saveNewPin = async function() {
+  const pin = document.getElementById('reset-pin-input').value.trim();
+  const errEl = document.getElementById('reset-pin-err');
+  errEl.textContent = '';
+  if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    errEl.textContent = '⚠ Please enter exactly 4 digits.';
+    return;
+  }
+  if (!resetPinUid) return;
+  const btn = document.getElementById('reset-pin-save-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Saving…';
+  try {
+    await updateDoc(doc(db, 'users', resetPinUid), { pin });
+    // Update local state
+    const w = allWorkers.find(x => x.id === resetPinUid);
+    if (w) w.pin = pin;
+    showToast(`✓ PIN updated to ${pin}`, 'green');
+    closeResetPin();
+    renderWorkers(allWorkers);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '✓ Save New PIN';
+    errEl.textContent = '✗ Error: ' + e.message;
+  }
+};
+
+// ── MANUAL ID VERIFICATION (Firebase) ──
+window.saveManualID = async function() {
+  const errEl = document.getElementById('mid-err');
+  errEl.textContent = '';
+  if (!midSelectedType) { errEl.textContent = '⚠ Please select an ID type.'; return; }
+  const idNumber  = document.getElementById('mid-id-number').value.trim();
+  const idFullName= document.getElementById('mid-id-fullname').value.trim();
+  const idDob     = document.getElementById('mid-id-dob').value;
+  const adminNotes= document.getElementById('mid-id-notes').value.trim();
+
+  if (!idNumber)   { errEl.textContent = '⚠ ID number is required.'; return; }
+  if (!idFullName) { errEl.textContent = '⚠ Full name on ID is required.'; return; }
+  if (!midWorkerId) return;
+
+  const btn = document.getElementById('mid-save-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Saving…';
+
+  const idData = {
+    idType:      midSelectedType,
+    idNumber,
+    idFullName,
+    idDob:       idDob || null,
+    adminNotes:  adminNotes || null,
+    status:      'verified',
+    submittedBy: 'admin',
+    submittedAt: new Date().toISOString(),
+    reviewedAt:  new Date().toISOString(),
+  };
+
+  try {
+    await updateDoc(doc(db, 'users', midWorkerId), {
+      idVerification: idData,
+      isVerified: true,
+    });
+    // Update local state
+    const w = allWorkers.find(x => x.id === midWorkerId);
+    if (w) { w.idVerification = idData; w.isVerified = true; }
+    const w2 = allIDWorkers.find(x => x.id === midWorkerId);
+    if (w2) { w2.idVerification = idData; w2.isVerified = true; }
+    showToast(`✓ ID verified for ${idFullName}`, 'green');
+    closeManualID();
+    renderWorkers(allWorkers);
+    renderIDQueue(allIDWorkers, 'all');
+    // Refresh stats
+    document.getElementById('id-stat-verified').textContent = allIDWorkers.filter(w => w.idVerification?.status==='verified').length;
+    document.getElementById('id-stat-pending').textContent  = allIDWorkers.filter(w => w.idVerification?.status==='pending').length;
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '✅ Save & Mark Verified';
+    errEl.textContent = '✗ Error: ' + e.message;
+  }
+};
+
+// expose workers for modal pre-fill
+function syncWorkerCacheForModals() { window._allWorkersForAdmin = allWorkers; }
 
 
 function renderBookings(list) {
@@ -1816,6 +1917,200 @@ window.chatasBackToConvos = function() {
   document.getElementById('chatas-step3').style.display = 'none';
 };
 
+</script>
+<!-- ══════ RESET PIN MODAL ══════ -->
+<div id="reset-pin-overlay" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:600;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;width:380px;max-width:92vw;animation:fadeUp 0.25s ease;">
+    <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;">🔑 Reset Worker PIN</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;font-family:'DM Mono',monospace;" id="reset-pin-name">—</div>
+
+    <div style="margin-bottom:16px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:6px;">CURRENT PIN</label>
+      <div style="font-size:22px;font-weight:700;color:var(--yellow);font-family:'DM Mono',monospace;letter-spacing:4px;background:var(--yellow-dim);border:1px solid #ffd74040;padding:10px 14px;border-radius:10px;display:inline-block;" id="reset-pin-current">—</div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:6px;">NEW 4-DIGIT PIN</label>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input id="reset-pin-input" type="tel" maxlength="4" placeholder="e.g. 1234"
+          style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:12px 16px;font-size:20px;font-family:'DM Mono',monospace;letter-spacing:4px;outline:none;width:140px;transition:border-color 0.2s;text-align:center;"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"
+          oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" />
+        <button onclick="generateRandomPin()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--muted);font-size:11px;cursor:pointer;font-family:'DM Mono',monospace;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🎲 Random</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;">Worker uses this to sign in. Share it with them via call/WhatsApp.</div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeResetPin()" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--muted);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Cancel</button>
+      <button id="reset-pin-save-btn" onclick="saveNewPin()" style="flex:2;background:var(--green);border:none;border-radius:10px;padding:11px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:0.5px;">✓ Save New PIN</button>
+    </div>
+    <div id="reset-pin-err" style="font-size:12px;color:var(--red);margin-top:10px;min-height:16px;font-family:'DM Mono',monospace;"></div>
+  </div>
+</div>
+
+<!-- ══════ MANUAL ID VERIFICATION MODAL ══════ -->
+<div id="manual-id-overlay" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:600;align-items:center;justify-content:center;overflow-y:auto;padding:20px;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;width:480px;max-width:95vw;animation:fadeUp 0.25s ease;">
+    <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;">🪪 Add / Update ID Verification</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;" id="mid-worker-name">—</div>
+    <div style="font-size:11px;color:var(--green);margin-bottom:20px;font-family:'DM Mono',monospace;background:var(--green-dim);padding:8px 12px;border-radius:8px;border:1px solid #00e67630;">Admin manually entering verified ID — no worker action needed</div>
+
+    <!-- ID Type -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:8px;">ID TYPE <span style="color:var(--red)">*</span></label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="selectIDType('fayda')" id="idtype-fayda"
+          style="padding:10px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;">
+          🆔 Fayda
+        </button>
+        <button onclick="selectIDType('kebele')" id="idtype-kebele"
+          style="padding:10px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;">
+          🏛️ Kebele ID
+        </button>
+        <button onclick="selectIDType('local')" id="idtype-local"
+          style="padding:10px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;">
+          📋 Local ID
+        </button>
+      </div>
+    </div>
+
+    <!-- ID Number -->
+    <div style="margin-bottom:14px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:6px;">ID NUMBER <span style="color:var(--red)">*</span></label>
+      <input id="mid-id-number" type="text" placeholder="e.g. FY-12345678 or 0012345"
+        style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:11px 14px;font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+    </div>
+
+    <!-- Full Name on ID -->
+    <div style="margin-bottom:14px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:6px;">FULL NAME ON ID <span style="color:var(--red)">*</span></label>
+      <input id="mid-id-fullname" type="text" placeholder="As written on the physical ID"
+        style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:11px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+    </div>
+
+    <!-- DOB -->
+    <div style="margin-bottom:14px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:6px;">DATE OF BIRTH</label>
+      <input id="mid-id-dob" type="date"
+        style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:11px 14px;font-size:14px;font-family:'DM Mono',monospace;outline:none;transition:border-color 0.2s;color-scheme:dark;"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+    </div>
+
+    <!-- Notes -->
+    <div style="margin-bottom:20px;">
+      <label style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;display:block;margin-bottom:6px;">ADMIN NOTES (optional)</label>
+      <textarea id="mid-id-notes" placeholder="e.g. Checked in person at office, original seen"
+        style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:11px 14px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;resize:vertical;min-height:60px;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeManualID()" style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--muted);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Cancel</button>
+      <button id="mid-save-btn" onclick="saveManualID()" style="flex:2;background:var(--green);border:none;border-radius:10px;padding:11px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:0.5px;">✅ Save & Mark Verified</button>
+    </div>
+    <div id="mid-err" style="font-size:12px;color:var(--red);margin-top:10px;min-height:16px;font-family:'DM Mono',monospace;"></div>
+  </div>
+</div>
+
+<script>
+// ── RESET PIN ──
+let resetPinUid = null;
+
+window.openResetPin = function(uid, name, currentPin) {
+  resetPinUid = uid;
+  document.getElementById('reset-pin-name').textContent = name;
+  document.getElementById('reset-pin-current').textContent = currentPin || '(none)';
+  document.getElementById('reset-pin-input').value = '';
+  document.getElementById('reset-pin-err').textContent = '';
+  document.getElementById('reset-pin-save-btn').textContent = '✓ Save New PIN';
+  document.getElementById('reset-pin-save-btn').disabled = false;
+  document.getElementById('reset-pin-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('reset-pin-input').focus(), 100);
+};
+
+window.closeResetPin = function() {
+  document.getElementById('reset-pin-overlay').style.display = 'none';
+  resetPinUid = null;
+};
+
+window.generateRandomPin = function() {
+  const pin = String(Math.floor(1000 + Math.random() * 9000));
+  document.getElementById('reset-pin-input').value = pin;
+};
+
+document.getElementById('reset-pin-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeResetPin();
+});
+</script>
+
+<script>
+// ── MANUAL ID VERIFICATION ──
+let midWorkerId = null;
+let midSelectedType = null;
+
+window.openManualID = function(uid, name) {
+  midWorkerId = uid;
+  midSelectedType = null;
+  document.getElementById('mid-worker-name').textContent = name;
+  document.getElementById('mid-id-number').value = '';
+  document.getElementById('mid-id-fullname').value = '';
+  document.getElementById('mid-id-dob').value = '';
+  document.getElementById('mid-id-notes').value = '';
+  document.getElementById('mid-err').textContent = '';
+  document.getElementById('mid-save-btn').textContent = '✅ Save & Mark Verified';
+  document.getElementById('mid-save-btn').disabled = false;
+  ['fayda','kebele','local'].forEach(t => {
+    const btn = document.getElementById('idtype-'+t);
+    btn.style.borderColor = 'var(--border)';
+    btn.style.color = 'var(--muted)';
+    btn.style.background = 'var(--surface2)';
+  });
+
+  // Pre-fill with existing worker data if present
+  const worker = (window._allWorkersForAdmin||[]).find(w => w.id === uid);
+  if (worker) {
+    document.getElementById('mid-id-fullname').value = (worker.firstName||'')+' '+(worker.lastName||'');
+    if (worker.idVerification) {
+      const idv = worker.idVerification;
+      selectIDType(idv.idType||'');
+      document.getElementById('mid-id-number').value = idv.idNumber||'';
+      document.getElementById('mid-id-fullname').value = idv.idFullName||'';
+      document.getElementById('mid-id-dob').value = idv.idDob||'';
+      document.getElementById('mid-id-notes').value = idv.adminNotes||'';
+    }
+  }
+
+  document.getElementById('manual-id-overlay').style.display = 'flex';
+};
+
+window.selectIDType = function(type) {
+  midSelectedType = type;
+  ['fayda','kebele','local'].forEach(t => {
+    const btn = document.getElementById('idtype-'+t);
+    if (!btn) return;
+    if (t === type) {
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green)';
+      btn.style.background = 'var(--green-dim)';
+    } else {
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--muted)';
+      btn.style.background = 'var(--surface2)';
+    }
+  });
+};
+
+window.closeManualID = function() {
+  document.getElementById('manual-id-overlay').style.display = 'none';
+  midWorkerId = null;
+};
+
+document.getElementById('manual-id-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeManualID();
+});
 </script>
 </body>
 </html>
