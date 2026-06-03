@@ -77,36 +77,88 @@
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
 
-    <div class="row2">
-      <div class="form-group"><label><span class="en">First name</span><span class="am">ስም</span></label><input type="text" id="fname" placeholder="Abebe" /></div>
-      <div class="form-group"><label><span class="en">Last name</span><span class="am">የአባት ስም</span></label><input type="text" id="lname" placeholder="Kebede" /></div>
-    </div>
-    <div class="form-group"><label><span class="en">Phone number</span><span class="am">ስልክ ቁጥር</span></label><input type="tel" id="phone" placeholder="09__ ___ ___" /></div>
-    <div class="form-group"><label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label><input type="email" id="email" placeholder="abebe@email.com" /></div>
-    <div class="form-group">
-      <label><span class="en">Location (Sub-city)</span><span class="am">አካባቢ (ክፍለ ከተማ)</span></label>
-      <select id="location">
-        <option value=""><span class="en">Select your sub-city</span></option>
-        <option>Bole</option><option>Kirkos</option><option>Yeka</option>
-        <option>Arada</option><option>Lideta</option><option>Kolfe Keranio</option>
-        <option>Gulele</option><option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
-        <option>Lemi Kura</option><option>Addis Ketema</option>
-      </select>
-    </div>
-    <div class="form-group" id="skill-group" style="display:none;">
-      <label><span class="en">Your skills</span><span class="am">ችሎታዎች</span> <span style="font-weight:400;color:#aaa;font-size:11px;"><span class="en">(select all that apply)</span><span class="am">(ሁሉንም የሚመለከቱ ይምረጡ)</span></span></label>
-      <div id="skill-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;">
-        <label class="skill-check-label"><input type="checkbox" value="Cleaning" class="skill-cb"> <span class="en">🧹 Cleaning</span><span class="am">🧹 ማፅዳት</span></label>
-        <label class="skill-check-label"><input type="checkbox" value="Cooking" class="skill-cb"> <span class="en">🍳 Cooking</span><span class="am">🍳 ምግብ ማብሰል</span></label>
-        <label class="skill-check-label"><input type="checkbox" value="Nanny / Child care" class="skill-cb"> <span class="en">👶 Nanny / Child care</span><span class="am">👶 ልጅ ማሳደግ</span></label>
-        <label class="skill-check-label"><input type="checkbox" value="Laundry" class="skill-cb"> <span class="en">👕 Laundry</span><span class="am">👕 ልብስ ማጠብ</span></label>
-        <label class="skill-check-label"><input type="checkbox" value="Full-time helper" class="skill-cb"> <span class="en">🏠 Full-time helper</span><span class="am">🏠 ሙሉ ጊዜ ረዳት</span></label>
-        <label class="skill-check-label"><input type="checkbox" value="Gardening" class="skill-cb"> <span class="en">🌿 Gardening</span><span class="am">🌿 የአትክልት ስራ</span></label>
+    <!-- OWNER FORM -->
+    <div id="owner-form">
+      <div class="row2">
+        <div class="form-group"><label><span class="en">First name</span><span class="am">ስም</span></label><input type="text" id="fname" placeholder="Abebe" /></div>
+        <div class="form-group"><label><span class="en">Last name</span><span class="am">የአባት ስም</span></label><input type="text" id="lname" placeholder="Kebede" /></div>
       </div>
+      <div class="form-group"><label><span class="en">Phone number</span><span class="am">ስልክ ቁጥር</span></label><input type="tel" id="phone" placeholder="09__ ___ ___" /></div>
+      <div class="form-group"><label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label><input type="email" id="email" placeholder="abebe@email.com" /></div>
+      <div class="form-group">
+        <label><span class="en">Location (Sub-city)</span><span class="am">አካባቢ (ክፍለ ከተማ)</span></label>
+        <select id="location">
+          <option value=""><span class="en">Select your sub-city</span></option>
+          <option>Bole</option><option>Kirkos</option><option>Yeka</option>
+          <option>Arada</option><option>Lideta</option><option>Kolfe Keranio</option>
+          <option>Gulele</option><option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
+          <option>Lemi Kura</option><option>Addis Ketema</option>
+        </select>
+      </div>
+      <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="ጠንካራ የይለፍ ቃል ይፍጠሩ" /></div>
+      <button class="submit-btn" id="signup-btn" onclick="handleSignUp()"><span class="en">Create Account →</span><span class="am">መለያ ፍጠር →</span></button>
     </div>
-    <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="ጠንካራ የይለፍ ቃል ይፍጠሩ" /></div>
 
-    <button class="submit-btn" id="signup-btn" onclick="handleSignUp()"><span class="en">Create Account →</span><span class="am">መለያ ፍጠር →</span></button>
+    <!-- WORKER FORM — phone only, Kebet manages the rest -->
+    <div id="worker-form" style="display:none;">
+      <!-- Info banner -->
+      <div style="background:#e8f5ee;border:1.5px solid #b2dfc6;border-radius:14px;padding:18px 16px;margin-bottom:20px;">
+        <div style="font-size:15px;font-weight:700;color:#1a6b3c;margin-bottom:6px;">
+          <span class="en">📋 How it works for workers</span>
+          <span class="am">📋 ለሰራተኞች እንዴት ይሰራል</span>
+        </div>
+        <div style="font-size:13px;color:#2a7a4a;line-height:1.8;">
+          <span class="en">
+            1️⃣ Enter your name & phone number below<br>
+            2️⃣ Kebet team will call you within 24 hours<br>
+            3️⃣ We verify you and set up your profile<br>
+            4️⃣ We match you with the right owner — no app needed!
+          </span>
+          <span class="am">
+            1️⃣ ስምዎን እና ስልክ ቁጥርዎን ከዚህ በታች ያስገቡ<br>
+            2️⃣ የከቤት ቡድን በ24 ሰዓት ውስጥ ይደውላል<br>
+            3️⃣ እናረጋግጥዎታለን እና መገለጫዎን እናዘጋጃለን<br>
+            4️⃣ ከትክክለኛው ባለቤት ጋር እናገናኝዎታለን — መተግበሪያ አያስፈልግም!
+          </span>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="form-group"><label><span class="en">First name</span><span class="am">ስም</span></label><input type="text" id="w-fname" placeholder="Tigist" /></div>
+        <div class="form-group"><label><span class="en">Last name</span><span class="am">የአባት ስም</span></label><input type="text" id="w-lname" placeholder="Alemu" /></div>
+      </div>
+      <div class="form-group">
+        <label><span class="en">📞 Phone number</span><span class="am">📞 ስልክ ቁጥር</span></label>
+        <input type="tel" id="w-phone" placeholder="09__ ___ ___" style="font-size:18px;font-weight:600;letter-spacing:1px;" />
+        <div style="font-size:11px;color:#888;margin-top:5px;"><span class="en">Kebet will call you on this number</span><span class="am">ከቤት በዚህ ቁጥር ይደውልልዎታል</span></div>
+      </div>
+      <div class="form-group">
+        <label><span class="en">Location (Sub-city)</span><span class="am">አካባቢ (ክፍለ ከተማ)</span></label>
+        <select id="w-location">
+          <option value=""><span class="en">Select your sub-city</span></option>
+          <option>Bole</option><option>Kirkos</option><option>Yeka</option>
+          <option>Arada</option><option>Lideta</option><option>Kolfe Keranio</option>
+          <option>Gulele</option><option>Akaky Kaliti</option><option>Nifas Silk-Lafto</option>
+          <option>Lemi Kura</option><option>Addis Ketema</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span class="en">Your skills</span><span class="am">ችሎታዎች</span> <span style="font-weight:400;color:#aaa;font-size:11px;"><span class="en">(select all that apply)</span><span class="am">(ሁሉንም ይምረጡ)</span></span></label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 0;">
+          <label class="skill-check-label"><input type="checkbox" value="Cleaning" class="w-skill-cb"> <span class="en">🧹 Cleaning</span><span class="am">🧹 ማፅዳት</span></label>
+          <label class="skill-check-label"><input type="checkbox" value="Cooking" class="w-skill-cb"> <span class="en">🍳 Cooking</span><span class="am">🍳 ምግብ ማብሰል</span></label>
+          <label class="skill-check-label"><input type="checkbox" value="Nanny / Child care" class="w-skill-cb"> <span class="en">👶 Nanny</span><span class="am">👶 ልጅ ማሳደግ</span></label>
+          <label class="skill-check-label"><input type="checkbox" value="Laundry" class="w-skill-cb"> <span class="en">👕 Laundry</span><span class="am">👕 ልብስ ማጠብ</span></label>
+          <label class="skill-check-label"><input type="checkbox" value="Full-time helper" class="w-skill-cb"> <span class="en">🏠 Full-time</span><span class="am">🏠 ሙሉ ጊዜ</span></label>
+          <label class="skill-check-label"><input type="checkbox" value="Gardening" class="w-skill-cb"> <span class="en">🌿 Gardening</span><span class="am">🌿 አትክልት</span></label>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="worker-submit-btn" onclick="handleWorkerRegister()" style="background:#1a6b3c;">
+        <span class="en">📞 Register — Kebet Will Call You →</span>
+        <span class="am">📞 ይመዝገቡ — ከቤት ይደውልልዎታል →</span>
+      </button>
+    </div>
     <div class="signin-link"><span class="en">Already have an account?</span><span class="am">መለያ አለዎት?</span> <a href="signin.html"><span class="en">Sign in here</span><span class="am">እዚህ ይግቡ</span></a></div>
   </div>
 </div>
@@ -115,7 +167,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -136,9 +188,13 @@
     userType = type;
     document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('skill-group').style.display = type === 'worker' ? 'block' : 'none';
+    document.getElementById('owner-form').style.display = type === 'owner' ? 'block' : 'none';
+    document.getElementById('worker-form').style.display = type === 'worker' ? 'block' : 'none';
+    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'none';
   }
 
+  // ── OWNER: full account creation ──
   window.handleSignUp = async function() {
     const fname = document.getElementById('fname').value.trim();
     const lname = document.getElementById('lname').value.trim();
@@ -146,7 +202,6 @@
     const email = document.getElementById('email').value.trim();
     const location = document.getElementById('location').value;
     const password = document.getElementById('password').value;
-    const skills = Array.from(document.querySelectorAll('.skill-cb:checked')).map(cb => cb.value);
     const errorMsg = document.getElementById('error-msg');
     const successMsg = document.getElementById('success-msg');
     const btn = document.getElementById('signup-btn');
@@ -156,11 +211,6 @@
 
     if (!fname || !lname || !email || !password || !location || !phone) {
       errorMsg.textContent = '⚠️ Please fill in all fields.';
-      errorMsg.style.display = 'block';
-      return;
-    }
-    if (userType === 'worker' && skills.length === 0) {
-      errorMsg.textContent = '⚠️ Please select at least one skill.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -178,28 +228,13 @@
       const user = userCredential.user;
 
       await setDoc(doc(db, 'users', user.uid), {
-        firstName: fname,
-        lastName: lname,
-        phone: phone,
-        email: email,
-        location: location,
-        userType: userType,
-        skill: skills.length > 0 ? skills : null,
-        skills: skills,
-        rating: 0,
-        createdAt: new Date().toISOString()
+        firstName: fname, lastName: lname, phone, email, location,
+        userType: 'owner', rating: 0, createdAt: new Date().toISOString()
       });
 
       successMsg.textContent = '✅ Account created! Taking you to your dashboard...';
       successMsg.style.display = 'block';
-
-      setTimeout(() => {
-        if (userType === 'owner') {
-          window.location.href = 'dashboard-owner.html';
-        } else {
-          window.location.href = 'dashboard-worker.html';
-        }
-      }, 1500);
+      setTimeout(() => { window.location.href = 'dashboard-owner.html'; }, 1500);
 
     } catch (error) {
       btn.textContent = 'Create Account →';
@@ -211,6 +246,63 @@
       } else {
         errorMsg.textContent = '❌ Error: ' + error.message;
       }
+      errorMsg.style.display = 'block';
+    }
+  }
+
+  // ── WORKER: phone-only registration, Kebet manages the rest ──
+  window.handleWorkerRegister = async function() {
+    const fname = document.getElementById('w-fname').value.trim();
+    const lname = document.getElementById('w-lname').value.trim();
+    const phone = document.getElementById('w-phone').value.trim();
+    const location = document.getElementById('w-location').value;
+    const skills = Array.from(document.querySelectorAll('.w-skill-cb:checked')).map(cb => cb.value);
+    const errorMsg = document.getElementById('error-msg');
+    const successMsg = document.getElementById('success-msg');
+    const btn = document.getElementById('worker-submit-btn');
+
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+
+    if (!fname || !lname || !phone) {
+      errorMsg.textContent = '⚠️ Please enter your name and phone number.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    if (!phone.match(/^0[79]\d{8}$/)) {
+      errorMsg.textContent = '⚠️ Please enter a valid Ethiopian phone number (e.g. 0912345678).';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.querySelector('.en').textContent = 'Submitting...';
+
+    try {
+      // Save to worker_leads — Kebet admin reviews and calls them
+      await addDoc(collection(db, 'worker_leads'), {
+        firstName: fname, lastName: lname, phone, location: location || '',
+        skills, status: 'pending', // Kebet admin changes to 'contacted', 'verified', 'placed'
+        submittedAt: new Date().toISOString()
+      });
+
+      // Show success — no password or app needed
+      document.getElementById('worker-form').style.display = 'none';
+      successMsg.innerHTML = `
+        <div style="font-size:22px;margin-bottom:8px;">✅</div>
+        <strong style="font-size:15px;display:block;margin-bottom:6px;">
+          <span class="en">Thank you, ${fname}! We'll call you soon.</span>
+          <span class="am">አመሰግናለሁ, ${fname}! በቅርቡ እንደውልልዎታለን።</span>
+        </strong>
+        <span class="en" style="font-size:13px;">The Kebet team will call <strong>${phone}</strong> within 24 hours to verify you and set up your profile. No app or password needed!</span>
+        <span class="am" style="font-size:13px;">የከቤት ቡድን <strong>${phone}</strong> ላይ በ24 ሰዓት ውስጥ ይደውልልዎታል። ምንም መተግበሪያ ወይም የይለፍ ቃል አያስፈልግም!</span>
+      `;
+      successMsg.style.display = 'block';
+
+    } catch (error) {
+      btn.disabled = false;
+      btn.querySelector('.en').textContent = '📞 Register — Kebet Will Call You →';
+      errorMsg.textContent = '❌ Error: ' + error.message;
       errorMsg.style.display = 'block';
     }
   }

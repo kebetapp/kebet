@@ -182,8 +182,22 @@
     @media (max-width: 900px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
-      .convos-panel { width: 100%; }
+      /* Mobile: full-width panels, one visible at a time */
+      .chat-layout { position: relative; overflow: hidden; }
+      .convos-panel { width: 100%; position: absolute; top: 0; left: 0; height: 100%; z-index: 2; transition: transform 0.3s ease; }
+      .convos-panel.slide-out { transform: translateX(-100%); }
+      .chat-panel { width: 100%; position: absolute; top: 0; left: 0; height: 100%; z-index: 1; transition: transform 0.3s ease; transform: translateX(100%); }
+      .chat-panel.slide-in { transform: translateX(0); z-index: 3; }
+      /* Back button shown on mobile */
+      .mobile-back-btn { display: flex; }
+      /* Shrink pay button on mobile */
+      .pay-now-btn { padding: 7px 12px; font-size: 12px; }
+      /* Keyboard-safe input area */
+      .chat-input-area { padding: 10px 12px; }
+      .chat-messages { padding: 12px; }
     }
+    /* Back button hidden on desktop */
+    .mobile-back-btn { display: none; align-items: center; gap: 8px; background: none; border: none; color: #1a6b3c; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0; margin-right: 8px; }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
@@ -248,6 +262,7 @@
       </div>
       <div id="chat-window" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
         <div class="chat-header">
+          <button class="mobile-back-btn" onclick="mobileBackToList()">← Back</button>
           <div class="chat-header-av" id="chat-header-av">?</div>
           <div>
             <div class="chat-header-name" id="chat-header-name">—</div>
@@ -643,6 +658,11 @@
 
     document.getElementById('chat-empty').style.display = 'none';
     document.getElementById('chat-window').style.display = 'flex';
+    // Mobile: slide to chat panel
+    if (window.innerWidth <= 900) {
+      document.getElementById('convos-panel').classList.add('slide-out');
+      document.getElementById('chat-panel').classList.add('slide-in');
+    }
 
     if (messagesUnsubscribe) messagesUnsubscribe();
 
@@ -703,6 +723,11 @@
   }
 
   // ── Send message ──
+  window.mobileBackToList = function() {
+    document.getElementById('convos-panel').classList.remove('slide-out');
+    document.getElementById('chat-panel').classList.remove('slide-in');
+  };
+
   window.sendMessage = async function() {
     if (!activeConvoId || !activeOtherId) return;
     const input = document.getElementById('chat-input');
