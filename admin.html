@@ -1495,7 +1495,11 @@ window.promoteLeadToUser = async function(leadId) {
 
   // Show modal-style confirm
   const name = (lead.firstName || '') + ' ' + (lead.lastName || '');
-  if (!confirm(`Make ${name.trim()} live on the app?\n\nThis will create a worker profile that house owners can find and book. You can still edit the profile in the Workers panel.`)) return;
+  const phone = lead.phone || '';
+  // Default PIN = last 4 digits of phone, or 1234 if can't determine
+  const digits = phone.replace(/\D/g, '');
+  const defaultPin = digits.length >= 4 ? digits.slice(-4) : '1234';
+  if (!confirm(`Make ${name.trim()} live on the app?\n\nThis will create a worker profile that house owners can find and book.\n\n🔐 Default PIN: ${defaultPin}\n(Last 4 digits of their phone number. Share this with the worker — they can change it later from their profile.)\n\nYou can still edit the profile in the Workers panel.`)) return;
 
   try {
     // Build skills array
@@ -1520,6 +1524,7 @@ window.promoteLeadToUser = async function(leadId) {
       averageRating: 0,
       profileSource: 'lead',
       leadId: leadId,
+      pin: defaultPin,
       createdAt: lead.submittedAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       disabled: false,
@@ -1543,7 +1548,7 @@ window.promoteLeadToUser = async function(leadId) {
     document.getElementById('cnt-workers').textContent = allWorkers.length;
     document.getElementById('stat-workers').textContent = allWorkers.length;
 
-    showToast(`✅ ${name.trim()} is now live! Owners can find and book them.`, 'green');
+    showToast(`✅ ${name.trim()} is now live! Default PIN: ${defaultPin} (share with worker)`, 'green');
     filterLeads(currentLeadFilter);
   } catch(e) {
     showToast('Error: ' + e.message, 'red');

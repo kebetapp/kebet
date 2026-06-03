@@ -410,8 +410,10 @@
   window.declineJob = function(bookingId) { openDeclineModal(bookingId); }
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href = 'signin.html'; return; }
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const workerSessionId = sessionStorage.getItem('kebet_worker_id');
+    if (!user && !workerSessionId) { window.location.href = 'signin.html'; return; }
+    const userId = user ? user.uid : workerSessionId;
+    const userDoc = await getDoc(doc(db, 'users', userId));
     if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
     const data = userDoc.data();
     if (data.userType !== 'worker') { window.location.href = 'dashboard-owner.html'; return; }
@@ -458,9 +460,9 @@
       banner.style.cssText = 'display:flex;background:#f5f5f0;border:1px solid #ddd;border-radius:14px;padding:16px 20px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;';
       banner.innerHTML = `<div><div style="font-size:14px;font-weight:700;color:#555;">🪪 Get ID Verified</div><div style="font-size:12px;color:#888;margin-top:2px;">Verified workers get more bookings. Submit your ID to get a verified badge.</div></div><button onclick="window.location.href='edit-profile.html'" style="background:#1a6b3c;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Verify Now →</button>`;
     }
-    const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false)));
+    const notifSnap = await getDocs(query(collection(db, 'notifications'), where('userId', '==', userId), where('read', '==', false)));
     if (notifSnap.size > 0) { document.getElementById('notif-badge').textContent = notifSnap.size; document.getElementById('notif-badge').style.display = 'inline'; }
-    const q = query(collection(db, 'bookings'), where('workerId', '==', user.uid));
+    const q = query(collection(db, 'bookings'), where('workerId', '==', userId));
     const snap = await getDocs(q);
     const bookings = [];
     snap.forEach(d => bookings.push(d));
@@ -471,7 +473,10 @@
   });
 
   document.getElementById('signout-btn').addEventListener('click', async () => {
-    await signOut(auth);
+    sessionStorage.removeItem('kebet_worker_id');
+    sessionStorage.removeItem('kebet_worker_phone');
+    sessionStorage.removeItem('kebet_worker_name');
+    if (auth.currentUser) await signOut(auth);
     window.location.href = 'signin.html';
   });
 </script>

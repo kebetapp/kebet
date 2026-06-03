@@ -214,8 +214,10 @@
   }
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href = 'signin.html'; return; }
-    const snap = await getDoc(doc(db, 'users', user.uid));
+    const workerSessionId = sessionStorage.getItem('kebet_worker_id');
+    if (!user && !workerSessionId) { window.location.href = 'signin.html'; return; }
+    const userId = user ? user.uid : workerSessionId;
+    const snap = await getDoc(doc(db, 'users', userId));
     if (!snap.exists()) { window.location.href = 'signin.html'; return; }
     const data = snap.data();
     const fullName = (data.firstName || '') + ' ' + (data.lastName || '');
@@ -227,7 +229,10 @@
   });
 
   document.getElementById('signout-btn').addEventListener('click', async () => {
-    await signOut(auth);
+    sessionStorage.removeItem('kebet_worker_id');
+    sessionStorage.removeItem('kebet_worker_phone');
+    sessionStorage.removeItem('kebet_worker_name');
+    if (auth.currentUser) await signOut(auth);
     window.location.href = 'signin.html';
   });
 </script>

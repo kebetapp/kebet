@@ -265,9 +265,10 @@
   const db = getFirestore(app);
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href = 'signin.html'; return; }
-
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const workerSessionId = sessionStorage.getItem('kebet_worker_id');
+    if (!user && !workerSessionId) { window.location.href = 'signin.html'; return; }
+    const userId = user ? user.uid : workerSessionId;
+    const userDoc = await getDoc(doc(db, 'users', userId));
     if (!userDoc.exists()) { window.location.href = 'signin.html'; return; }
 
     const data = userDoc.data();
@@ -306,7 +307,7 @@
     try {
       const paymentsQuery = query(
         collection(db, 'payments'),
-        where('workerId', '==', user.uid)
+        where('workerId', '==', userId)
       );
       const paymentsSnap = await getDocs(paymentsQuery);
 
@@ -366,7 +367,10 @@
   });
 
   document.getElementById('signout-btn').addEventListener('click', async () => {
-    await signOut(auth);
+    sessionStorage.removeItem('kebet_worker_id');
+    sessionStorage.removeItem('kebet_worker_phone');
+    sessionStorage.removeItem('kebet_worker_name');
+    if (auth.currentUser) await signOut(auth);
     window.location.href = 'signin.html';
   });
 </script>

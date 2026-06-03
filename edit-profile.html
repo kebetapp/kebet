@@ -157,7 +157,8 @@
       <button class="save-btn" id="save-btn" onclick="saveProfile()">💾 Save Changes</button>
     </div>
 
-    <div class="form-card">
+    <!-- Change Password (owners) -->
+    <div class="form-card" id="change-password-card">
       <div class="section-title ks-reveal">🔒 Change Password</div>
       <div class="form-group">
         <label class="form-label">New password</label>
@@ -170,6 +171,29 @@
       <div class="error-msg" id="pw-error-msg"></div>
       <div class="success-msg" id="pw-success-msg">✅ Password updated!</div>
       <button class="save-btn" id="pw-btn" onclick="changePassword()">🔒 Update Password</button>
+    </div>
+
+    <!-- Change PIN (workers) -->
+    <div class="form-card" id="change-pin-card" style="display:none;">
+      <div class="section-title ks-reveal">🔐 Change PIN</div>
+      <p style="font-size:13px;color:#888;margin-bottom:18px;line-height:1.7;">
+        Your 4-digit PIN is used to sign in. Your current PIN was set by Kebet admin (default: last 4 digits of your phone). Choose a new one below.
+      </p>
+      <div class="form-group">
+        <label class="form-label">Current PIN</label>
+        <input type="tel" id="current-pin" class="form-input" maxlength="4" placeholder="Enter current 4-digit PIN" style="letter-spacing:6px;font-size:18px;font-weight:700;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">New PIN</label>
+        <input type="tel" id="new-pin" class="form-input" maxlength="4" placeholder="Choose new 4-digit PIN" style="letter-spacing:6px;font-size:18px;font-weight:700;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm New PIN</label>
+        <input type="tel" id="confirm-pin" class="form-input" maxlength="4" placeholder="Repeat new PIN" style="letter-spacing:6px;font-size:18px;font-weight:700;" />
+      </div>
+      <div class="error-msg" id="pin-error-msg"></div>
+      <div class="success-msg" id="pin-success-msg">✅ PIN updated!</div>
+      <button class="save-btn" id="pin-btn" onclick="changePin()">🔐 Update PIN</button>
     </div>
 
     <!-- ID VERIFICATION — workers only -->
@@ -319,6 +343,9 @@
       document.getElementById('skill-group').style.display = 'block';
       document.getElementById('id-verify-card').style.display = 'block';
       document.getElementById('sidebar-role').textContent = 'House Worker';
+      // Workers use PIN, not email password
+      document.getElementById('change-password-card').style.display = 'none';
+      document.getElementById('change-pin-card').style.display = 'block';
     }
   }
 
@@ -397,10 +424,59 @@
     btn.disabled = false;
   }
 
+  window.changePin = async function() {
+    const currentPin = document.getElementById('current-pin').value.trim();
+    const newPin = document.getElementById('new-pin').value.trim();
+    const confirmPin = document.getElementById('confirm-pin').value.trim();
+    const errEl = document.getElementById('pin-error-msg');
+    const sucEl = document.getElementById('pin-success-msg');
+    const btn = document.getElementById('pin-btn');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!currentPin || currentPin.length < 4) { errEl.textContent = '⚠️ Please enter your current 4-digit PIN.'; errEl.style.display = 'block'; return; }
+    if (!newPin || newPin.length < 4) { errEl.textContent = '⚠️ New PIN must be 4 digits.'; errEl.style.display = 'block'; return; }
+    if (!/^\d{4}$/.test(newPin)) { errEl.textContent = '⚠️ PIN must contain only digits.'; errEl.style.display = 'block'; return; }
+    if (newPin !== confirmPin) { errEl.textContent = '⚠️ New PINs do not match.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Updating...';
+    btn.disabled = true;
+
+    try {
+      // Fetch current PIN from Firestore and verify
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      const storedPin = snap.data()?.pin || '';
+      if (currentPin !== storedPin) {
+        errEl.textContent = '❌ Current PIN is incorrect.';
+        errEl.style.display = 'block';
+        btn.textContent = '🔐 Update PIN';
+        btn.disabled = false;
+        return;
+      }
+      // Update PIN in Firestore
+      await updateDoc(doc(db, 'users', currentUser.uid), { pin: newPin });
+      sucEl.style.display = 'block';
+      document.getElementById('current-pin').value = '';
+      document.getElementById('new-pin').value = '';
+      document.getElementById('confirm-pin').value = '';
+      setTimeout(() => sucEl.style.display = 'none', 3000);
+    } catch(err) {
+      errEl.textContent = '❌ Error: ' + err.message;
+      errEl.style.display = 'block';
+    }
+    btn.textContent = '🔐 Update PIN';
+    btn.disabled = false;
+  };
+
   onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href = 'signin.html'; return; }
-    currentUser = user;
-    const snap = await getDoc(doc(db, 'users', user.uid));
+    // Workers sign in via sessionStorage PIN flow (no Firebase Auth user)
+    const workerSessionId = sessionStorage.getItem('kebet_worker_id');
+    if (!user && !workerSessionId) { window.location.href = 'signin.html'; return; }
+
+    let userId = user ? user.uid : workerSessionId;
+    currentUser = user || { uid: workerSessionId };
+
+    const snap = await getDoc(doc(db, 'users', userId));
     if (!snap.exists()) { window.location.href = 'signin.html'; return; }
     const data = snap.data();
     const fullName = (data.firstName || '') + ' ' + (data.lastName || '');
