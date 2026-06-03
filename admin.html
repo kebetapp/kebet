@@ -318,6 +318,10 @@
     <span class="sb-item-icon">🧹</span> Workers
     <span class="sb-count" id="cnt-workers">—</span>
   </div>
+  <div class="sb-item" id="nav-leads" onclick="showPanel('leads')">
+    <span class="sb-item-icon">📞</span> Worker Leads
+    <span class="sb-count" id="cnt-leads" style="background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">—</span>
+  </div>
   <div class="sb-item" id="nav-bookings" onclick="showPanel('bookings')">
     <span class="sb-item-icon">📋</span> Bookings
     <span class="sb-count" id="cnt-bookings">—</span>
@@ -329,6 +333,10 @@
   <div class="sb-item" id="nav-messages" onclick="showPanel('messages')">
     <span class="sb-item-icon">💬</span> Messages
     <span class="sb-count" id="cnt-messages">—</span>
+  </div>
+  <div class="sb-item" id="nav-chatas" onclick="showPanel('chatas')">
+    <span class="sb-item-icon">🎭</span> Chat as Worker
+    <span class="sb-count" id="cnt-chatas" style="background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">—</span>
   </div>
   <div class="sb-section">PAYMENTS</div>
   <div class="sb-item" id="nav-payments" onclick="showPanel('payments')">
@@ -516,6 +524,70 @@
     </div>
   </div>
 
+  <!-- ── WORKER LEADS PANEL ── -->
+  <div class="panel" id="panel-leads">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
+      <div class="pay-stat"><div class="pay-stat-label">PENDING CALL</div><div class="pay-stat-val yellow" id="leads-stat-pending">—</div></div>
+      <div class="pay-stat"><div class="pay-stat-label">CONTACTED</div><div class="pay-stat-val blue" id="leads-stat-contacted">—</div></div>
+      <div class="pay-stat"><div class="pay-stat-label">VERIFIED & ACTIVE</div><div class="pay-stat-val green" id="leads-stat-verified">—</div></div>
+      <div class="pay-stat"><div class="pay-stat-label">PLACED WITH OWNER</div><div class="pay-stat-val" id="leads-stat-placed" style="color:var(--text)">—</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="action-btn btn-success" id="lf-all"      onclick="filterLeads('all')"      style="padding:7px 14px;">All</button>
+      <button class="action-btn"             id="lf-pending"  onclick="filterLeads('pending')"  style="padding:7px 14px;background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">⏳ Pending</button>
+      <button class="action-btn"             id="lf-contacted"onclick="filterLeads('contacted')" style="padding:7px 14px;background:#1a3a5c;color:#4e9eff;border-color:#4e9eff">📞 Contacted</button>
+      <button class="action-btn btn-success" id="lf-verified" onclick="filterLeads('verified')"  style="padding:7px 14px;">✅ Verified</button>
+      <button class="action-btn"             id="lf-placed"   onclick="filterLeads('placed')"    style="padding:7px 14px;">🏠 Placed</button>
+    </div>
+    <div id="leads-queue"></div>
+  </div>
+
+  <!-- ── CHAT AS WORKER PANEL ── -->
+  <div class="panel" id="panel-chatas">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;">
+      <div style="font-size:28px;">🎭</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Chat as Worker — Kebet speaks on the worker's behalf</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Select a worker, then select an owner conversation. You type as the worker — the owner sees a message from the worker's name. Workers don't need the app.</div>
+      </div>
+    </div>
+
+    <!-- Step 1: pick worker -->
+    <div id="chatas-step1">
+      <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:1px;">STEP 1 — SELECT WORKER TO SPEAK AS</div>
+      <div id="chatas-worker-list" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;"></div>
+    </div>
+
+    <!-- Step 2: pick owner conversation -->
+    <div id="chatas-step2" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <button onclick="chatasReset()" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;">← Back</button>
+        <div style="font-size:13px;font-weight:700;color:var(--text);">Speaking as: <span id="chatas-active-worker" style="color:var(--green);">—</span></div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:1px;">STEP 2 — SELECT OWNER CONVERSATION</div>
+      <div id="chatas-convo-list" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;"></div>
+    </div>
+
+    <!-- Step 3: chat window -->
+    <div id="chatas-step3" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <button onclick="chatasBackToConvos()" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;">← Back</button>
+        <div style="font-size:13px;font-weight:700;color:var(--text);">
+          🎭 <span id="chatas-label-worker" style="color:var(--green)">Worker</span>
+          <span style="color:var(--muted)"> ↔ </span>
+          <span id="chatas-label-owner" style="color:var(--text)">Owner</span>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;" id="chatas-chat-box">
+        <div id="chatas-messages" style="padding:16px;display:flex;flex-direction:column;gap:10px;min-height:300px;max-height:420px;overflow-y:auto;background:var(--surface);"></div>
+        <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end;">
+          <textarea id="chatas-input" placeholder="Type as worker..." style="flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 14px;font-size:14px;font-family:inherit;resize:none;min-height:44px;max-height:120px;outline:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatasSend();}"></textarea>
+          <button onclick="chatasSend()" style="background:var(--green);border:none;color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;">Send 📤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── PAYMENTS PANEL ── -->
   <div class="panel" id="panel-payments">
 
@@ -596,7 +668,8 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, getDocs, getDoc, doc,
-  updateDoc, deleteDoc, query, orderBy, limit, where, collectionGroup
+  addDoc, updateDoc, deleteDoc, query, orderBy, limit, where, collectionGroup,
+  onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1118,15 +1191,23 @@ window.setIDStatus = async function(uid, status) {
 function renderBookings(list) {
   document.getElementById('bookings-body').innerHTML = list.length === 0
     ? `<tr><td colspan="6" class="table-empty">No bookings found</td></tr>`
-    : list.map(b => `
+    : list.map(b => {
+        const isPending = !b.status || b.status === 'pending';
+        const acceptBtn = isPending
+          ? `<button class="action-btn btn-success" onclick="acceptBookingForWorker('${b.id}','${(b.workerName||'').replace(/'/g,"\\'")}','${b.workerId||''}','${b.ownerId||''}','${(b.ownerName||'').replace(/'/g,"\\'")}')">✅ Accept</button>`
+          : '';
+        return `
       <tr>
         <td class="user-name">${b.workerName||'—'}</td>
         <td class="user-name">${b.ownerName||'—'}</td>
         <td class="td-mono">${b.monthlySalary ? b.monthlySalary.toLocaleString() + ' ETB/mo' : (b.salary ? b.salary.toLocaleString() + ' ETB/mo' : '—')}</td>
         <td>${statusBadge(b.status)}</td>
         <td class="td-mono">${fmtDate(b.createdAt)}</td>
-        <td><button class="action-btn btn-danger" onclick="deleteBooking('${b.id}')">Delete</button></td>
-      </tr>`).join('');
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${acceptBtn}
+          <button class="action-btn btn-danger" onclick="deleteBooking('${b.id}')">Delete</button>
+        </td>
+      </tr>`}).join('');
 }
 
 // ── RENDER REVIEWS ──
@@ -1207,14 +1288,16 @@ window.showPanel = function(name) {
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
-  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', bookings:'Bookings', reviews:'Reviews', messages:'Conversations', payments:'Verify Fee Payments', idverify:'ID Verification' };
-  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations', payments:'One-click Telebirr fee verification', idverify:'Review and approve worker ID submissions' };
+  const titles = { overview:'Overview', owners:'House Owners', workers:'Workers', leads:'Worker Leads', bookings:'Bookings', reviews:'Reviews', messages:'Conversations', chatas:'Chat as Worker', payments:'Verify Fee Payments', idverify:'ID Verification' };
+  const subs   = { overview:'Platform at a glance', owners:'Manage all registered owners', workers:'Manage all registered workers', leads:'Phone registrations — call, verify, and place workers', bookings:'All booking records', reviews:'All submitted reviews', messages:'All conversations', chatas:'Speak on behalf of workers to owners', payments:'One-click Telebirr fee verification', idverify:'Review and approve worker ID submissions' };
   document.getElementById('panel-title').textContent = titles[name]||name;
   document.getElementById('panel-sub').textContent   = subs[name]||'';
   const showTabs = ['owners','workers'].includes(name);
   document.getElementById('user-tabs').style.display = showTabs ? 'flex' : 'none';
   if (showTabs) filterUsers('all');
   if (name === 'idverify') loadIDVerifications();
+  if (name === 'leads')   loadLeads();
+  if (name === 'chatas')  loadChatas();
 };
 
 // ── ACTIONS ──
@@ -1298,6 +1381,359 @@ function statusBadge(s) {
   const map = { pending:'badge-yellow', accepted:'badge-green', active:'badge-blue', completed:'badge-grey', rejected:'badge-red', cancelled:'badge-red' };
   return `<span class="badge ${map[s]||'badge-grey'}">${s||'—'}</span>`;
 }
+
+// ════════════════════════════════════════════
+//  WORKER LEADS — phone registrations
+// ════════════════════════════════════════════
+let allLeads = [];
+let currentLeadFilter = 'all';
+
+async function loadLeads() {
+  const el = document.getElementById('leads-queue');
+  el.innerHTML = '<div style="color:var(--muted);padding:20px;">⏳ Loading leads...</div>';
+  try {
+    const snap = await getDocs(collection(db, 'worker_leads'));
+    allLeads = [];
+    snap.forEach(d => allLeads.push({ id: d.id, ...d.data() }));
+    allLeads.sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+
+    // Update stats
+    document.getElementById('leads-stat-pending').textContent   = allLeads.filter(l=>l.status==='pending').length;
+    document.getElementById('leads-stat-contacted').textContent = allLeads.filter(l=>l.status==='contacted').length;
+    document.getElementById('leads-stat-verified').textContent  = allLeads.filter(l=>l.status==='verified').length;
+    document.getElementById('leads-stat-placed').textContent    = allLeads.filter(l=>l.status==='placed').length;
+
+    const pendingCount = allLeads.filter(l=>l.status==='pending').length;
+    document.getElementById('cnt-leads').textContent = pendingCount || '✓';
+
+    filterLeads(currentLeadFilter);
+  } catch(e) {
+    el.innerHTML = `<div style="color:var(--red);padding:20px;">Error: ${e.message}</div>`;
+  }
+}
+
+window.filterLeads = function(filter) {
+  currentLeadFilter = filter;
+  ['all','pending','contacted','verified','placed'].forEach(f => {
+    const btn = document.getElementById('lf-'+f);
+    if (btn) btn.style.opacity = f === filter ? '1' : '0.5';
+  });
+  const list = filter === 'all' ? allLeads : allLeads.filter(l => l.status === filter);
+  renderLeads(list);
+};
+
+function renderLeads(list) {
+  const el = document.getElementById('leads-queue');
+  if (list.length === 0) {
+    el.innerHTML = '<div class="payments-empty">No leads in this category</div>';
+    return;
+  }
+  const statusColors = { pending:'var(--yellow)', contacted:'#4e9eff', verified:'var(--green)', placed:'var(--text)' };
+  el.innerHTML = list.map(l => {
+    const skills = (l.skills||[]).join(', ') || '—';
+    const date = l.submittedAt ? new Date(l.submittedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+    const color = statusColors[l.status] || 'var(--muted)';
+    return `
+    <div class="fee-card" style="--bar:${color};" id="lead-card-${l.id}">
+      <style>.fee-card{--bar:var(--yellow)}.fee-card::before{background:var(--bar)!important}</style>
+      <div class="fee-card-left">
+        <div class="fee-owner-name">🧹 ${l.firstName||''} ${l.lastName||''}</div>
+        <div class="fee-meta">
+          <span class="fee-meta-item">📞 <strong style="font-size:15px;color:var(--text)">${l.phone||'—'}</strong></span>
+          <span class="fee-meta-item">📍 ${l.location||'—'}</span>
+          <span class="fee-meta-item">🛠 ${skills}</span>
+          <span class="fee-meta-item">📅 ${date}</span>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="tel:${l.phone}" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none;">📞 Call Now</a>
+          <a href="https://wa.me/251${(l.phone||'').replace(/^0/,'')}?text=${encodeURIComponent(`Hello ${l.firstName}, this is Kebet ከቤት! We received your registration. We will help match you with a house owner. Are you available?`)}" target="_blank" style="background:#1a3a1a;color:#25d366;border:1px solid #25d366;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none;">💬 WhatsApp</a>
+        </div>
+      </div>
+      <div class="fee-actions" style="gap:8px;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-align:center;">STATUS</div>
+        ${['pending','contacted','verified','placed'].map(s =>
+          `<button class="action-btn ${l.status===s?'btn-success':''}" onclick="setLeadStatus('${l.id}','${s}')" style="width:100%;margin-bottom:4px;${l.status===s?'':'opacity:0.5'}">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`
+        ).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.setLeadStatus = async function(leadId, status) {
+  try {
+    await updateDoc(doc(db, 'worker_leads', leadId), { status, updatedAt: new Date().toISOString() });
+    const idx = allLeads.findIndex(l => l.id === leadId);
+    if (idx !== -1) allLeads[idx].status = status;
+    showToast(`✓ Lead marked as ${status}`, 'green');
+    // Update stats
+    document.getElementById('leads-stat-pending').textContent   = allLeads.filter(l=>l.status==='pending').length;
+    document.getElementById('leads-stat-contacted').textContent = allLeads.filter(l=>l.status==='contacted').length;
+    document.getElementById('leads-stat-verified').textContent  = allLeads.filter(l=>l.status==='verified').length;
+    document.getElementById('leads-stat-placed').textContent    = allLeads.filter(l=>l.status==='placed').length;
+    filterLeads(currentLeadFilter);
+  } catch(e) { showToast('Error: '+e.message, 'red'); }
+};
+
+// ════════════════════════════════════════════
+//  ACCEPT BOOKING FOR WORKER
+// ════════════════════════════════════════════
+window.acceptBookingForWorker = async function(bookingId, workerName, workerId, ownerId, ownerName) {
+  openModal(
+    `Accept booking for ${workerName}?`,
+    `This will accept the booking on ${workerName}'s behalf. The owner (${ownerName}) will see the booking as accepted. A conversation will be opened so you can chat with the owner as ${workerName}.`,
+    async () => {
+      try {
+        // 1. Update booking status
+        await updateDoc(doc(db, 'bookings', bookingId), {
+          status: 'accepted',
+          acceptedAt: new Date().toISOString(),
+          acceptedByKebet: true
+        });
+
+        // 2. Create or find conversation between worker and owner
+        let convoId = null;
+        const participants = [workerId, ownerId].filter(Boolean).sort();
+
+        if (workerId && ownerId) {
+          // Check if convo already exists
+          const convosSnap = await getDocs(query(
+            collection(db, 'conversations'),
+            where('participants', 'array-contains', ownerId)
+          ));
+          let existing = null;
+          convosSnap.forEach(d => {
+            const p = d.data().participants || [];
+            if (workerId && p.includes(workerId) && p.includes(ownerId)) existing = d.id;
+          });
+
+          if (existing) {
+            convoId = existing;
+          } else {
+            // Create new conversation
+            const convoRef = await addDoc(collection(db, 'conversations'), {
+              participants,
+              participantNames: { [workerId]: workerName, [ownerId]: ownerName },
+              participantTypes: { [workerId]: 'worker', [ownerId]: 'owner' },
+              createdAt: new Date().toISOString(),
+              lastMessage: 'Booking accepted',
+              lastMessageAt: new Date().toISOString(),
+              bookingId
+            });
+            convoId = convoRef.id;
+
+            // Auto-send a first message as worker
+            await addDoc(collection(db, 'conversations', convoId, 'messages'), {
+              text: `Hello! I'm ${workerName}. I've accepted your booking request. I'm ready to start work. Please feel free to message me here.`,
+              senderId: workerId || 'kebet-admin',
+              senderName: workerName,
+              createdAt: serverTimestamp(),
+              sentByKebet: true
+            });
+          }
+        }
+
+        // 3. Notify owner
+        if (ownerId) {
+          await addDoc(collection(db, 'notifications'), {
+            userId: ownerId,
+            type: 'accepted',
+            title: `✅ ${workerName} accepted your booking!`,
+            body: `Your booking request has been accepted. You can now chat with ${workerName}.`,
+            read: false,
+            createdAt: serverTimestamp()
+          });
+        }
+
+        // Update local state
+        const idx = allBookings.findIndex(b => b.id === bookingId);
+        if (idx !== -1) allBookings[idx].status = 'accepted';
+        renderBookings(allBookings);
+
+        showToast(`✅ Booking accepted for ${workerName}! Conversation created.`, 'green');
+      } catch(e) {
+        showToast('Error: '+e.message, 'red');
+        console.error(e);
+      }
+    },
+    'Accept Booking'
+  );
+};
+
+// ════════════════════════════════════════════
+//  CHAT AS WORKER
+// ════════════════════════════════════════════
+let chatasWorker = null;   // { id, name, firstName, lastName }
+let chatasConvoId = null;
+let chatasOwnerId = null;
+let chatasOwnerName = null;
+let chatasUnsubscribe = null;
+
+async function loadChatas() {
+  chatasReset();
+  // Load verified workers (from users collection) + leads with status=verified/placed
+  const workerList = document.getElementById('chatas-worker-list');
+  workerList.innerHTML = '<div style="color:var(--muted);font-size:13px;">⏳ Loading workers...</div>';
+
+  try {
+    const snap = await getDocs(query(collection(db,'users'), where('userType','==','worker')));
+    const workers = [];
+    snap.forEach(d => workers.push({ id: d.id, ...d.data() }));
+
+    if (workers.length === 0) {
+      workerList.innerHTML = '<div style="color:var(--muted);font-size:13px;">No workers in the system yet.</div>';
+      return;
+    }
+
+    workerList.innerHTML = workers.map(w => `
+      <div onclick="chatasPickWorker('${w.id}','${(w.firstName||'').replace(/'/g,"\\'")} ${(w.lastName||'').replace(/'/g,"\\'")}','${(w.firstName||'').replace(/'/g,"\\'")}','${(w.lastName||'').replace(/'/g,"\\'")}' )"
+        style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;transition:all 0.2s;min-width:160px;"
+        onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:28px;margin-bottom:6px;">🧹</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);">${w.firstName||''} ${w.lastName||''}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${(w.skills||[w.skill]||[]).flat().filter(Boolean).slice(0,2).join(', ')||'Worker'}</div>
+      </div>
+    `).join('');
+  } catch(e) {
+    workerList.innerHTML = `<div style="color:var(--red);">Error: ${e.message}</div>`;
+  }
+}
+
+window.chatasPickWorker = async function(wId, wFullName, wFirst, wLast) {
+  chatasWorker = { id: wId, name: wFullName.trim(), firstName: wFirst, lastName: wLast };
+  document.getElementById('chatas-active-worker').textContent = chatasWorker.name;
+  document.getElementById('chatas-step1').style.display = 'none';
+  document.getElementById('chatas-step2').style.display = 'block';
+
+  const convoList = document.getElementById('chatas-convo-list');
+  convoList.innerHTML = '<div style="color:var(--muted);font-size:13px;">⏳ Loading conversations...</div>';
+  document.getElementById('cnt-chatas').textContent = '...';
+
+  try {
+    const snap = await getDocs(query(collection(db,'conversations'), where('participants','array-contains', wId)));
+    const convos = [];
+    snap.forEach(d => convos.push({ id: d.id, ...d.data() }));
+
+    if (convos.length === 0) {
+      convoList.innerHTML = '<div style="color:var(--muted);font-size:13px;">No conversations yet for this worker. Accept a booking first to create one.</div>';
+      return;
+    }
+
+    document.getElementById('cnt-chatas').textContent = convos.length;
+
+    convoList.innerHTML = convos.map(c => {
+      const names = c.participantNames || {};
+      const types = c.participantTypes || {};
+      const ownerEntry = Object.entries(types).find(([uid, t]) => t === 'owner');
+      const ownerUid = ownerEntry ? ownerEntry[0] : '';
+      const ownerName = ownerUid ? (names[ownerUid] || 'Owner') : 'Unknown Owner';
+      const lastMsg = c.lastMessage || 'No messages yet';
+      return `
+        <div onclick="chatasPickConvo('${c.id}','${ownerUid}','${ownerName.replace(/'/g,"\\'")}' )"
+          style="background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;transition:all 0.2s;min-width:200px;max-width:280px;"
+          onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:22px;margin-bottom:6px;">🏠</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);">${ownerName}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${lastMsg.slice(0,50)}</div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    convoList.innerHTML = `<div style="color:var(--red);">Error: ${e.message}</div>`;
+  }
+};
+
+window.chatasPickConvo = async function(convoId, ownerId, ownerName) {
+  chatasConvoId  = convoId;
+  chatasOwnerId  = ownerId;
+  chatasOwnerName = ownerName;
+
+  document.getElementById('chatas-step2').style.display = 'none';
+  document.getElementById('chatas-step3').style.display = 'block';
+  document.getElementById('chatas-label-worker').textContent = chatasWorker.name;
+  document.getElementById('chatas-label-owner').textContent  = ownerName;
+
+  // Listen to messages in real time
+  if (chatasUnsubscribe) chatasUnsubscribe();
+  const msgsEl = document.getElementById('chatas-messages');
+  msgsEl.innerHTML = '<div style="color:var(--muted);font-size:13px;">⏳ Loading messages...</div>';
+
+  chatasUnsubscribe = onSnapshot(collection(db, 'conversations', convoId, 'messages'), snap => {
+    const docs = snap.docs.slice().sort((a,b) => {
+      const ta = a.data().createdAt, tb = b.data().createdAt;
+      const da = ta ? (ta.toDate ? ta.toDate() : new Date(ta)) : new Date(0);
+      const db2 = tb ? (tb.toDate ? tb.toDate() : new Date(tb)) : new Date(0);
+      return da - db2;
+    });
+    msgsEl.innerHTML = docs.map(d => {
+      const m = d.data();
+      const isMine = m.senderId === chatasWorker.id || m.sentByKebet;
+      const time = m.createdAt ? (m.createdAt.toDate ? m.createdAt.toDate() : new Date(m.createdAt)).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '';
+      const label = isMine
+        ? `<span style="font-size:10px;color:var(--green);">${chatasWorker.name} (you/Kebet)</span>`
+        : `<span style="font-size:10px;color:var(--muted);">${ownerName}</span>`;
+      return `
+        <div style="display:flex;flex-direction:column;align-items:${isMine?'flex-end':'flex-start'};gap:2px;">
+          ${label}
+          <div style="max-width:70%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;
+            background:${isMine?'var(--green)':'var(--surface2)'};
+            color:${isMine?'#fff':'var(--text)'};
+            border-bottom-${isMine?'right':'left'}-radius:4px;">
+            ${m.text||''}
+          </div>
+          <div style="font-size:10px;color:var(--muted);">${time}</div>
+        </div>`;
+    }).join('');
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  });
+};
+
+window.chatasSend = async function() {
+  const input = document.getElementById('chatas-input');
+  const text = input.value.trim();
+  if (!text || !chatasConvoId || !chatasWorker) return;
+  input.value = '';
+
+  try {
+    await addDoc(collection(db, 'conversations', chatasConvoId, 'messages'), {
+      text,
+      senderId: chatasWorker.id,
+      senderName: chatasWorker.name,
+      sentByKebet: true,
+      createdAt: serverTimestamp()
+    });
+    await updateDoc(doc(db, 'conversations', chatasConvoId), {
+      lastMessage: text.slice(0,60),
+      lastMessageAt: new Date().toISOString()
+    });
+    // Notify owner
+    if (chatasOwnerId) {
+      await addDoc(collection(db, 'notifications'), {
+        userId: chatasOwnerId, type: 'message',
+        title: `💬 New message from ${chatasWorker.name}`,
+        body: text.slice(0,80),
+        senderId: chatasWorker.id,
+        senderName: chatasWorker.name,
+        convoId: chatasConvoId,
+        link: `messages.html?with=${chatasWorker.id}`,
+        read: false, createdAt: serverTimestamp()
+      });
+    }
+  } catch(e) { showToast('Send failed: '+e.message, 'red'); }
+};
+
+window.chatasReset = function() {
+  chatasWorker = null; chatasConvoId = null; chatasOwnerId = null;
+  if (chatasUnsubscribe) { chatasUnsubscribe(); chatasUnsubscribe = null; }
+  document.getElementById('chatas-step1').style.display = 'block';
+  document.getElementById('chatas-step2').style.display = 'none';
+  document.getElementById('chatas-step3').style.display = 'none';
+};
+window.chatasBackToConvos = function() {
+  if (chatasUnsubscribe) { chatasUnsubscribe(); chatasUnsubscribe = null; }
+  chatasConvoId = null;
+  document.getElementById('chatas-step2').style.display = 'block';
+  document.getElementById('chatas-step3').style.display = 'none';
+};
+
 </script>
 </body>
 </html>
