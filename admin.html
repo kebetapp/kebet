@@ -338,6 +338,10 @@
     <span class="sb-item-icon">🎭</span> Chat as Worker
     <span class="sb-count" id="cnt-chatas" style="background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow)">—</span>
   </div>
+  <div class="sb-item" id="nav-pinresets" onclick="showPanel('pinresets')">
+    <span class="sb-item-icon">🔑</span> PIN Resets
+    <span class="sb-count" id="cnt-pinresets" style="background:var(--red-dim);color:var(--red);border-color:var(--red)">—</span>
+  </div>
   <div class="sb-section">PAYMENTS</div>
   <div class="sb-item" id="nav-payments" onclick="showPanel('payments')">
     <span class="sb-item-icon">📱</span> Verify Fees
@@ -461,7 +465,7 @@
       </div>
       <table>
         <thead><tr>
-          <th>WORKER</th><th>SKILLS</th><th>RATING</th><th>ID STATUS</th><th>STATUS</th><th>ACTION</th>
+          <th>WORKER</th><th>PHONE</th><th>SKILLS</th><th>RATING</th><th>PIN</th><th>ID STATUS</th><th>STATUS</th><th>ACTION</th>
         </tr></thead>
         <tbody id="workers-body">
           <tr><td colspan="6" class="table-loading">⏳ Loading...</td></tr>
@@ -591,6 +595,18 @@
           <button onclick="chatasSend()" style="background:var(--green);border:none;color:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;">Send 📤</button>
         </div>
       </div>
+    </div>
+  <!-- ── PIN RESETS PANEL ── -->
+  <div class="panel" id="panel-pinresets">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;">
+      <div style="font-size:28px;">🔑</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Worker PIN Reset Requests</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Workers who forgot their PIN send a request here. Set a new PIN for them and mark as resolved.</div>
+      </div>
+    </div>
+    <div id="pinresets-body" style="display:grid;gap:12px;">
+      <div style="text-align:center;padding:40px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px;">⏳ Loading...</div>
     </div>
   </div>
 
@@ -1069,7 +1085,7 @@ function renderOwners(list) {
 // ── RENDER WORKERS ──
 function renderWorkers(list) {
   document.getElementById('workers-body').innerHTML = list.length === 0
-    ? `<tr><td colspan="6" class="table-empty">No workers found</td></tr>`
+    ? `<tr><td colspan="8" class="table-empty">No workers found</td></tr>`
     : list.map(u => {
         const skills = Array.isArray(u.skills) ? u.skills.slice(0,2).join(', ') : (u.skills||u.skill||'—');
         const rating = u.averageRating ? '★ '+Number(u.averageRating).toFixed(1) : '—';
@@ -1087,15 +1103,21 @@ function renderWorkers(list) {
             <div><div class="user-name">${u.firstName||''} ${u.lastName||''}</div>
             <div class="user-email">${u.email||''}</div></div>
           </div></td>
+          <td class="td-mono" style="font-size:12px;">${u.phone||'—'}</td>
           <td class="td-mono">${skills}</td>
           <td class="td-mono">${rating}</td>
+          <td>
+            <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${u.pin?'var(--green)':'var(--muted)'};letter-spacing:3px;">${u.pin||'—'}</span>
+          </td>
           <td>${idBadge}</td>
           <td><span class="badge ${u.disabled?'badge-red':'badge-green'}">${u.disabled?'Disabled':'Active'}</span></td>
-          <td>
+          <td style="white-space:nowrap;">
             ${u.disabled
               ? `<button class="action-btn btn-success" onclick="toggleUser('${u.id}',false,'${u.firstName} ${u.lastName}')">Enable</button>`
               : `<button class="action-btn btn-warn"    onclick="toggleUser('${u.id}',true,'${u.firstName} ${u.lastName}')">Disable</button>`}
-            <button class="action-btn btn-danger" style="margin-left:6px" onclick="deleteUser('${u.id}','${u.firstName} ${u.lastName}')">Delete</button>
+            <button class="action-btn btn-danger" style="margin-left:4px" onclick="deleteUser('${u.id}','${u.firstName} ${u.lastName}')">Delete</button>
+            <button class="action-btn" style="margin-left:4px;background:var(--blue-dim);color:var(--blue);border:1px solid #40c4ff40;" onclick="openSetPinForWorker('${u.id}','${u.firstName} ${u.lastName}','${u.phone||''}')">🔑 PIN</button>
+            <button class="action-btn" style="margin-left:4px;background:var(--yellow-dim);color:var(--yellow);border:1px solid #ffd74040;" onclick="openManualIDModal('${u.id}')">🪪 ID</button>
           </td>
         </tr>`;
       }).join('');
@@ -1159,6 +1181,7 @@ function renderIDQueue(list, filter) {
           </div>` : `<div style="margin-top:6px;font-size:12px;color:var(--muted)">No ID submitted yet</div>`}
       </div>
       <div class="fee-actions">
+        <button class="action-btn" style="background:var(--yellow-dim);color:var(--yellow);border:1px solid #ffd74040;margin-bottom:6px;width:100%;" onclick="openManualIDModal('${w.id}')">${idv ? '✏️ Edit ID' : '➕ Add ID'}</button>
         ${!idv ? '' : idv.status==='verified'
           ? `<div class="fee-verified-badge">✅ Verified</div>
              <button class="unverify-btn" onclick="setIDStatus('${w.id}','rejected')">Revoke</button>`
@@ -1187,6 +1210,7 @@ window.setIDStatus = async function(uid, status) {
       });
       showToast(status==='verified' ? `✓ ${name} ID verified` : status==='rejected' ? `✓ ${name} ID rejected` : `✓ Reset to pending`, status==='verified'?'green':'red');
       await loadIDVerifications();
+  loadPinResets();
       await loadUsers();
     },
     labels[status]
@@ -1802,6 +1826,256 @@ window.chatasSend = async function() {
   } catch(e) { showToast('Send failed: '+e.message, 'red'); }
 };
 
+// ── PIN RESETS ──
+let allPinResets = [];
+
+async function loadPinResets() {
+  const body = document.getElementById('pinresets-body');
+  if (!body) return;
+  body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px;">⏳ Loading...</div>';
+  try {
+    const snap = await getDocs(query(collection(db, 'pin_reset_requests'), orderBy('requestedAt', 'desc')));
+    allPinResets = [];
+    snap.forEach(d => allPinResets.push({ id: d.id, ...d.data() }));
+
+    const pending = allPinResets.filter(r => r.status === 'pending');
+    document.getElementById('cnt-pinresets').textContent = pending.length || '0';
+
+    if (allPinResets.length === 0) {
+      body.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px;">✅ No PIN reset requests</div>';
+      return;
+    }
+
+    body.innerHTML = allPinResets.map(r => {
+      const time = r.requestedAt ? (r.requestedAt.toDate ? r.requestedAt.toDate() : new Date(r.requestedAt)).toLocaleString('en-GB') : '—';
+      const isPending = r.status === 'pending';
+      return `
+        <div style="background:var(--surface);border:1px solid ${isPending ? 'var(--yellow)' : 'var(--border)'};border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;">
+          <div style="font-size:28px;flex-shrink:0;">${isPending ? '⏳' : '✅'}</div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">${r.workerName || 'Unknown Worker'}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">📞 ${r.phone || '—'} &nbsp;·&nbsp; Requested: ${time}</div>
+            ${r.resolvedAt ? `<div style="font-size:11px;color:var(--green);margin-top:4px;">✅ Resolved · PIN set to: <strong>${r.newPin || '—'}</strong></div>` : ''}
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0;">
+            ${isPending
+              ? `<button class="action-btn btn-success" onclick="openSetPinModal('${r.id}','${(r.workerName||'').replace(/'/g,"\'")}','${r.workerId}','${r.phone}')">🔑 Set PIN</button>`
+              : `<button class="action-btn btn-danger" onclick="deletePinRequest('${r.id}')">🗑 Delete</button>`
+            }
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    body.innerHTML = `<div style="color:var(--red);padding:20px;font-size:13px;">Error: ${e.message}</div>`;
+  }
+}
+
+// ── Set PIN modal ──
+let setPinTarget = null;
+
+window.openSetPinModal = function(reqId, workerName, workerId, phone) {
+  setPinTarget = { reqId, workerName, workerId, phone };
+  document.getElementById('setpin-worker-name').textContent = workerName;
+  document.getElementById('setpin-phone').textContent = phone;
+  document.getElementById('setpin-input').value = '';
+  document.getElementById('setpin-error').style.display = 'none';
+  document.getElementById('setpin-overlay').classList.add('show');
+};
+
+window.closeSetPinModal = function() {
+  document.getElementById('setpin-overlay').classList.remove('show');
+  setPinTarget = null;
+};
+
+window.confirmSetPin = async function() {
+  if (!setPinTarget) return;
+  const pin = document.getElementById('setpin-input').value.trim();
+  const errEl = document.getElementById('setpin-error');
+  errEl.style.display = 'none';
+  if (!/^\d{4}$/.test(pin)) {
+    errEl.textContent = '⚠️ PIN must be exactly 4 digits.';
+    errEl.style.display = 'block';
+    return;
+  }
+  const btn = document.getElementById('setpin-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    // Update the worker's PIN in users collection
+    await updateDoc(doc(db, 'users', setPinTarget.workerId), { pin });
+
+    // Mark the request as resolved
+    await updateDoc(doc(db, 'pin_reset_requests', setPinTarget.reqId), {
+      status: 'resolved',
+      newPin: pin,
+      resolvedAt: serverTimestamp()
+    });
+
+    // Write a notification for the worker so they know PIN is ready
+    await addDoc(collection(db, 'worker_notifications'), {
+      workerId: setPinTarget.workerId,
+      type: 'pin_reset',
+      title: '🔑 Your PIN has been reset',
+      body: `Your new PIN is: ${pin}. Please sign in and change it from your profile.`,
+      read: false,
+      createdAt: serverTimestamp()
+    });
+
+    closeSetPinModal();
+    showToast(`✅ PIN set to ${pin} for ${setPinTarget.workerName}`, 'green');
+    loadPinResets();
+  } catch(e) {
+    errEl.textContent = '❌ Error: ' + e.message;
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Set PIN ✓';
+  }
+};
+
+window.deletePinRequest = async function(reqId) {
+  try {
+    await deleteDoc(doc(db, 'pin_reset_requests', reqId));
+    showToast('🗑 Request deleted', 'green');
+    loadPinResets();
+  } catch(e) { showToast('Error: '+e.message, 'red'); }
+};
+
+// Also add Set PIN button to worker rows
+
+window.openSetPinForWorker = function(workerId, workerName, phone) {
+  // Find or create a dummy request object (no Firestore request needed when admin sets directly)
+  setPinTarget = { reqId: null, workerName, workerId, phone };
+  document.getElementById('setpin-worker-name').textContent = workerName;
+  document.getElementById('setpin-phone').textContent = phone || '—';
+  document.getElementById('setpin-input').value = '';
+  document.getElementById('setpin-error').style.display = 'none';
+  document.getElementById('setpin-overlay').classList.add('show');
+};
+
+// Override confirmSetPin to handle direct (no reqId) case
+const _origConfirmSetPin = window.confirmSetPin;
+window.confirmSetPin = async function() {
+  if (!setPinTarget) return;
+  const pin = document.getElementById('setpin-input').value.trim();
+  const errEl = document.getElementById('setpin-error');
+  errEl.style.display = 'none';
+  if (!/^\d{4}$/.test(pin)) {
+    errEl.textContent = '⚠️ PIN must be exactly 4 digits.';
+    errEl.style.display = 'block';
+    return;
+  }
+  const btn = document.getElementById('setpin-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    await updateDoc(doc(db, 'users', setPinTarget.workerId), { pin });
+    if (setPinTarget.reqId) {
+      await updateDoc(doc(db, 'pin_reset_requests', setPinTarget.reqId), {
+        status: 'resolved', newPin: pin, resolvedAt: serverTimestamp()
+      });
+      await addDoc(collection(db, 'worker_notifications'), {
+        workerId: setPinTarget.workerId, type: 'pin_reset',
+        title: '🔑 Your PIN has been reset',
+        body: 'Your new PIN is: ' + pin + '. Please sign in and change it from your profile.',
+        read: false, createdAt: serverTimestamp()
+      });
+      loadPinResets();
+    }
+    closeSetPinModal();
+    showToast('✅ PIN set to ' + pin + ' for ' + setPinTarget.workerName, 'green');
+  } catch(e) {
+    errEl.textContent = '❌ Error: ' + e.message;
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Set PIN ✓';
+  }
+};
+
+
+// ── MANUAL ID VERIFICATION ──
+let manualIDTarget = null;
+let manualIDStatus = 'verified';
+
+window.openManualIDModal = function(workerId) {
+  // Look up worker from allWorkers or fallback to allIDWorkers
+  const worker = allWorkers.find(w => w.id === workerId) || allIDWorkers.find(w => w.id === workerId);
+  if (!worker) { showToast('Worker not found — try refreshing', 'red'); return; }
+
+  manualIDTarget = workerId;
+  const idv = worker.idVerification || {};
+
+  document.getElementById('manualid-worker-name').textContent = (worker.firstName||'') + ' ' + (worker.lastName||'');
+  document.getElementById('manualid-title').textContent = idv.idType ? 'Edit ID Verification' : 'Add ID Verification';
+  document.getElementById('manualid-type').value    = idv.idType    || '';
+  document.getElementById('manualid-number').value  = idv.idNumber  || '';
+  document.getElementById('manualid-fullname').value= idv.idFullName|| '';
+  document.getElementById('manualid-dob').value     = idv.idDob     || '';
+  document.getElementById('manualid-expiry').value  = idv.idExpiry  || '';
+  document.getElementById('manualid-notes').value   = idv.adminNotes|| '';
+  document.getElementById('manualid-error').style.display = 'none';
+
+  setManualIDStatus(idv.status || 'verified');
+  document.getElementById('manualid-overlay').classList.add('show');
+};
+
+window.setManualIDStatus = function(status) {
+  manualIDStatus = status;
+  ['pending','verified','rejected'].forEach(s => {
+    const btn = document.getElementById('manualid-status-' + s);
+    btn.style.opacity = s === status ? '1' : '0.4';
+    btn.style.fontWeight = s === status ? '800' : '500';
+  });
+};
+
+window.closeManualIDModal = function() {
+  document.getElementById('manualid-overlay').classList.remove('show');
+  manualIDTarget = null;
+};
+
+window.saveManualID = async function() {
+  if (!manualIDTarget) return;
+  const errEl = document.getElementById('manualid-error');
+  errEl.style.display = 'none';
+
+  const idType    = document.getElementById('manualid-type').value.trim();
+  const idNumber  = document.getElementById('manualid-number').value.trim();
+  const idFullName= document.getElementById('manualid-fullname').value.trim();
+  const idDob     = document.getElementById('manualid-dob').value;
+  const idExpiry  = document.getElementById('manualid-expiry').value;
+  const adminNotes= document.getElementById('manualid-notes').value.trim();
+
+  const acceptedIDs = ['Fayda ID', 'Local ID', 'Kebele ID'];
+  if (!idType)     { errEl.textContent='⚠️ Please select an ID type.';     errEl.style.display='block'; return; }
+  if (!acceptedIDs.includes(idType)) {
+    errEl.textContent='⚠️ ID must be Fayda ID, Local ID, or Kebele ID. Other types are not accepted.';
+    errEl.style.display='block'; return;
+  }
+  if (!idNumber)   { errEl.textContent='⚠️ Please enter the ID number.';   errEl.style.display='block'; return; }
+  if (!idFullName) { errEl.textContent='⚠️ Please enter the full name on the ID.'; errEl.style.display='block'; return; }
+
+  const btn = document.getElementById('manualid-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  try {
+    await updateDoc(doc(db, 'users', manualIDTarget), {
+      idVerification: {
+        idType, idNumber, idFullName, idDob, idExpiry, adminNotes,
+        status: manualIDStatus,
+        addedByAdmin: true,
+        submittedAt: new Date().toISOString(),
+        reviewedAt: new Date().toISOString()
+      },
+      isVerified: manualIDStatus === 'verified'
+    });
+
+    closeManualIDModal();
+    showToast('✅ ID saved as ' + manualIDStatus, 'green');
+    await loadUsers();
+    await loadIDVerifications();
+  } catch(e) {
+    errEl.textContent = '❌ Error: ' + e.message;
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Save ID ✓';
+  }
+};
+
+
 window.chatasReset = function() {
   chatasWorker = null; chatasConvoId = null; chatasOwnerId = null;
   if (chatasUnsubscribe) { chatasUnsubscribe(); chatasUnsubscribe = null; }
@@ -1817,5 +2091,108 @@ window.chatasBackToConvos = function() {
 };
 
 </script>
+
+<!-- ── SET PIN MODAL ── -->
+<div class="modal-overlay" id="setpin-overlay" onclick="if(event.target===this)closeSetPinModal()">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-title">🔑 Set Worker PIN</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+      Setting a new 4-digit PIN for:<br>
+      <strong id="setpin-worker-name" style="color:var(--text);"></strong><br>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;" id="setpin-phone"></span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:8px;">NEW PIN (4 DIGITS)</div>
+    <input id="setpin-input" type="tel" maxlength="4" placeholder="e.g. 1234"
+      style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:24px;font-weight:700;text-align:center;color:var(--text);outline:none;letter-spacing:8px;font-family:'DM Mono',monospace;margin-bottom:12px;"
+      onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"
+      onkeydown="if(event.key==='Enter')confirmSetPin()" />
+    <div id="setpin-error" style="background:var(--red-dim);border:1px solid #ff525240;color:var(--red);font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;font-family:'DM Mono',monospace;"></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">💡 Tip: use the last 4 digits of their phone as the default PIN.</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeSetPinModal()">Cancel</button>
+      <button id="setpin-confirm-btn" onclick="confirmSetPin()" style="background:var(--green);border:none;border-radius:8px;padding:9px 22px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Set PIN ✓</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── MANUAL ID MODAL ── -->
+<div class="modal-overlay" id="manualid-overlay" onclick="if(event.target===this)closeManualIDModal()" style="z-index:600;">
+  <div class="modal" style="max-width:460px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-title">🪪 <span id="manualid-title">Add ID Verification</span></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">Worker: <strong id="manualid-worker-name" style="color:var(--text);"></strong></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:6px;">ID TYPE</div>
+        <select id="manualid-type" style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
+          <option value="">— Select ID Type —</option>
+          <optgroup label="✅ Accepted IDs">
+            <option value="Fayda ID">🪪 Fayda ID (National Digital ID)</option>
+            <option value="Local ID">🏛 Local ID (Wereda / Sub-city)</option>
+            <option value="Kebele ID">📋 Kebele ID</option>
+          </optgroup>
+          <optgroup label="Other (case-by-case)">
+            <option value="Passport">Passport</option>
+            <option value="Driver's License">Driver's License</option>
+            <option value="Other">Other</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:6px;">ID NUMBER</div>
+        <input id="manualid-number" type="text" placeholder="e.g. ETH-123456"
+          style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;font-family:'DM Mono',monospace;"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:6px;">FULL NAME ON ID</div>
+      <input id="manualid-fullname" type="text" placeholder="As written on the ID document"
+        style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:6px;">DATE OF BIRTH</div>
+        <input id="manualid-dob" type="date"
+          style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:6px;">EXPIRY DATE (optional)</div>
+        <input id="manualid-expiry" type="date"
+          style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" />
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:6px;">NOTES (optional)</div>
+      <textarea id="manualid-notes" rows="2" placeholder="Any extra notes about the verification..."
+        style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;resize:vertical;font-family:'DM Sans',sans-serif;"
+        onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:8px;">VERIFICATION STATUS</div>
+      <div style="display:flex;gap:8px;">
+        <button id="manualid-status-pending"  onclick="setManualIDStatus('pending')"  class="action-btn btn-warn"   style="flex:1;padding:10px;">⏳ Pending</button>
+        <button id="manualid-status-verified" onclick="setManualIDStatus('verified')" class="action-btn btn-success" style="flex:1;padding:10px;">✅ Verified</button>
+        <button id="manualid-status-rejected" onclick="setManualIDStatus('rejected')" class="action-btn btn-danger"  style="flex:1;padding:10px;">❌ Rejected</button>
+      </div>
+    </div>
+
+    <div id="manualid-error" style="background:var(--red-dim);border:1px solid #ff525240;color:var(--red);font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;font-family:'DM Mono',monospace;"></div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeManualIDModal()">Cancel</button>
+      <button id="manualid-confirm-btn" onclick="saveManualID()" style="background:var(--green);border:none;border-radius:8px;padding:9px 22px;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Save ID ✓</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

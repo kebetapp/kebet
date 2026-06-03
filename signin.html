@@ -218,17 +218,38 @@
 
 <!-- ══════════ FORGOT PIN MODAL ══════════ -->
 <div id="forgot-pin-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:20px;padding:32px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+  <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
     <div style="font-size:20px;font-weight:700;color:#111;margin-bottom:6px;">🔐 Forgot PIN?</div>
-    <div style="font-size:13px;color:#888;margin-bottom:20px;line-height:1.7;">
-      Your PIN is managed by Kebet admin. To reset it, please contact us:
+
+    <!-- Step 1: enter phone -->
+    <div id="fpin-step1">
+      <div style="font-size:13px;color:#888;margin-bottom:18px;line-height:1.7;">
+        Enter your registered phone number and we'll send a PIN reset request to Kebet admin. They'll set a new PIN for you.
+      </div>
+      <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px;">📞 Your phone number</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <div style="padding:12px 10px;border:1.5px solid #eee;border-radius:10px;font-size:14px;font-weight:700;color:#111;background:#fff;width:80px;text-align:center;">+251</div>
+        <input type="tel" id="fpin-phone" placeholder="09__ ___ ___" maxlength="10"
+          style="flex:1;padding:12px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;color:#111;outline:none;"
+          onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+      </div>
+      <div id="fpin-error" style="background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:14px;display:none;"></div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="closeForgotPin()" style="flex:1;padding:12px;border:none;background:#f5f5f0;color:#555;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
+        <button id="fpin-submit-btn" onclick="submitPinReset()" style="flex:2;padding:12px;border:none;background:#1a6b3c;color:#fff;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">Request PIN Reset →</button>
+      </div>
     </div>
-    <div style="background:#f0faf5;border-radius:12px;padding:16px;margin-bottom:20px;">
-      <div style="font-size:13px;font-weight:600;color:#1a6b3c;margin-bottom:6px;">📞 Call / WhatsApp</div>
-      <div style="font-size:15px;font-weight:700;color:#111;">+251 9__ ___ ___</div>
-      <div style="font-size:12px;color:#888;margin-top:8px;">Tell us your registered phone number and we'll reset your PIN right away.</div>
+
+    <!-- Step 2: success -->
+    <div id="fpin-step2" style="display:none;text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">✅</div>
+      <div style="font-size:16px;font-weight:700;color:#111;margin-bottom:10px;">Request sent!</div>
+      <div style="font-size:13px;color:#888;line-height:1.7;margin-bottom:20px;">
+        Kebet admin has been notified. They will set a new PIN for your account and it will be ready within a short time.<br><br>
+        <strong style="color:#1a6b3c;">Your new PIN will be the last 4 digits of your phone number</strong> unless admin sets a different one.
+      </div>
+      <button onclick="closeForgotPin()" style="width:100%;background:#1a6b3c;color:#fff;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">Got it ✓</button>
     </div>
-    <button onclick="closeForgotPin()" style="width:100%;background:#1a6b3c;color:#fff;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">Got it ✓</button>
   </div>
 </div>
 
@@ -262,7 +283,7 @@
   import { getAuth, signInWithEmailAndPassword,
     sendPasswordResetEmail, signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -476,12 +497,69 @@
     }
   };
 
-  // ─── Forgot PIN (show contact info modal) ───
+  // ─── Forgot PIN ───
   window.showForgotPin = function() {
+    // Pre-fill phone from worker form if already typed
+    const phone = document.getElementById('worker-phone').value.trim();
+    if (phone) document.getElementById('fpin-phone').value = phone;
+    document.getElementById('fpin-step1').style.display = 'block';
+    document.getElementById('fpin-step2').style.display = 'none';
+    document.getElementById('fpin-error').style.display = 'none';
     document.getElementById('forgot-pin-overlay').style.display = 'flex';
   };
   window.closeForgotPin = function() {
     document.getElementById('forgot-pin-overlay').style.display = 'none';
+    document.getElementById('fpin-phone').value = '';
+  };
+
+  window.submitPinReset = async function() {
+    const phone = document.getElementById('fpin-phone').value.trim();
+    const errEl = document.getElementById('fpin-error');
+    const btn = document.getElementById('fpin-submit-btn');
+    errEl.style.display = 'none';
+
+    if (!phone.match(/^0[79]\d{8}$/)) {
+      errEl.textContent = '⚠️ Please enter a valid Ethiopian phone number (e.g. 0912345678).';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      // Check the worker exists
+      const usersQ = query(collection(db, 'users'), where('phone', '==', phone), where('userType', '==', 'worker'));
+      const snap = await getDocs(usersQ);
+      if (snap.empty) {
+        errEl.textContent = '❌ This phone number is not registered as a worker with Kebet.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Request PIN Reset →';
+        return;
+      }
+
+      const workerDoc = snap.docs[0];
+      const workerData = workerDoc.data();
+
+      // Write a reset request to Firestore
+      await addDoc(collection(db, 'pin_reset_requests'), {
+        workerId: workerDoc.id,
+        workerName: (workerData.firstName || '') + ' ' + (workerData.lastName || ''),
+        phone: phone,
+        status: 'pending',
+        requestedAt: serverTimestamp()
+      });
+
+      // Show success step
+      document.getElementById('fpin-step1').style.display = 'none';
+      document.getElementById('fpin-step2').style.display = 'block';
+    } catch(err) {
+      errEl.textContent = '❌ Error: ' + err.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Request PIN Reset →';
+    }
   };
 
   // ─── Forgot password (for owners) ───
