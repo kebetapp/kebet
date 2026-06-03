@@ -260,7 +260,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-    sendPasswordResetEmail
+    sendPasswordResetEmail, signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -336,20 +336,32 @@
 
     btn.disabled = true;
     btn.textContent = 'Signing in...';
-    setLang(document.querySelector('.lang-btn-right.active')?.textContent === 'EN' ? 'en' : 'am');
 
     try {
+      // Sign out any stale session first
+      await signOut(auth).catch(() => {});
+
       const cred = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
-      if (!userDoc.exists()) throw { code: 'no-profile', message: 'No profile found.' };
-      const userData = userDoc.data();
-      if (userData.userType === 'worker') {
-        // Worker tried to use owner form — redirect them nicely
-        showError('👷 You are a worker! Please use the Worker tab to sign in with your phone number.');
-        btn.disabled = false;
-        btn.textContent = 'Sign In →';
-        return;
+
+      if (!userDoc.exists()) {
+        await signOut(auth).catch(() => {});
+        showError('❌ No profile found for this account. Please contact Kebet support.');
+        btn.disabled = false; btn.textContent = 'Sign In →'; return;
       }
+
+      const userData = userDoc.data();
+      if (userData.disabled) {
+        await signOut(auth).catch(() => {});
+        showError('❌ Your account has been suspended. Please contact Kebet support.');
+        btn.disabled = false; btn.textContent = 'Sign In →'; return;
+      }
+      if (userData.userType === 'worker') {
+        await signOut(auth).catch(() => {});
+        showError('👷 You are a worker! Please use the Worker tab to sign in with your phone number.');
+        btn.disabled = false; btn.textContent = 'Sign In →'; return;
+      }
+
       showSuccess('✅ Welcome back! Taking you to your dashboard...');
       setTimeout(() => { window.location.href = 'dashboard-owner.html'; }, 1500);
     } catch(err) {
@@ -357,8 +369,12 @@
       btn.textContent = 'Sign In →';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
         showError('❌ Wrong email or password. Please try again.');
+      } else if (err.code === 'auth/too-many-requests') {
+        showError('⚠️ Too many failed attempts. Please wait a few minutes and try again.');
+      } else if (err.code === 'auth/network-request-failed') {
+        showError('❌ Network error. Please check your connection and try again.');
       } else {
-        showError('❌ ' + err.message);
+        showError('❌ ' + (err.message || 'Sign-in failed. Please try again.'));
       }
     }
   };
@@ -527,49 +543,6 @@
   if (sessionStorage.getItem('kebet_worker_id')) {
     window.location.href = 'dashboard-worker.html';
   }
-
-
-
-    // Check if phone is registered in Kebet (Firestore check)
-    const btn = document.getElementById('send-otp-btn');
-    btn.disabled = true;
-    btn.textContent = 'Checking...';
-
-    try {
-      // Check users collection first
-      const usersQ = query(collection(db, 'users'), where('phone', '==', rawPhone));
-      const usersSnap = await getDocs(usersQ);
-      
-      // Also check worker_leads for pending workers
-      const leadsQ = query(collection(db, 'worker_leads'), where('phone', '==', rawPhone));
-      const leadsSnap = await getDocs(leadsQ);
-
-      if (usersSnap.empty && leadsSnap.empty) {
-        showError('❌ This phone number is not registered with Kebet. Please register first or contact us.');
-        btn.disabled = false;
-        btn.textContent = 'Send Code →';
-        return;
-      }
-
-      // If lead exists but no user account yet, inform them
-      if (usersSnap.empty && !leadsSnap.empty) {
-        const leadData = leadsSnap.docs[0].data();
-  });
-
-  // ─── Auto-redirect if already signed in ───
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const d = userDoc.data();
-          if (!d.disabled) {
-            window.location.href = d.userType === 'owner' ? 'dashboard-owner.html' : 'dashboard-worker.html';
-          }
-        }
-      } catch(e) { /* stay on page */ }
-    }
-  });
 
 </script>
 
