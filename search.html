@@ -565,9 +565,14 @@
 
   async function loadWorkers() {
     try {
+      // Load all users with userType=worker (includes promoted leads with id = 'lead_xxx')
       const q = query(collection(db, 'users'), where('userType', '==', 'worker'));
       const snap = await getDocs(q);
-      allWorkers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const seen = new Set();
+      allWorkers = [];
+      snap.docs.forEach(d => {
+        if (!seen.has(d.id)) { seen.add(d.id); allWorkers.push({ id: d.id, ...d.data() }); }
+      });
       filterWorkers();
     } catch (err) {
       document.getElementById('worker-grid').innerHTML =
@@ -615,8 +620,9 @@
       const matchSearch = !search || fullName.includes(search) || skill.includes(search);
       const matchLocation = !location || loc.includes(location);
       const matchSkill = !currentSkillFilter || skill.toLowerCase().includes(currentSkillFilter.toLowerCase());
-      // Feature 8: Only show workers who are available (isAvailable !== false means available by default)
-      const matchAvail = w.isAvailable !== false;
+      // Show workers who are available — isAvailable defaults to true if not set.
+      // Also hide disabled workers (admin can disable them).
+      const matchAvail = (w.isAvailable !== false) && !w.disabled;
       // Salary range filter — uses worker's expectedSalary field if set
       const workerSalary = parseInt(w.expectedSalary) || 0;
       const matchSalary = workerSalary === 0 || (workerSalary >= salMin && workerSalary <= salMax);

@@ -526,6 +526,12 @@
 
   <!-- ── WORKER LEADS PANEL ── -->
   <div class="panel" id="panel-leads">
+    <div style="background:var(--green-dim);border:1px solid var(--green);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:12px;color:var(--text);line-height:1.9;">
+      <strong style="color:var(--green);font-size:13px;">📋 Worker Lead Flow</strong><br>
+      1. Worker registers by phone on signup page → appears here as <strong>Pending</strong><br>
+      2. Call &amp; verify them → mark as <strong>Verified</strong><br>
+      3. Click <strong style="color:var(--green);">🚀 Make Live on App</strong> → worker profile appears in owner search &amp; gets <span style="color:var(--green);">Live on App</span> badge
+    </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
       <div class="pay-stat"><div class="pay-stat-label">PENDING CALL</div><div class="pay-stat-val yellow" id="leads-stat-pending">—</div></div>
       <div class="pay-stat"><div class="pay-stat-label">CONTACTED</div><div class="pay-stat-val blue" id="leads-stat-contacted">—</div></div>
@@ -668,7 +674,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, collection, getDocs, getDoc, doc,
-  addDoc, updateDoc, deleteDoc, query, orderBy, limit, where, collectionGroup,
+  addDoc, updateDoc, deleteDoc, setDoc, query, orderBy, limit, where, collectionGroup,
   onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -1454,6 +1460,12 @@ function renderLeads(list) {
         ${['pending','contacted','verified','placed'].map(s =>
           `<button class="action-btn ${l.status===s?'btn-success':''}" onclick="setLeadStatus('${l.id}','${s}')" style="width:100%;margin-bottom:4px;${l.status===s?'':'opacity:0.5'}">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`
         ).join('')}
+        <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;">
+          ${l.userId
+            ? `<div style="font-size:11px;color:var(--green);font-weight:700;text-align:center;padding:6px 0;">&#x2705; Already Live on App</div>`
+            : `<button class="action-btn btn-success" onclick="promoteLeadToUser('${l.id}')" style="width:100%;font-weight:800;background:var(--green);color:#000;border-color:var(--green);margin-top:2px;">&#x1F680; Make Live on App</button><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:4px;">Creates worker profile owners can find &amp; book</div>`
+          }
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1472,6 +1484,71 @@ window.setLeadStatus = async function(leadId, status) {
     document.getElementById('leads-stat-placed').textContent    = allLeads.filter(l=>l.status==='placed').length;
     filterLeads(currentLeadFilter);
   } catch(e) { showToast('Error: '+e.message, 'red'); }
+};
+
+// ════════════════════════════════════════════
+//  PROMOTE LEAD → LIVE WORKER PROFILE IN USERS
+// ════════════════════════════════════════════
+window.promoteLeadToUser = async function(leadId) {
+  const lead = allLeads.find(l => l.id === leadId);
+  if (!lead) { showToast('Lead not found', 'red'); return; }
+
+  // Show modal-style confirm
+  const name = (lead.firstName || '') + ' ' + (lead.lastName || '');
+  if (!confirm(`Make ${name.trim()} live on the app?\n\nThis will create a worker profile that house owners can find and book. You can still edit the profile in the Workers panel.`)) return;
+
+  try {
+    // Build skills array
+    const skills = Array.isArray(lead.skills) ? lead.skills : (lead.skills ? [lead.skills] : []);
+    const primarySkill = skills[0] || 'House Worker';
+
+    // Create user doc — use leadId as the doc ID (stable, reusable)
+    // If the worker later gets a Firebase Auth account the admin can link it
+    const userId = lead.userId || 'lead_' + leadId;
+
+    await setDoc(doc(db, 'users', userId), {
+      firstName: lead.firstName || '',
+      lastName: lead.lastName || '',
+      phone: lead.phone || '',
+      location: lead.location || '',
+      userType: 'worker',
+      skill: primarySkill,
+      skills: skills,
+      isAvailable: true,
+      isVerified: false,
+      rating: 0,
+      averageRating: 0,
+      profileSource: 'lead',
+      leadId: leadId,
+      createdAt: lead.submittedAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      disabled: false,
+    }, { merge: true });
+
+    // Update the lead to record the userId and mark as placed
+    await updateDoc(doc(db, 'worker_leads', leadId), {
+      userId: userId,
+      status: 'placed',
+      promotedAt: new Date().toISOString(),
+    });
+
+    // Update local state
+    const idx = allLeads.findIndex(l => l.id === leadId);
+    if (idx !== -1) { allLeads[idx].status = 'placed'; allLeads[idx].userId = userId; }
+
+    // Refresh workers list too
+    const wSnap = await getDocs(query(collection(db,'users'), where('userType','==','worker')));
+    allWorkers = [];
+    wSnap.forEach(d => allWorkers.push({ id: d.id, ...d.data() }));
+    document.getElementById('cnt-workers').textContent = allWorkers.length;
+    document.getElementById('stat-workers').textContent = allWorkers.length;
+
+    showToast(`✅ ${name.trim()} is now live! Owners can find and book them.`, 'green');
+    filterLeads(currentLeadFilter);
+  } catch(e) {
+    showToast('Error: ' + e.message, 'red');
+    console.error(e);
+  }
 };
 
 // ════════════════════════════════════════════
