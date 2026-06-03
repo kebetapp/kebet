@@ -134,8 +134,8 @@
 
     <!-- Type toggle -->
     <div class="type-toggle">
-      <button class="type-btn active" id="tab-owner" onclick="switchTab('owner')">🏠 <span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></button>
-      <button class="type-btn" id="tab-worker" onclick="switchTab('worker')">🧹 <span class="en">House Worker</span><span class="am">የቤት ሰራተኛ</span></button>
+      <button class="type-btn active" id="tab-owner" onclick="switchTab('owner')">🏠 House Owner</button>
+      <button class="type-btn" id="tab-worker" onclick="switchTab('worker')">🧹 House Worker</button>
     </div>
 
     <div class="error-msg" id="error-msg"></div>
@@ -152,9 +152,7 @@
         <input type="password" id="owner-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleOwnerSignIn()" />
       </div>
       <div class="forgot"><a href="#" onclick="showForgotPassword();return false;"><span class="en">Forgot password?</span><span class="am">የይለፍ ቃል ረሱ?</span></a></div>
-      <button class="submit-btn" id="owner-signin-btn" onclick="handleOwnerSignIn()">
-        <span class="en">Sign In →</span><span class="am">ግባ →</span>
-      </button>
+      <button class="submit-btn" id="owner-signin-btn" onclick="handleOwnerSignIn()">Sign In →</button>
     </div>
 
     <!-- ══════ WORKER FORM (phone + PIN) ══════ -->
@@ -201,9 +199,7 @@
         </div>
       </div>
 
-      <button class="submit-btn" id="worker-pin-btn" onclick="workerPinSignIn()">
-        <span class="en">Sign In →</span><span class="am">ግባ →</span>
-      </button>
+      <button class="submit-btn" id="worker-pin-btn" onclick="workerPinSignIn()">Sign In →</button>
       <div style="text-align:center;margin-top:14px;font-size:12px;color:#888;">
         <span class="en">Forgot your PIN?</span><span class="am">PIN ረሱ?</span>
         <a href="#" onclick="showForgotPin();return false;" style="color:#1a6b3c;font-weight:600;text-decoration:none;">
@@ -339,7 +335,7 @@
     if (!email || !password) { showError('⚠️ Please fill in all fields.'); return; }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="en">Signing in...</span><span class="am">እየገባ...</span>';
+    btn.textContent = 'Signing in...';
     setLang(document.querySelector('.lang-btn-right.active')?.textContent === 'EN' ? 'en' : 'am');
 
     try {
@@ -351,14 +347,14 @@
         // Worker tried to use owner form — redirect them nicely
         showError('👷 You are a worker! Please use the Worker tab to sign in with your phone number.');
         btn.disabled = false;
-        btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+        btn.textContent = 'Sign In →';
         return;
       }
       showSuccess('✅ Welcome back! Taking you to your dashboard...');
       setTimeout(() => { window.location.href = 'dashboard-owner.html'; }, 1500);
     } catch(err) {
       btn.disabled = false;
-      btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+      btn.textContent = 'Sign In →';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
         showError('❌ Wrong email or password. Please try again.');
       } else {
@@ -395,7 +391,7 @@
 
     const btn = document.getElementById('worker-pin-btn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="en">Signing in...</span><span class="am">እየገባ...</span>';
+    btn.textContent = 'Signing in...';
 
     try {
       // Look up worker by phone in Firestore
@@ -417,7 +413,7 @@
           showError('❌ Phone number not registered with Kebet. Please contact admin.');
         }
         btn.disabled = false;
-        btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+        btn.textContent = 'Sign In →';
         return;
       }
 
@@ -428,7 +424,7 @@
       if (workerData.disabled) {
         showError('❌ Your account has been suspended. Please contact Kebet support.');
         btn.disabled = false;
-        btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+        btn.textContent = 'Sign In →';
         return;
       }
 
@@ -437,7 +433,7 @@
       if (!storedPin) {
         showError('⚠️ No PIN set for your account. Please contact Kebet admin to reset your PIN.');
         btn.disabled = false;
-        btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+        btn.textContent = 'Sign In →';
         return;
       }
       if (pin !== storedPin) {
@@ -446,7 +442,7 @@
         Array.from({length:4}, (_,i) => { document.getElementById('pin-'+i).value = ''; });
         document.getElementById('pin-0').focus();
         btn.disabled = false;
-        btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+        btn.textContent = 'Sign In →';
         return;
       }
 
@@ -459,7 +455,7 @@
 
     } catch(err) {
       btn.disabled = false;
-      btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+      btn.textContent = 'Sign In →';
       showError('❌ Error: ' + err.message);
     }
   };
@@ -537,7 +533,7 @@
     // Check if phone is registered in Kebet (Firestore check)
     const btn = document.getElementById('send-otp-btn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="en">Checking...</span><span class="am">እየፈተሸ...</span>';
+    btn.textContent = 'Checking...';
 
     try {
       // Check users collection first
@@ -551,7 +547,7 @@
       if (usersSnap.empty && leadsSnap.empty) {
         showError('❌ This phone number is not registered with Kebet. Please register first or contact us.');
         btn.disabled = false;
-        btn.innerHTML = '<span class="en">Send Verification Code →</span><span class="am">የማረጋገጫ ኮድ ላክ →</span>';
+        btn.textContent = 'Send Code →';
         return;
       }
 
