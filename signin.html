@@ -18,43 +18,104 @@
     .stat { text-align: center; }
     .stat-num { font-size: 28px; font-weight: 700; color: #fff; }
     .stat-lab { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
-    .right { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px; }
-    .form-box { width: 100%; max-width: 400px; }
+    .right { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 40px; overflow-y: auto; }
+    .form-box { width: 100%; max-width: 420px; }
     .form-title { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 6px; }
-    .form-sub { font-size: 14px; color: #888; margin-bottom: 28px; }
+    .form-sub { font-size: 14px; color: #888; margin-bottom: 20px; }
+
+    /* User type toggle */
+    .type-toggle { display: flex; background: #f0f0f0; border-radius: 12px; padding: 4px; margin-bottom: 24px; }
+    .type-btn { flex: 1; padding: 11px 8px; border: none; background: transparent; border-radius: 10px; font-size: 13px; font-weight: 500; color: #888; cursor: pointer; transition: all 0.2s; }
+    .type-btn.active { background: #fff; color: #1a6b3c; font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
     .form-group { margin-bottom: 16px; }
     label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
     input { width: 100%; padding: 12px 14px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; color: #111; background: #fff; outline: none; transition: border 0.2s; }
     input:focus { border-color: #1a6b3c; }
+    input:disabled { background: #f5f5f0; color: #aaa; cursor: not-allowed; }
+
+    .phone-row { display: flex; gap: 8px; }
+    .country-code { width: 90px; flex-shrink: 0; padding: 12px 10px; border: 1.5px solid #eee; border-radius: 10px; font-size: 14px; font-weight: 700; color: #111; background: #fff; outline: none; text-align: center; }
+    .phone-input { flex: 1; }
+
+    .otp-group { display: flex; gap: 10px; justify-content: center; margin: 8px 0 16px; }
+    .otp-box { width: 52px; height: 58px; border: 1.5px solid #eee; border-radius: 12px; text-align: center; font-size: 22px; font-weight: 700; color: #111; outline: none; background: #fff; transition: border 0.2s; }
+    .otp-box:focus { border-color: #1a6b3c; background: #f0faf5; }
+
+    .timer-row { text-align: center; font-size: 12px; color: #888; margin-bottom: 14px; }
+    .resend-link { color: #1a6b3c; font-weight: 600; cursor: pointer; text-decoration: underline; }
+
     .forgot { text-align: right; margin-top: -10px; margin-bottom: 16px; }
     .forgot a { font-size: 12px; color: #1a6b3c; text-decoration: none; }
-    .submit-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+    .submit-btn { width: 100%; background: #1a6b3c; color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; transition: background 0.2s; }
     .submit-btn:hover { background: #145530; }
     .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+    .submit-btn-outline { width: 100%; background: #fff; color: #1a6b3c; border: 2px solid #1a6b3c; padding: 13px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+    .submit-btn-outline:hover { background: #e8f5ee; }
+
     .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
     .divider-line { flex: 1; height: 1px; background: #eee; }
     .divider span { font-size: 12px; color: #aaa; }
     .signup-link { text-align: center; font-size: 13px; color: #888; margin-top: 16px; }
     .signup-link a { color: #1a6b3c; font-weight: 600; text-decoration: none; }
+
     .error-msg { background: #fff0f0; border: 1px solid #ffcccc; color: #cc0000; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
     .success-msg { background: #e8f5ee; border: 1px solid #b2dfc6; color: #1a6b3c; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
-    @media (max-width: 768px) { body { flex-direction: column; } .left { width: 100%; height: auto; padding: 40px 20px; position: relative; } .right { padding: 40px 20px; } }
+
+    /* Info banner for workers */
+    .worker-info-banner { background: linear-gradient(135deg, #1a6b3c 0%, #145530 100%); border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; }
+    .wib-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .wib-text { font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.7; }
+
+    /* Step indicator */
+    .step-indicator { display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #eee; transition: background 0.3s; }
+    .step-dot.active { background: #1a6b3c; width: 24px; border-radius: 4px; }
+    .step-dot.done { background: #b2dfc6; }
+    .step-label { font-size: 11px; color: #888; margin-left: 8px; }
+
+    /* lang toggle */
+    .lang-toggle { display: flex; gap: 4px; padding: 3px; background: rgba(255,255,255,0.1); border-radius: 8px; }
+    .lang-btn { padding: 4px 10px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 6px; }
+    .lang-btn.active { background: rgba(255,255,255,0.2); color: #fff; }
+    .lang-toggle-right { display: flex; gap: 4px; padding: 3px; background: #f0f0f0; border-radius: 8px; }
+    .lang-btn-right { padding: 4px 10px; border: none; background: transparent; color: #999; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 6px; }
+    .lang-btn-right.active { background: #fff; color: #1a6b3c; }
+
+    /* Amharic hidden by default */
+    .am { display: none; }
+
+    /* reCAPTCHA container */
+    #recaptcha-container { margin: 12px 0; }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .left { width: 100%; height: auto; padding: 40px 20px; position: relative; }
+      .right { padding: 32px 20px; }
+      .stat-box { gap: 20px; }
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="kebet-lang.css"/>
-  <script src="kebet-lang.js"></script>
-  <link rel="stylesheet" href="kebet-smooth.css"/>
-  <script src="kebet-smooth.js"></script>
 </head>
 <body>
 
+<!-- ══════════ LEFT PANEL ══════════ -->
 <div class="left">
+  <div style="position:absolute;top:16px;right:20px;">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
+    </div>
+  </div>
   <div class="logo">
     <div class="logo-icon">🏠</div>
     <div><div class="logo-text">KEBET</div><div class="logo-am">ከቤት</div></div>
   </div>
   <div class="left-title"><span class="en">Welcome back! 👋</span><span class="am">እንኳን ደህና መጡ! 👋</span></div>
-  <div class="left-sub"><span class="en">Sign in to find trusted house workers near you in Addis Ababa</span><span class="am">አዲስ አበባ ውስጥ ታማኝ የቤት ሰራተኞችን ለማግኘት ይግቡ</span></div>
+  <div class="left-sub">
+    <span class="en">Sign in to find trusted house workers near you in Addis Ababa</span>
+    <span class="am">አዲስ አበባ ውስጥ ታማኝ የቤት ሰራተኞችን ለማግኘት ይግቡ</span>
+  </div>
   <div class="stat-box">
     <div class="stat"><div class="stat-num">50+</div><div class="stat-lab"><span class="en">Workers</span><span class="am">ሰራተኞች</span></div><div style="font-size:10px;color:#f0a500;font-weight:700;margin-top:4px;">🎯 Goal: 500+</div></div>
     <div class="stat"><div class="stat-num">100+</div><div class="stat-lab"><span class="en">Happy homes</span><span class="am">ደስተኛ ቤቶች</span></div><div style="font-size:10px;color:#f0a500;font-weight:700;margin-top:4px;">🎯 Goal: 1,200+</div></div>
@@ -62,29 +123,165 @@
   </div>
 </div>
 
-<div class="right"><div style="text-align:right;padding:16px 40px 0;"><div class="lang-toggle"><button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button><button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button></div></div>
+<!-- ══════════ RIGHT PANEL ══════════ -->
+<div class="right">
   <div class="form-box">
-    <div class="form-title"><span class="en">Sign in to Kebet</span><span class="am">ወደ ከቤት ይግቡ</span></div>
-    <div class="form-sub"><span class="en">Enter your email and password to continue</span><span class="am">ለመቀጠል ኢሜልዎን እና የይለፍ ቃልዎን ያስገቡ</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div class="form-title"><span class="en">Sign in to Kebet</span><span class="am">ወደ ከቤት ይግቡ</span></div>
+      <div class="lang-toggle-right">
+        <button class="lang-btn-right active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn-right" onclick="setLang('am')">አማ</button>
+      </div>
+    </div>
+    <div class="form-sub"><span class="en">Choose your account type to continue</span><span class="am">ለመቀጠል የመለያ አይነትዎን ይምረጡ</span></div>
+
+    <!-- Type toggle -->
+    <div class="type-toggle">
+      <button class="type-btn active" id="tab-owner" onclick="switchTab('owner')">🏠 <span class="en">House Owner</span><span class="am">የቤት ባለቤት</span></button>
+      <button class="type-btn" id="tab-worker" onclick="switchTab('worker')">🧹 <span class="en">House Worker</span><span class="am">የቤት ሰራተኛ</span></button>
+    </div>
 
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
 
-    <div class="form-group"><label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label><input type="email" id="email" placeholder="abebe@email.com" /></div>
-    <div class="form-group"><label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label><input type="password" id="password" placeholder="የይለፍ ቃልዎ" /></div>
-    <div class="forgot"><a href="#" onclick="showForgotPassword(); return false;"><span class="en">Forgot password?</span><span class="am">የይለፍ ቃል ረሱ?</span></a></div>
+    <!-- ══════ OWNER FORM (email + password) ══════ -->
+    <div id="owner-form">
+      <div class="form-group">
+        <label><span class="en">Email address</span><span class="am">ኢሜል አድራሻ</span></label>
+        <input type="email" id="owner-email" placeholder="abebe@email.com" onkeydown="if(event.key==='Enter')document.getElementById('owner-pass').focus()" />
+      </div>
+      <div class="form-group">
+        <label><span class="en">Password</span><span class="am">የይለፍ ቃል</span></label>
+        <input type="password" id="owner-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleOwnerSignIn()" />
+      </div>
+      <div class="forgot"><a href="#" onclick="showForgotPassword();return false;"><span class="en">Forgot password?</span><span class="am">የይለፍ ቃል ረሱ?</span></a></div>
+      <button class="submit-btn" id="owner-signin-btn" onclick="handleOwnerSignIn()">
+        <span class="en">Sign In →</span><span class="am">ግባ →</span>
+      </button>
+    </div>
 
-    <button class="submit-btn" id="signin-btn" onclick="handleSignIn()"><span class="en">Sign In →</span><span class="am">ግባ →</span></button>
+    <!-- ══════ WORKER FORM (phone + OTP) ══════ -->
+    <div id="worker-form" style="display:none;">
 
-    <div class="divider"><div class="divider-line"></div><span><span class="en">don't have an account?</span><span class="am">መለያ የለዎትም?</span></span><div class="divider-line"></div></div>
-    <div class="signup-link"><span class="en">New to Kebet?</span><span class="am">አዲስ ተጠቃሚ ናቸው?</span> <a href="signup.html"><span class="en">Create account here</span><span class="am">እዚህ መለያ ይፍጠሩ</span></a></div>
+      <!-- Info banner -->
+      <div class="worker-info-banner">
+        <div class="wib-title">📱 <span class="en">Worker sign-in via phone</span><span class="am">ሰራተኛ በስልክ ይግቡ</span></div>
+        <div class="wib-text">
+          <span class="en">Enter your registered phone number. We'll send a verification code (OTP) to that number. No password needed!</span>
+          <span class="am">የተመዘገበ ስልክ ቁጥርዎን ያስገቡ። የማረጋገጫ ኮድ (OTP) ወደ ዚያ ቁጥር እንልካለን። የይለፍ ቃል አያስፈልግም!</span>
+        </div>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="sdot-1"></div>
+        <div class="step-dot" id="sdot-2"></div>
+        <div class="step-dot" id="sdot-3"></div>
+        <span class="step-label" id="step-label-text"><span class="en">Enter phone number</span><span class="am">ስልክ ቁጥር ያስገቡ</span></span>
+      </div>
+
+      <!-- STEP 1: Phone input -->
+      <div id="worker-step1">
+        <div class="form-group">
+          <label><span class="en">📞 Phone number (registered with Kebet)</span><span class="am">📞 ስልክ ቁጥር (በከቤት የተመዘገበ)</span></label>
+          <div class="phone-row">
+            <input class="country-code" value="+251" readonly title="Ethiopia (+251)" />
+            <input class="phone-input" type="tel" id="worker-phone" placeholder="09__ ___ ___" maxlength="10"
+              oninput="formatPhone(this)"
+              onkeydown="if(event.key==='Enter')sendOTP()" />
+          </div>
+          <div style="font-size:11px;color:#888;margin-top:5px;">
+            <span class="en">Use the phone number you gave to Kebet when registering</span>
+            <span class="am">ሲመዘገቡ ለከቤት የሰጡትን ስልክ ቁጥር ይጠቀሙ</span>
+          </div>
+        </div>
+        <!-- reCAPTCHA -->
+        <div id="recaptcha-container"></div>
+        <button class="submit-btn" id="send-otp-btn" onclick="sendOTP()">
+          <span class="en">Send Verification Code →</span><span class="am">የማረጋገጫ ኮድ ላክ →</span>
+        </button>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:#888;">
+          <span class="en">Not registered yet?</span><span class="am">ገና አልተመዘገቡም?</span>
+          <a href="signup.html" style="color:#1a6b3c;font-weight:600;text-decoration:none;"> <span class="en">Register here</span><span class="am">እዚህ ይመዝገቡ</span></a>
+        </div>
+      </div>
+
+      <!-- STEP 2: OTP input -->
+      <div id="worker-step2" style="display:none;">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:32px;margin-bottom:8px;">📲</div>
+          <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:6px;">
+            <span class="en">Enter the 6-digit code</span><span class="am">6-ዲጂት ኮዱን ያስገቡ</span>
+          </div>
+          <div style="font-size:12px;color:#888;" id="otp-sent-to">
+            <span class="en">Sent to</span><span class="am">ወደ</span> <strong id="otp-phone-display"></strong>
+          </div>
+        </div>
+        <div class="otp-group" id="otp-boxes">
+          <input class="otp-box" maxlength="1" type="tel" id="otp-0" oninput="otpMove(0)" onkeydown="otpBack(event,0)" />
+          <input class="otp-box" maxlength="1" type="tel" id="otp-1" oninput="otpMove(1)" onkeydown="otpBack(event,1)" />
+          <input class="otp-box" maxlength="1" type="tel" id="otp-2" oninput="otpMove(2)" onkeydown="otpBack(event,2)" />
+          <input class="otp-box" maxlength="1" type="tel" id="otp-3" oninput="otpMove(3)" onkeydown="otpBack(event,3)" />
+          <input class="otp-box" maxlength="1" type="tel" id="otp-4" oninput="otpMove(4)" onkeydown="otpBack(event,4)" />
+          <input class="otp-box" maxlength="1" type="tel" id="otp-5" oninput="otpMove(5)" onkeydown="otpBack(event,5)" />
+        </div>
+        <div class="timer-row" id="timer-row">
+          <span class="en">Code expires in </span><span class="am">ኮድ ያበቃዋል </span>
+          <strong id="countdown">02:00</strong>
+          <span class="en"> — </span>
+          <span id="resend-link" class="resend-link" style="display:none;" onclick="resendOTP()">
+            <span class="en">Resend code</span><span class="am">ኮድ እንደገና ላክ</span>
+          </span>
+        </div>
+        <button class="submit-btn" id="verify-otp-btn" onclick="verifyOTP()">
+          <span class="en">Verify & Sign In →</span><span class="am">አረጋግጥ እና ግባ →</span>
+        </button>
+        <button class="submit-btn-outline" onclick="goBackToPhone()" style="margin-top:8px;">
+          <span class="en">← Change phone number</span><span class="am">← ስልክ ቁጥር ቀይር</span>
+        </button>
+      </div>
+
+    </div><!-- end worker-form -->
+
+    <div class="divider"><div class="divider-line"></div><span><span class="en">new here?</span><span class="am">አዲስ ናቸው?</span></span><div class="divider-line"></div></div>
+    <div class="signup-link">
+      <a href="signup.html"><span class="en">Create a new account</span><span class="am">አዲስ መለያ ይፍጠሩ</span></a>
+    </div>
   </div>
 </div>
 
+<!-- ══════════ FORGOT PASSWORD MODAL ══════════ -->
+<div id="forgot-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="font-size:20px;font-weight:700;color:#111;margin-bottom:6px;">🔑 <span class="en">Reset Password</span><span class="am">የይለፍ ቃል ዳግም አቁም</span></div>
+    <div style="font-size:13px;color:#888;margin-bottom:20px;">
+      <span class="en">Enter your email and we'll send you a reset link.</span>
+      <span class="am">ኢሜልዎን ያስገቡ፣ የዳግም ማስጀመሪያ ማስፈንጠሪያ እንልክልዎታለን።</span>
+    </div>
+    <div id="forgot-error" style="background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;"></div>
+    <div id="forgot-success" style="background:#e8f5ee;border:1px solid #b2dfc6;color:#1a6b3c;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;"></div>
+    <input type="email" id="forgot-email" placeholder="abebe@email.com"
+      style="width:100%;padding:12px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;color:#111;outline:none;margin-bottom:14px;"
+      onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeForgotPassword()" style="flex:1;padding:12px;border:none;background:#f5f5f0;color:#555;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">
+        <span class="en">Cancel</span><span class="am">ሰርዝ</span>
+      </button>
+      <button id="forgot-btn" onclick="sendReset()" style="flex:2;padding:12px;border:none;background:#1a6b3c;color:#fff;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">
+        <span class="en">Send Reset Link →</span><span class="am">ማስፈንጠሪያ ላክ →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FIREBASE ══════════ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+    sendPasswordResetEmail, RecaptchaVerifier, signInWithPhoneNumber
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
@@ -99,82 +296,358 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  window.handleSignIn = async function() {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const errorMsg = document.getElementById('error-msg');
-    const successMsg = document.getElementById('success-msg');
-    const btn = document.getElementById('signin-btn');
+  let confirmationResult = null;
+  let countdownTimer = null;
 
-    errorMsg.style.display = 'none';
-    successMsg.style.display = 'none';
+  // ─── Language toggle ───
+  window.setLang = function(lang) {
+    document.querySelectorAll('.en').forEach(el => el.style.display = lang === 'en' ? '' : 'none');
+    document.querySelectorAll('.am').forEach(el => el.style.display = lang === 'am' ? '' : 'none');
+    document.querySelectorAll('.lang-btn, .lang-btn-right').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim() === (lang === 'en' ? 'EN' : 'አማ'));
+    });
+  };
+  setLang('en');
 
-    if (!email || !password) {
-      errorMsg.textContent = '⚠️ Please fill in all fields.';
-      errorMsg.style.display = 'block';
+  // ─── Tab switch ───
+  window.switchTab = function(tab) {
+    const isWorker = tab === 'worker';
+    document.getElementById('owner-form').style.display = isWorker ? 'none' : 'block';
+    document.getElementById('worker-form').style.display = isWorker ? 'block' : 'none';
+    document.getElementById('tab-owner').classList.toggle('active', !isWorker);
+    document.getElementById('tab-worker').classList.toggle('active', isWorker);
+    clearMessages();
+
+    // Init reCAPTCHA when switching to worker tab
+    if (isWorker && !window.recaptchaVerifier) {
+      initRecaptcha();
+    }
+  };
+
+  function clearMessages() {
+    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('success-msg').style.display = 'none';
+  }
+
+  function showSuccess(msg) {
+    const el = document.getElementById('success-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('error-msg').style.display = 'none';
+  }
+
+  // ─── Format phone ───
+  window.formatPhone = function(input) {
+    let v = input.value.replace(/\D/g, '');
+    // Allow only digits
+    input.value = v;
+  };
+
+  // ─── Phone to E.164 ───
+  function toE164(phone) {
+    let p = phone.trim().replace(/\s/g, '');
+    if (p.startsWith('0')) p = '+251' + p.slice(1);
+    else if (p.startsWith('9') || p.startsWith('7')) p = '+251' + p;
+    else if (!p.startsWith('+')) p = '+251' + p;
+    return p;
+  }
+
+  // ─── Init reCAPTCHA ───
+  function initRecaptcha() {
+    try {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'normal',
+        callback: () => {
+          // reCAPTCHA solved
+        },
+        'expired-callback': () => {
+          showError('⚠️ reCAPTCHA expired. Please refresh and try again.');
+        }
+      });
+      window.recaptchaVerifier.render();
+    } catch(e) {
+      console.warn('reCAPTCHA init issue:', e.message);
+    }
+  }
+
+  // ─── OWNER: Email sign-in ───
+  window.handleOwnerSignIn = async function() {
+    const email = document.getElementById('owner-email').value.trim();
+    const password = document.getElementById('owner-pass').value;
+    const btn = document.getElementById('owner-signin-btn');
+    clearMessages();
+
+    if (!email || !password) { showError('⚠️ Please fill in all fields.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="en">Signing in...</span><span class="am">እየገባ...</span>';
+    setLang(document.querySelector('.lang-btn-right.active')?.textContent === 'EN' ? 'en' : 'am');
+
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
+      if (!userDoc.exists()) throw { code: 'no-profile', message: 'No profile found.' };
+      const userData = userDoc.data();
+      if (userData.userType === 'worker') {
+        // Worker tried to use owner form — redirect them nicely
+        showError('👷 You are a worker! Please use the Worker tab to sign in with your phone number.');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+        return;
+      }
+      showSuccess('✅ Welcome back! Taking you to your dashboard...');
+      setTimeout(() => { window.location.href = 'dashboard-owner.html'; }, 1500);
+    } catch(err) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="en">Sign In →</span><span class="am">ግባ →</span>';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        showError('❌ Wrong email or password. Please try again.');
+      } else {
+        showError('❌ ' + err.message);
+      }
+    }
+  };
+
+  // ─── WORKER: Send OTP ───
+  window.sendOTP = async function() {
+    const rawPhone = document.getElementById('worker-phone').value.trim();
+    clearMessages();
+
+    if (!rawPhone.match(/^0[79]\d{8}$/)) {
+      showError('⚠️ Please enter a valid Ethiopian phone number (e.g. 0912345678).');
       return;
     }
 
-    btn.textContent = 'Signing in...';
+    const e164 = toE164(rawPhone);
+
+    // Check if phone is registered in Kebet (Firestore check)
+    const btn = document.getElementById('send-otp-btn');
     btn.disabled = true;
+    btn.innerHTML = '<span class="en">Checking...</span><span class="am">እየፈተሸ...</span>';
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      // Check users collection first
+      const usersQ = query(collection(db, 'users'), where('phone', '==', rawPhone));
+      const usersSnap = await getDocs(usersQ);
+      
+      // Also check worker_leads for pending workers
+      const leadsQ = query(collection(db, 'worker_leads'), where('phone', '==', rawPhone));
+      const leadsSnap = await getDocs(leadsQ);
 
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const userData = userDoc.data();
+      if (usersSnap.empty && leadsSnap.empty) {
+        showError('❌ This phone number is not registered with Kebet. Please register first or contact us.');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="en">Send Verification Code →</span><span class="am">የማረጋገጫ ኮድ ላክ →</span>';
+        return;
+      }
 
-      successMsg.textContent = '✅ Welcome back! Taking you to your dashboard...';
-      successMsg.style.display = 'block';
-
-      setTimeout(() => {
-        if (userData.userType === 'owner') {
-          window.location.href = 'dashboard-owner.html';
-        } else {
-          window.location.href = 'dashboard-worker.html';
+      // If lead exists but no user account yet, inform them
+      if (usersSnap.empty && !leadsSnap.empty) {
+        const leadData = leadsSnap.docs[0].data();
+        const status = leadData.status || 'pending';
+        if (status === 'pending' || status === 'contacted') {
+          showError(`⏳ Your registration is being processed. The Kebet team will call you on ${rawPhone} soon. Please wait!`);
+          btn.disabled = false;
+          btn.innerHTML = '<span class="en">Send Verification Code →</span><span class="am">የማረጋገጫ ኮድ ላክ →</span>';
+          return;
         }
+      }
+
+      btn.innerHTML = '<span class="en">Sending code...</span><span class="am">ኮድ እየላከ...</span>';
+
+      // Send OTP via Firebase Phone Auth
+      const verifier = window.recaptchaVerifier;
+      confirmationResult = await signInWithPhoneNumber(auth, e164, verifier);
+      
+      document.getElementById('otp-phone-display').textContent = rawPhone;
+      document.getElementById('worker-step1').style.display = 'none';
+      document.getElementById('worker-step2').style.display = 'block';
+
+      // Update step indicator
+      document.getElementById('sdot-1').className = 'step-dot done';
+      document.getElementById('sdot-2').className = 'step-dot active';
+      document.getElementById('step-label-text').innerHTML = '<span class="en">Enter OTP code</span><span class="am">ኮዱን ያስገቡ</span>';
+      setLang(document.querySelector('.lang-btn-right.active')?.textContent === 'EN' ? 'en' : 'am');
+
+      document.getElementById('otp-0').focus();
+      startCountdown(120);
+
+      showSuccess('✅ Code sent! Check your SMS messages.');
+
+    } catch(err) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="en">Send Verification Code →</span><span class="am">የማረጋገጫ ኮድ ላክ →</span>';
+      if (err.code === 'auth/too-many-requests') {
+        showError('⚠️ Too many attempts. Please wait a few minutes and try again.');
+      } else if (err.code === 'auth/invalid-phone-number') {
+        showError('❌ Invalid phone number format. Please use format: 0912345678');
+      } else {
+        showError('❌ Could not send code: ' + err.message);
+      }
+      // Reset reCAPTCHA
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+        initRecaptcha();
+      }
+    }
+  };
+
+  // ─── OTP input movement ───
+  window.otpMove = function(idx) {
+    const val = document.getElementById('otp-'+idx).value;
+    if (val && idx < 5) {
+      document.getElementById('otp-'+(idx+1)).focus();
+    }
+    // Auto-verify when all 6 filled
+    const code = Array.from({length:6}, (_,i) => document.getElementById('otp-'+i).value).join('');
+    if (code.length === 6) verifyOTP();
+  };
+
+  window.otpBack = function(e, idx) {
+    if (e.key === 'Backspace' && !document.getElementById('otp-'+idx).value && idx > 0) {
+      document.getElementById('otp-'+(idx-1)).focus();
+    }
+  };
+
+  // ─── Verify OTP ───
+  window.verifyOTP = async function() {
+    const code = Array.from({length:6}, (_,i) => document.getElementById('otp-'+i).value).join('');
+    clearMessages();
+
+    if (code.length < 6) { showError('⚠️ Please enter all 6 digits.'); return; }
+    if (!confirmationResult) { showError('⚠️ Session expired. Please go back and resend the code.'); return; }
+
+    const btn = document.getElementById('verify-otp-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="en">Verifying...</span><span class="am">እያረጋገጠ...</span>';
+
+    try {
+      const cred = await confirmationResult.confirm(code);
+      const user = cred.user;
+
+      // Fetch user profile
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (!userDoc.exists()) {
+        // Profile may have been created by admin with phone auth
+        // Check by phone number
+        showSuccess('✅ Phone verified! Loading your dashboard...');
+        document.getElementById('sdot-2').className = 'step-dot done';
+        document.getElementById('sdot-3').className = 'step-dot active';
+        if (countdownTimer) clearInterval(countdownTimer);
+        setTimeout(() => { window.location.href = 'dashboard-worker.html'; }, 1500);
+        return;
+      }
+
+      const userData = userDoc.data();
+      if (userData.disabled) {
+        showError('❌ Your account has been suspended. Please contact Kebet support.');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="en">Verify & Sign In →</span><span class="am">አረጋግጥ እና ግባ →</span>';
+        return;
+      }
+
+      showSuccess('✅ Welcome! Taking you to your dashboard...');
+      document.getElementById('sdot-2').className = 'step-dot done';
+      document.getElementById('sdot-3').className = 'step-dot active';
+      if (countdownTimer) clearInterval(countdownTimer);
+      setTimeout(() => {
+        window.location.href = userData.userType === 'owner' ? 'dashboard-owner.html' : 'dashboard-worker.html';
       }, 1500);
 
-    } catch (error) {
-      btn.textContent = 'Sign In →';
+    } catch(err) {
       btn.disabled = false;
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        errorMsg.textContent = '❌ Wrong email or password. Please try again.';
+      btn.innerHTML = '<span class="en">Verify & Sign In →</span><span class="am">አረጋግጥ እና ግባ →</span>';
+      if (err.code === 'auth/invalid-verification-code') {
+        showError('❌ Wrong code. Please check the SMS and try again.');
+        // Clear OTP boxes
+        Array.from({length:6}, (_,i) => { document.getElementById('otp-'+i).value = ''; });
+        document.getElementById('otp-0').focus();
+      } else if (err.code === 'auth/code-expired') {
+        showError('⏱️ Code expired. Please request a new one.');
       } else {
-        errorMsg.textContent = '❌ Error: ' + error.message;
+        showError('❌ ' + err.message);
       }
-      errorMsg.style.display = 'block';
     }
+  };
+
+  // ─── Countdown timer ───
+  function startCountdown(seconds) {
+    if (countdownTimer) clearInterval(countdownTimer);
+    document.getElementById('resend-link').style.display = 'none';
+    let remaining = seconds;
+    function tick() {
+      const m = Math.floor(remaining/60).toString().padStart(2,'0');
+      const s = (remaining%60).toString().padStart(2,'0');
+      document.getElementById('countdown').textContent = m+':'+s;
+      if (remaining <= 0) {
+        clearInterval(countdownTimer);
+        document.getElementById('countdown').textContent = '00:00';
+        document.getElementById('resend-link').style.display = 'inline';
+      }
+      remaining--;
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
   }
-</script>
 
-<!-- Forgot Password Modal -->
-<div id="forgot-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:20px;padding:32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-    <div style="font-size:20px;font-weight:700;color:#111;margin-bottom:6px;">🔑 <span class="en">Reset Password</span><span class="am">የይለፍ ቃል ዳግም አቁም</span></div>
-    <div style="font-size:13px;color:#888;margin-bottom:20px;"><span class="en">Enter your email and we'll send you a reset link.</span><span class="am">ኢሜልዎን ያስገቡ፣ የዳግም ማስጀመሪያ ማስፈንጠሪያ እንልክልዎታለን።</span></div>
-    <div id="forgot-error" style="background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;"></div>
-    <div id="forgot-success" style="background:#e8f5ee;border:1px solid #b2dfc6;color:#1a6b3c;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:none;"></div>
-    <input type="email" id="forgot-email" placeholder="abebe@email.com" style="width:100%;padding:12px 14px;border:1.5px solid #eee;border-radius:10px;font-size:14px;color:#111;outline:none;margin-bottom:14px;" onfocus="this.style.borderColor='#1a6b3c'" onblur="this.style.borderColor='#eee'" />
-    <div style="display:flex;gap:10px;">
-      <button onclick="closeForgotPassword()" style="flex:1;padding:12px;border:none;background:#f5f5f0;color:#555;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><span class="en">Cancel</span><span class="am">ሰርዝ</span></button>
-      <button id="forgot-btn" onclick="sendReset()" style="flex:2;padding:12px;border:none;background:#1a6b3c;color:#fff;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><span class="en">Send Reset Link →</span><span class="am">ማስፈንጠሪያ ላክ →</span></button>
-    </div>
-  </div>
-</div>
+  // ─── Resend OTP ───
+  window.resendOTP = async function() {
+    document.getElementById('resend-link').style.display = 'none';
+    clearMessages();
 
-<script type="module">
-  import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  const auth = getAuth();
+    // Reset reCAPTCHA
+    if (window.recaptchaVerifier) { window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+    initRecaptcha();
 
+    const rawPhone = document.getElementById('worker-phone').value.trim();
+    const e164 = toE164(rawPhone);
+
+    try {
+      confirmationResult = await signInWithPhoneNumber(auth, e164, window.recaptchaVerifier);
+      showSuccess('✅ New code sent!');
+      // Clear boxes
+      Array.from({length:6}, (_,i) => { document.getElementById('otp-'+i).value = ''; });
+      document.getElementById('otp-0').focus();
+      startCountdown(120);
+    } catch(err) {
+      showError('❌ Could not resend: ' + err.message);
+      document.getElementById('resend-link').style.display = 'inline';
+    }
+  };
+
+  // ─── Go back to phone input ───
+  window.goBackToPhone = function() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    confirmationResult = null;
+    document.getElementById('worker-step2').style.display = 'none';
+    document.getElementById('worker-step1').style.display = 'block';
+    document.getElementById('sdot-1').className = 'step-dot active';
+    document.getElementById('sdot-2').className = 'step-dot';
+    clearMessages();
+    // Reset OTP boxes
+    Array.from({length:6}, (_,i) => { document.getElementById('otp-'+i).value = ''; });
+    // Reset reCAPTCHA
+    if (window.recaptchaVerifier) { window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+    document.getElementById('send-otp-btn').disabled = false;
+    document.getElementById('send-otp-btn').innerHTML = '<span class="en">Send Verification Code →</span><span class="am">የማረጋገጫ ኮድ ላክ →</span>';
+    initRecaptcha();
+  };
+
+  // ─── Forgot password (for owners) ───
   window.showForgotPassword = function() {
-    const emailEl = document.getElementById('email');
-    document.getElementById('forgot-email').value = emailEl?.value || '';
+    document.getElementById('forgot-email').value = document.getElementById('owner-email')?.value || '';
     document.getElementById('forgot-error').style.display = 'none';
     document.getElementById('forgot-success').style.display = 'none';
-    const overlay = document.getElementById('forgot-overlay');
-    overlay.style.display = 'flex';
+    document.getElementById('forgot-overlay').style.display = 'flex';
   };
 
   window.closeForgotPassword = function() {
@@ -186,41 +659,41 @@
     const errEl = document.getElementById('forgot-error');
     const sucEl = document.getElementById('forgot-success');
     const btn = document.getElementById('forgot-btn');
-
-    errEl.style.display = 'none';
-    sucEl.style.display = 'none';
-
-    if (!email) {
-      errEl.textContent = '⚠️ Please enter your email address.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-
+    errEl.style.display = 'none'; sucEl.style.display = 'none';
+    if (!email) { errEl.textContent = '⚠️ Please enter your email address.'; errEl.style.display = 'block'; return; }
+    btn.textContent = 'Sending...'; btn.disabled = true;
     try {
       await sendPasswordResetEmail(auth, email);
       sucEl.textContent = '✅ Reset link sent! Check your email inbox (and spam folder).';
       sucEl.style.display = 'block';
       btn.textContent = '✓ Sent!';
       setTimeout(() => closeForgotPassword(), 3000);
-    } catch (err) {
-      btn.textContent = 'Send Reset Link →';
-      btn.disabled = false;
-      if (err.code === 'auth/user-not-found') {
-        errEl.textContent = '❌ No account found with this email.';
-      } else {
-        errEl.textContent = '❌ Error: ' + err.message;
-      }
+    } catch(err) {
+      btn.textContent = 'Send Reset Link →'; btn.disabled = false;
+      errEl.textContent = err.code === 'auth/user-not-found' ? '❌ No account found with this email.' : '❌ ' + err.message;
       errEl.style.display = 'block';
     }
   };
 
-  // Close on backdrop click
   document.getElementById('forgot-overlay').addEventListener('click', function(e) {
     if (e.target === this) closeForgotPassword();
   });
+
+  // ─── Auto-redirect if already signed in ───
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const d = userDoc.data();
+          if (!d.disabled) {
+            window.location.href = d.userType === 'owner' ? 'dashboard-owner.html' : 'dashboard-worker.html';
+          }
+        }
+      } catch(e) { /* stay on page */ }
+    }
+  });
+
 </script>
 
 </body>
