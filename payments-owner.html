@@ -191,6 +191,13 @@
       .sidebar { transform: none !important; }
     }
     /* ═══════════════════════════════════════════ */
+  
+    @media (max-width: 900px) {
+      #mobile-topbar { display: flex !important; }
+    }
+    @media (min-width: 901px) {
+      #mobile-topbar { display: none !important; }
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
@@ -199,6 +206,24 @@
   <script src="kebet-smooth.js"></script>
 </head>
 <body>
+
+
+<!-- ── Mobile hamburger topbar ── -->
+<div class="mobile-topbar" id="mobile-topbar" style="display:none;position:fixed;top:0;left:0;right:0;height:56px;background:#1a6b3c;padding:0 16px;align-items:center;justify-content:space-between;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,0.2);">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">💰</div>
+    <div>
+      <div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:2px;line-height:1;">KEBET</div>
+      <div style="font-size:9px;color:#f0a500;">ከቤት</div>
+    </div>
+  </div>
+  <button onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px;align-items:center;">
+    <span style="display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;"></span>
+    <span style="display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;"></span>
+    <span style="display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;"></span>
+  </button>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:298;"></div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
