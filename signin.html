@@ -371,6 +371,7 @@
       }
 
       showSuccess('✅ Welcome back! Taking you to your dashboard...');
+      if (window.initKeberFCM) initKeberFCM(cred.user.uid, db);
       setTimeout(() => { window.location.href = 'dashboard-owner.html'; }, 1500);
     } catch(err) {
       btn.disabled = false;
@@ -475,6 +476,7 @@
       sessionStorage.setItem('kebet_worker_phone', rawPhone);
       sessionStorage.setItem('kebet_worker_name', (workerData.firstName || '') + ' ' + (workerData.lastName || ''));
       showSuccess('✅ Welcome back! Taking you to your dashboard...');
+      if (window.initKeberFCM && auth.currentUser) initKeberFCM(auth.currentUser.uid, db);
       setTimeout(() => { window.location.href = 'dashboard-worker.html'; }, 1200);
 
     } catch(err) {
@@ -542,5 +544,6 @@
 
 </script>
 
+<script src="kebet-fcm.js"></script>
 </body>
 </html>

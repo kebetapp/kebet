@@ -234,6 +234,7 @@
 
       successMsg.textContent = '✅ Account created! Taking you to your dashboard...';
       successMsg.style.display = 'block';
+      if (window.initKeberFCM) initKeberFCM(user.uid, db);
       setTimeout(() => { window.location.href = 'dashboard-owner.html'; }, 1500);
 
     } catch (error) {
@@ -308,5 +309,6 @@
   }
 </script>
 
+<script src="kebet-fcm.js"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@
 
 (function () {
   // ⚠️  Replace with your actual VAPID public key from Firebase Console
-  var VAPID_KEY = 'YOUR_VAPID_PUBLIC_KEY_HERE';
+  var VAPID_KEY = 'BDluVmen0kTJCYu6gl7qS4M5lKAj7xCjn6NT4Bpy2tjsDCYZXCXPyETsDu3tPDzsyvCgqZu31O28zBH5aSCn_xg';
 
   var firebaseConfig = {
     apiKey: "AIzaSyAuR0ccqos7BFAEXRFMfKp18LtLkmsogF8",
