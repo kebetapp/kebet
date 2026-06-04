@@ -391,8 +391,9 @@
   <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
   <button class="lang-btn" id="btn-am" onclick="setLang('am')">አማ</button>
 </div>
-    <button class="btn-outline-nav" onclick="window.location.href='signin.html'"><span class="en">Sign in</span><span class="am">ግባ</span></button>
-    <button class="btn-green-nav" onclick="window.location.href='signup.html'"><span class="en">Get Started</span><span class="am">ጀምር</span></button>
+    <button id="nav-signin-btn" class="btn-outline-nav" style="display:none;" onclick="window.location.href='signin.html'"><span class="en">Sign in</span><span class="am">ግባ</span></button>
+    <button id="nav-signup-btn" class="btn-green-nav" style="display:none;" onclick="window.location.href='signup.html'"><span class="en">Get Started</span><span class="am">ጀምር</span></button>
+    <button id="nav-dashboard-btn" class="btn-green-nav" style="display:none;" onclick="window.location.href='dashboard-owner.html'"><span class="en">Dashboard</span><span class="am">ዳሽቦርድ</span></button>
   </div>
 </nav>
 
@@ -571,10 +572,31 @@
   let selectedWorkerData = null;
 
   onAuthStateChanged(auth, async (user) => {
+    const signinBtn = document.getElementById('nav-signin-btn');
+    const signupBtn = document.getElementById('nav-signup-btn');
+    const dashBtn   = document.getElementById('nav-dashboard-btn');
+
     if (user) {
       currentUser = user;
       const snap = await getDoc(doc(db, 'users', user.uid));
       if (snap.exists()) currentOwnerData = snap.data();
+
+      // Update nav: hide sign-in/get-started, show Dashboard
+      if (signinBtn) signinBtn.style.display = 'none';
+      if (signupBtn) signupBtn.style.display = 'none';
+      if (dashBtn) {
+        dashBtn.style.display = 'inline-block';
+        if (currentOwnerData && currentOwnerData.userType === 'worker') {
+          dashBtn.onclick = () => window.location.href = 'dashboard-worker.html';
+        } else {
+          dashBtn.onclick = () => window.location.href = 'dashboard-owner.html';
+        }
+      }
+    } else {
+      // Not logged in — show auth buttons
+      if (signinBtn) signinBtn.style.display = 'inline-block';
+      if (signupBtn) signupBtn.style.display = 'inline-block';
+      if (dashBtn)   dashBtn.style.display   = 'none';
     }
   });
 
