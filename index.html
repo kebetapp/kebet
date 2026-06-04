@@ -256,31 +256,32 @@
     body.am-mode .why-title-am { display: block; }
     body.am-mode .why-title { display: none; }
 
-    @media (max-width: 900px) {
-      nav { padding: 12px 16px; }
-      .nav-links { display: none; }
-      .nav-logo-text { font-size: 18px; letter-spacing: 2px; }
-      .nav-logo-icon { width: 36px; height: 36px; font-size: 18px; }
-      .nav-btns { gap: 6px; }
-      .btn-outline { padding: 7px 14px; font-size: 12px; }
-      .btn-primary { display: none; } /* hidden on mobile — hero has the CTA buttons */
-      .lang-toggle { display: none; } /* hide lang on mobile nav, save space */
-      .hero-headline { font-size: 32px; }
+        @media (max-width: 900px) {
+      nav { padding: 12px 16px !important; }
+      .nav-links { display: none !important; }
+      .lang-toggle { display: none !important; }
+      .btn-primary { display: none !important; }
+      .btn-outline { padding: 8px 18px; font-size: 13px; }
+      .nav-logo-text { font-size: 17px; }
+      .nav-logo-icon { width: 36px; height: 36px; font-size: 17px; }
+      .hero-headline { font-size: 30px; }
       .hero { padding: 100px 20px 60px; }
       .hero-stats { gap: 20px; flex-wrap: wrap; }
-      .trust-bar { flex-wrap: wrap; gap: 8px; }
-      .trust-item { padding: 12px 14px; font-size: 11px; }
+      .trust-bar { flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+      .trust-item { padding: 10px 12px; font-size: 11px; }
       .section { padding: 50px 20px; }
       .how-grid, .workers-grid, .testi-grid, .why-grid { grid-template-columns: 1fr; }
       .workers-inner, .why-inner, .fee-inner { padding: 0 16px; }
       .testi-section { padding: 50px 20px; }
-      .contact-bar { gap: 20px; padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+      .contact-bar { gap: 16px; padding: 24px 20px; flex-direction: column; }
       .cta-section h2 { font-size: 26px; }
       .float-label { display: none; }
-      .float-btn { padding: 13px 16px; }
-      .fee-grid { grid-template-columns: 1fr; max-width: 360px; }
+      .float-btn { padding: 12px 14px; }
+      .fee-grid { grid-template-columns: 1fr; max-width: 340px; }
       .fee-card.agency { margin-top: 0; }
-      .fee-amount { font-size: 40px; }
+      .fee-amount { font-size: 38px; }
+      .hero-btns { flex-direction: column; gap: 12px; }
+      .hero-btns a, .hero-btns button { width: 100%; }
     }
   </style>
 </head>

@@ -108,7 +108,7 @@
     input:checked + .avail-slider { background: #1a6b3c; }
     input:checked + .avail-slider::before { transform: translateX(24px); }
     .avail-saving { font-size: 11px; color: #888; margin-left: 8px; display: none; }
-    
+
     @media (max-width: 900px) {
       .sidebar {
         transform: translateX(-100%);
@@ -117,21 +117,19 @@
         display: flex !important;
       }
       .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(0,0,0,0.3); }
-      .main { margin-left: 0 !important; padding: 72px 16px 24px !important; }
+      .main { margin-left: 0 !important; padding: 72px 16px 24px !important; max-width: 100vw !important; }
       .stats-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-      .two-col { grid-template-columns: 1fr !important; }
-      .form-grid { grid-template-columns: 1fr !important; }
-      .rights-grid { grid-template-columns: 1fr !important; }
+      .two-col, .form-grid, .rights-grid { grid-template-columns: 1fr !important; }
       .booking-card { flex-direction: column !important; }
       .booking-right { flex-direction: row !important; flex-wrap: wrap; }
       .job-offer-top { flex-wrap: wrap !important; }
       .topbar { flex-wrap: wrap; gap: 10px; }
-      #mobile-topbar { display: flex !important; }
+      #mob-topbar { display: flex !important; }
     }
     @media (min-width: 901px) {
-      #mobile-topbar { display: none !important; }
+      #mob-topbar { display: none !important; }
     }
-    #mobile-topbar {
+    #mob-topbar {
       display: none;
       position: fixed; top: 0; left: 0; right: 0; height: 56px;
       background: #111;
@@ -140,14 +138,8 @@
       z-index: 300;
       box-shadow: 0 2px 12px rgba(0,0,0,0.18);
     }
-    .sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:298; }
-    .sidebar-overlay.show { display:block; }
-
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .two-col { grid-template-columns: 1fr; }
-      .rights-grid { grid-template-columns: 1fr; }
-      .job-offer-top { flex-wrap: wrap; }
-    }
+    #sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:298; }
+    #sidebar-overlay.show { display:block; }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
@@ -156,22 +148,21 @@
   <script src="kebet-smooth.js"></script>
 </head>
 <body>
-<!-- Mobile topbar -->
-<div id="mobile-topbar">
+<div id="mob-topbar">
   <div style="display:flex;align-items:center;gap:8px;">
-    <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🏠</div>
+    <div style="width:32px;height:32px;background:rgba(255,255,255,0.18);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🏠</div>
     <div>
-      <div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:2px;line-height:1;">KEBET</div>
-      <div style="font-size:9px;color:#f0a500;">ከቤት</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:2px;line-height:1.1;">KEBET</div>
+      <div style="font-size:9px;color:#f0a500;font-weight:600;">ከቤት</div>
     </div>
   </div>
-  <button onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px;align-items:center;">
-    <span style="display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;"></span>
-    <span style="display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;"></span>
-    <span style="display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;"></span>
+  <button onclick="toggleSidebar()" aria-label="Menu" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;justify-content:center;gap:5px;">
+    <span style="display:block;width:23px;height:2px;background:#fff;border-radius:2px;"></span>
+    <span style="display:block;width:23px;height:2px;background:#fff;border-radius:2px;"></span>
+    <span style="display:block;width:23px;height:2px;background:#fff;border-radius:2px;"></span>
   </button>
 </div>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
@@ -304,6 +295,30 @@
   </div>
 </div>
 
+<script>
+/* Mobile sidebar toggle — must be plain script (not module) so onclick= works */
+window.toggleSidebar = function() {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebar-overlay');
+  if (!sb) return;
+  var isOpen = sb.classList.toggle('open');
+  if (ov) ov.classList.toggle('show', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+};
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.sidebar-item').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        var sb = document.getElementById('sidebar');
+        var ov = document.getElementById('sidebar-overlay');
+        if (sb) sb.classList.remove('open');
+        if (ov) ov.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+});
+</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
