@@ -180,8 +180,12 @@
     .success-btn { background: #1a6b3c; color: #fff; border: none; padding: 12px 32px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
 
     @media (max-width: 900px) {
-      .sidebar { display: none; }
-      .main { margin-left: 0; }
+      .mobile-topbar-msg { display: flex !important; }
+      .sidebar { transform: translateX(-100%); transition: transform 0.28s ease; display: flex !important; z-index: 299 !important; }
+      .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(0,0,0,0.3); }
+      .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 298; }
+      .sidebar-overlay.show { display: block; }
+      .main { margin-left: 0; padding-top: 56px; }
       /* Mobile: full-width panels, one visible at a time */
       .chat-layout { position: relative; overflow: hidden; }
       .convos-panel { width: 100%; position: absolute; top: 0; left: 0; height: 100%; z-index: 2; transition: transform 0.3s ease; }
@@ -196,8 +200,13 @@
       .chat-input-area { padding: 10px 12px; }
       .chat-messages { padding: 12px; }
     }
+    @media (min-width: 901px) {
+      .mobile-topbar-msg { display: none !important; }
+    }
     /* Back button hidden on desktop */
     .mobile-back-btn { display: none; align-items: center; gap: 8px; background: none; border: none; color: #1a6b3c; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0; margin-right: 8px; }
+    .mobile-topbar-msg { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: #111; padding: 0 16px; align-items: center; justify-content: space-between; z-index: 300; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+    .mob-hamburger { background: none; border: none; color: #fff; font-size: 26px; cursor: pointer; display: flex; align-items: center; }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
@@ -206,6 +215,16 @@
   <script src="kebet-smooth.js"></script>
 </head>
 <body>
+
+<!-- Mobile top bar -->
+<div class="mobile-topbar-msg">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div style="width:30px;height:30px;background:#1a6b3c;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;">🏠</div>
+    <span style="font-size:16px;font-weight:700;color:#fff;letter-spacing:2px;">KEBET</span>
+  </div>
+  <button class="mob-hamburger" onclick="toggleMsgSidebar()">☰</button>
+</div>
+<div class="sidebar-overlay" id="msg-sidebar-overlay" onclick="toggleMsgSidebar()"></div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
@@ -999,5 +1018,25 @@
   });
 </script>
 
+<script>
+function toggleMsgSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('msg-sidebar-overlay');
+  const isOpen = sb.classList.toggle('open');
+  if (ov) ov.classList.toggle('show', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.sidebar-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        document.getElementById('sidebar')?.classList.remove('open');
+        document.getElementById('msg-sidebar-overlay')?.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>
