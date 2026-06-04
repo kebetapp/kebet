@@ -63,7 +63,9 @@
     .no-reviews { text-align: center; padding: 24px; color: #aaa; font-size: 13px; }
 
     .loading { text-align: center; padding: 60px; color: #888; font-size: 16px; }
+    }
 
+    /* ═══ KEBET MOBILE ═══ */
     @media (max-width: 900px) {
       .sidebar {
         transform: translateX(-100%);
@@ -72,29 +74,26 @@
         display: flex !important;
       }
       .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(0,0,0,0.3); }
-      .main { margin-left: 0 !important; padding: 72px 16px 24px !important; max-width: 100vw !important; }
+      .main { margin-left: 0 !important; padding: 72px 16px 24px !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box; }
       .stats-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
       .two-col, .form-grid, .rights-grid { grid-template-columns: 1fr !important; }
       .booking-card { flex-direction: column !important; }
       .booking-right { flex-direction: row !important; flex-wrap: wrap; }
       .job-offer-top { flex-wrap: wrap !important; }
       .topbar { flex-wrap: wrap; gap: 10px; }
+      table { font-size: 12px; }
       #mob-topbar { display: flex !important; }
     }
-    @media (min-width: 901px) {
-      #mob-topbar { display: none !important; }
-    }
+    @media (min-width: 901px) { #mob-topbar { display: none !important; } }
     #mob-topbar {
-      display: none;
-      position: fixed; top: 0; left: 0; right: 0; height: 56px;
-      background: #1a6b3c;
-      padding: 0 16px;
+      display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px;
+      background: #1a6b3c; padding: 0 16px;
       align-items: center; justify-content: space-between;
-      z-index: 300;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      z-index: 300; box-shadow: 0 2px 12px rgba(0,0,0,0.18);
     }
     #sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:298; }
     #sidebar-overlay.show { display:block; }
+    /* ═════════════════════ */
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="kebet-lang.css"/>
@@ -111,14 +110,13 @@
       <div style="font-size:9px;color:#f0a500;font-weight:600;">ከቤት</div>
     </div>
   </div>
-  <button onclick="toggleSidebar()" aria-label="Menu" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;justify-content:center;gap:5px;">
-    <span style="display:block;width:23px;height:2px;background:#fff;border-radius:2px;"></span>
-    <span style="display:block;width:23px;height:2px;background:#fff;border-radius:2px;"></span>
-    <span style="display:block;width:23px;height:2px;background:#fff;border-radius:2px;"></span>
+  <button onclick="toggleSidebar()" aria-label="Menu" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;">
+    <span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;"></span>
+    <span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;"></span>
+    <span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px;"></span>
   </button>
 </div>
 <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="sidebar-logo-icon">🏠</div>
@@ -194,14 +192,13 @@
 </div>
 
 <script>
-/* Mobile sidebar toggle — must be plain script (not module) so onclick= works */
 window.toggleSidebar = function() {
   var sb = document.getElementById('sidebar');
   var ov = document.getElementById('sidebar-overlay');
   if (!sb) return;
-  var isOpen = sb.classList.toggle('open');
-  if (ov) ov.classList.toggle('show', isOpen);
-  document.body.style.overflow = isOpen ? 'hidden' : '';
+  var open = sb.classList.toggle('open');
+  if (ov) ov.classList.toggle('show', open);
+  document.body.style.overflow = open ? 'hidden' : '';
 };
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.sidebar-item').forEach(function(el) {
@@ -381,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
           : '<span class="worker-status status-active"><span class="en">Review now</span><span class="am">አሁን ይገምግሙ</span></span>';
         const clickAttr = alreadyReviewed ? '' : `onclick="selectWorker('${b.id}', '${b.workerId}', '${b.workerName}')"`;
         html += `
-          <div class="worker-tab ks-reveal" data-booking="${b.id}" ${clickAttr} style="${alreadyReviewed ? 'opacity:0.6; cursor:default;' : ''}">
+          <div class="worker-tab " data-booking="${b.id}" ${clickAttr} style="${alreadyReviewed ? 'opacity:0.6; cursor:default;' : ''}">
             <div class="worker-av">${initials}</div>
             <div>
               <div class="worker-name">${b.workerName || '—'}</div>
@@ -402,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
       reviewsGiven.forEach(r => {
         const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
         html += `
-          <div class="review-item ks-reveal">
+          <div class="review-item ">
             <div class="review-top">
               <div class="review-av">${r.ownerInitials || '??'}</div>
               <div>
